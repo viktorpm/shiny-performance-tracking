@@ -1,5 +1,7 @@
 library(R.matlab)
+library(rmatio)
 
+library(rstudioapi)
 library(tidyverse)
 library(data.tree)
 library(listviewer)
@@ -77,23 +79,43 @@ TRAINING <- add_row(TRAINING,
 
 ### read and extract data automatically
 # CHECK ALL SUBDIRECTORIES
-file_list <- list.files(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data")) %>% as.list()
-walk(file_list, ~ReadData(filename = .x) %>% TRAININGtoCSV())
+file_list <- list.files(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data"),recursive = T) %>% as.list()
+walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
+
+list.dirs(file.path("D:","_Rig_data","SoloData","Data"), full.names = TRUE, recursive = TRUE)
+
+
+
+
+
+data_path <- file.path("D:", "_Rig_data","SoloData","Data")
+file_list <- list.files(data_path,recursive = T) %>% as.list()
+walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
+
+
+
+
+rat_data = readRDS(file.path("D:", "_R_WD", "git_projects", 
+                             "rat_wm_training", "data",
+                             "rds_files",
+                             "data_@AthenaDelayComp_experimenter_ratname_190226_ASV.mat.rds")) 
+
+
+
+rat_data$saved[, , ]$SideSection.training.stage
+rat_data$saved[, , ]$SideSection.init.CP.duration
+rat_data$saved[, , ]$SideSection.Total.CP.duration
+
+
+rat_data$saved[, , ]$ProtocolsSection.n.done.trials
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
+# termId <- rstudioapi::terminalExecute("ubuntu")
+# rstudioapi::terminalExecute("ssh vplattner@172.24.155.100")
 
 
 # TRAINING <- ReadData(filename = "data_@AthenaDelayComp_viktor_VP01_190425a.mat") %>% as_tibble()

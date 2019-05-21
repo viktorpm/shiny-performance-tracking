@@ -1,4 +1,4 @@
-ReadData <- function(filename) {
+ReadData <- function(file) {
   library(R.matlab)
   library(tidyverse)
 
@@ -11,17 +11,44 @@ ReadData <- function(filename) {
   #   left_trials = numeric()
   # )
 
+  # browser()
 
-  rat_data <- readMat(file.path("data", filename))
-  
-  
-  
+
+  # filename_pos <- gregexpr(file,
+  #                          pattern = "/"
+  # ) %>%
+  #   unlist() %>%
+  #   `[[`(length(.)) + 1
+  #
+  # filename <- substr(
+  #   file,
+  #   start = filename_pos,
+  #   stop = nchar(file)
+  # )
+  #
+  #
+  # file_path <- substr(
+  #   file,
+  #   start = 1,
+  #   stop = filename_pos - 1
+  # )
+
+  rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files"), "/", file))
+
+  filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.data.file %>% as.character(),
+    pattern = "\\\\"
+  ) %>%
+    unlist() %>%
+    `[[`(length(.)) + 1
+
+
+
   TRAINING <- list(
     file = rat_data$saved[, , ]$SavingSection.data.file %>% as.character() %>%
-      substr(start = (nchar(.)-18), stop = nchar(.)),
-    experimenter = rat_data$saved[, , ]$SavingSection.experimenter %>% 
+      substr(start = filename_pos, stop = nchar(.)),
+    experimenter = rat_data$saved[, , ]$SavingSection.experimenter %>%
       as.character(),
-    animal_id = rat_data$saved[, , ]$SavingSection.ratname %>% 
+    animal_id = rat_data$saved[, , ]$SavingSection.ratname %>%
       as.character(),
     date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
       as.character() %>%
@@ -32,14 +59,26 @@ ReadData <- function(filename) {
       as.character() %>%
       substr(13, 20),
     right_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass1 %>% as.double() +
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass2 %>% as.double()+
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass3 %>% as.double()+
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass4%>% as.double(),
-    left_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass5 %>% as.double()+
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass6 %>% as.double()+
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass7 %>% as.double()+
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass8 %>% as.double()
+      rat_data$saved[, , ]$StimulusSection.nTrialsClass2 %>% as.double() +
+      rat_data$saved[, , ]$StimulusSection.nTrialsClass3 %>% as.double() +
+      rat_data$saved[, , ]$StimulusSection.nTrialsClass4 %>% as.double(),
+    left_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass5 %>% as.double() +
+      rat_data$saved[, , ]$StimulusSection.nTrialsClass6 %>% as.double() +
+      rat_data$saved[, , ]$StimulusSection.nTrialsClass7 %>% as.double() +
+      rat_data$saved[, , ]$StimulusSection.nTrialsClass8 %>% as.double(),
+    stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
+    inti_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
+    total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
+    done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric()
   )
+
+
+
+
+
+  # rat_data$saved[, , ]$SideSection TrainingStage, init CP duration, total CP duration
+  # rat_data$saved[, , ]$ProtocolSection n done trials
+
 
 
   # # adding rows of data to tibble
@@ -64,7 +103,6 @@ ReadData <- function(filename) {
   #     rat_data$saved[, , ]$StimulusSection.nTrialsClass7 +
   #     rat_data$saved[, , ]$StimulusSection.nTrialsClass8
   # )
-  # 
+  #
   return(TRAINING)
-
 }
