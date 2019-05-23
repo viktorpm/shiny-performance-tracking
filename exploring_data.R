@@ -111,7 +111,12 @@ rat_data$saved[, , ]$ProtocolsSection.n.done.trials
 
 
 
+rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files"), "/", "data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds"))
 
+
+ReadData("data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds")
+
+rat_data$saved[, , ]$SavingSection.settings.file
 
 
 # termId <- rstudioapi::terminalExecute("ubuntu")

@@ -7,9 +7,7 @@ TRAINING <- TRAINING %>%
 
 
 
-
-
-ggplot(data = TRAINING %>% filter(stage == 1),
+ggplot(data = TRAINING %>% dplyr::filter(stage == 0),
        mapping = aes(x = animal_id,
                      y = No_pokes)) +
   geom_boxplot(aes(fill = choice_direction)) +
@@ -18,19 +16,31 @@ ggplot(data = TRAINING %>% filter(stage == 1),
 
 
 
-ggplot(data = TRAINING %>% filter(stage == 1),
+ggplot(data = TRAINING %>% dplyr::filter(stage == 1),
+       
        mapping = aes(x = animal_id,
                      y = done_trials)) +
-  geom_boxplot()
+  geom_boxplot() 
+
+
+ggplot(data = TRAINING %>% dplyr::filter(stage == 1,animal_id != "ratname"),
+       
+       mapping = aes(x = date,
+                     y = total_CP,col = animal_id)) +
+  geom_line() 
+
   
 
-ggplot(data = TRAINING %>% filter(stage == 0, animal_id != "ratname"),
+ggplot(data = TRAINING %>% dplyr::filter(stage == 0, animal_id != "ratname"),
        mapping = aes(x = date,
                      y = done_trials,
                      col = animal_id)) +
   geom_line() +
-  geom_point()
-  scale_x_date(limits = as.Date(c('2019-05-06','2019-05-25')))
+  geom_point() +
+  scale_x_date(date_breaks = "1 day", date_labels = "%b %d") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) 
+  
+
   
 
 
@@ -64,6 +74,3 @@ setdiff(c(4,5,6,7,8,9), c(1,2,3,4,5,6))
 intersect(c(1,2,3,4,5,6), c(4,5,6,7,8,9))
 
 
-
-file.edit("~/Desktop/foo/.Rprofile")
-file.edit()

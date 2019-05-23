@@ -40,35 +40,55 @@ ReadData <- function(file) {
   ) %>%
     unlist() %>%
     `[[`(length(.)) + 1
+  
+  
+  settings_filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.settings.file %>% as.character(),
+                           pattern = "\\\\"
+  ) %>%
+    unlist() %>%
+    `[[`(length(.)) + 1
 
 
 
   TRAINING <- list(
     file = rat_data$saved[, , ]$SavingSection.data.file %>% as.character() %>%
       substr(start = filename_pos, stop = nchar(.)),
+    
+    settings_file = rat_data$saved[, , ]$SavingSection.settings.file %>% as.character() %>%
+      substr(start = settings_filename_pos, stop = nchar(.)), 
+    
     experimenter = rat_data$saved[, , ]$SavingSection.experimenter %>%
       as.character(),
+    
     animal_id = rat_data$saved[, , ]$SavingSection.ratname %>%
       as.character(),
+    
     date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
       as.character() %>%
       substr(1, 11), # %>%
     # strptime(format = "%d-%b-%Y") %>%
     # as.POSIXct(),
+    
     time = rat_data$saved[, , ]$SavingSection.SaveTime %>%
       as.character() %>%
       substr(13, 20),
+    
     right_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass1 %>% as.double() +
       rat_data$saved[, , ]$StimulusSection.nTrialsClass2 %>% as.double() +
       rat_data$saved[, , ]$StimulusSection.nTrialsClass3 %>% as.double() +
       rat_data$saved[, , ]$StimulusSection.nTrialsClass4 %>% as.double(),
+    
     left_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass5 %>% as.double() +
       rat_data$saved[, , ]$StimulusSection.nTrialsClass6 %>% as.double() +
       rat_data$saved[, , ]$StimulusSection.nTrialsClass7 %>% as.double() +
       rat_data$saved[, , ]$StimulusSection.nTrialsClass8 %>% as.double(),
+    
     stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
+    
     inti_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
+    
     total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
+    
     done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric()
   )
 
