@@ -69,7 +69,15 @@ ReadData <- function(file) {
     # strptime(format = "%d-%b-%Y") %>%
     # as.POSIXct(),
     
-    time = rat_data$saved[, , ]$SavingSection.SaveTime %>%
+    # MATLAB TIME FORMAT TO R: https://stackoverflow.com/questions/30072063/how-to-extract-the-time-using-r-from-a-matlab-serial-date-number
+    start_time = rat_data$saved[, , ]$SavingSection.settings.file.load.time %>% 
+      as.numeric() %>% `-` (719529) %>% `*`(86400) %>% 
+      as.POSIXct( origin = "1970-01-01", tz = "UTC") %>% 
+      as.character() %>%
+      substr(12, 20),
+    
+    
+    save_time = rat_data$saved[, , ]$SavingSection.SaveTime %>%
       as.character() %>%
       substr(13, 20),
     
