@@ -1,13 +1,14 @@
 library(ggplot2)
 library(ggrepel)
 library(chron)
+library(gridExtra)
 
 ### Reading csv to tibble ----
 TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "output_data", "TRAINING.csv"))
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
-  mutate(session_length = save_time %>% chron(times. = .) - start_time %>% chron(times. = .)) %>% 
+  mutate(session_length = save_time %>% chron(times. = .) - start_time %>% chron(times. = .)) %>%
   mutate(settings_file = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)) %>%
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
 
@@ -17,6 +18,23 @@ TRAINING$session_length %>% hist(breaks = 30)
 
 
 ### PLOTTING ----
+
+
+
+### PLOT: session length over time
+
+ggplot(
+  data = TRAINING,
+  mapping = aes(
+    col = animal_id,
+    x = date,
+    y = (session_length* 60 * 24) %>% as.numeric()
+  )
+) +
+  geom_line() +
+  geom_point() +
+  scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 
 
 ### PLOT: No. left and right pokes ----
@@ -39,7 +57,7 @@ ggplot(
 
   mapping = aes(
     x = animal_id,
-    y = done_trials
+    y = done_trials /  ((session_length * 60 * 24) %>% as.numeric())
   )
 ) +
   geom_boxplot()
@@ -47,32 +65,70 @@ ggplot(
 
 
 ### PLOT: CP duration ----
-ggplot(
+plot1 <- ggplot(
   data = TRAINING %>%
     dplyr::filter(stage == 1),
 
   mapping = aes(
+    col = animal_id,
     x = date,
-    y = total_CP, col = animal_id
+    y = total_CP / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+    
   )
 ) +
   geom_line() +
   geom_point() +
-  scale_x_date(date_breaks = "1 day", date_labels = "%b %d") +
+  scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
 
+
+plot2 <- ggplot(
+  data = TRAINING %>%
+    dplyr::filter(stage == 1),
+  
+  mapping = aes(
+    col = animal_id,
+    x = date,
+    y = total_CP #/ ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+    
+  )
+) +
+  geom_line() +
+  geom_point() +
+  scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+
+
+grid.arrange(plot1,plot2, ncol = 2)
 
 
 
 ### PLOT: No. done trials vs date ----
-ggplot(
+plot1 <- ggplot(
   data = TRAINING %>% dplyr::filter(stage == 0),
-  mapping = aes(x = date, y = done_trials)
+  mapping = aes(
+    x = date,
+    y = done_trials / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+  )
 ) +
   geom_line(mapping = aes(col = animal_id)) +
   geom_point(mapping = aes(col = animal_id)) +
-  scale_x_date(date_breaks = "1 day", date_labels = "%b %d") +
+  scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) 
+
+plot2 <- ggplot(
+  data = TRAINING %>% dplyr::filter(stage == 0),
+  mapping = aes(
+    x = date,
+    y = done_trials #/ ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+  )
+) +
+  geom_line(mapping = aes(col = animal_id)) +
+  geom_point(mapping = aes(col = animal_id)) +
+  scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+
 
 
 annotate("label_repel",
@@ -118,10 +174,10 @@ geom_label(aes(label = animal_id, col = animal_id))
 ### PLOT: CP duration vs No. done trials ----
 ggplot(
   data = TRAINING %>% dplyr::filter(stage == 1),
-  mapping = aes(x = total_CP, y = done_trials)
+  mapping = aes(x = done_trials, y = total_CP)
 ) +
-  geom_point(mapping = aes(col = animal_id))
-geom_line(mapping = aes(col = animal_id))
+  geom_point(mapping = aes(col = animal_id)) 
+  geom_line(mapping = aes(col = animal_id))
 
 
 
