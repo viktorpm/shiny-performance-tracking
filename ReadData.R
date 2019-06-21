@@ -97,7 +97,11 @@ ReadData <- function(file) {
     
     total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
     
-    done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric()
+    done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric(),
+    
+    A2_time = rat_data$saved[, , ]$SideSection.A2.time %>% as.numeric(),
+    
+    reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character() 
   )
 
 
