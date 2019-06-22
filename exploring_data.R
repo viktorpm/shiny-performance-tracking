@@ -114,6 +114,7 @@ rat_data$saved[, , ]$SideSection.Total.CP.duration
 
 
 rat_data$saved[, , ]$ProtocolsSection.n.done.trials
+rat_data$saved[, , ]$WaterValvesSection.RigID
 
 
 
