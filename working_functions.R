@@ -30,6 +30,9 @@ walk(full_path, ~ ConvertToRDS(file = .x))
 rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files")) %>% as.list()
 walk(rds_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
 
+# ReadData("data_@AthenaDelayComp_athena_AA01_190612b.mat.rds") %>% TRAININGtoCSV()
+# ReadData("data_@AthenaDelayComp_athena_AA01_190611a.mat.rds") %>% TRAININGtoCSV()
+
 
 
 system2("D:", invisible = F)

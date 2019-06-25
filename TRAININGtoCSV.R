@@ -4,7 +4,9 @@ TRAININGtoCSV <- function(data) {
     "output_data"
   )
 
-  # browser()
+  
+  
+  # browser() 
   write_TRAINING <- as_tibble(data, .name_repair = "minimal")
 
   csv_exists <- file.exists(file.path(path, "TRAINING.csv"))

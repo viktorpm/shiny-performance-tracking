@@ -103,7 +103,23 @@ ReadData <- function(file) {
     
     reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character() 
   )
+  
+  
 
+  # browser()
+  
+  # TRAINING <- lapply(TRAINING, function(x) if(identical(x,character(0))) NA else x)
+
+  
+  ### convert character(0) to NA otherwise in TRAININGtoCSV as_tibble function won't save those rows  
+  if (identical(TRAINING$settings_file, character(0))){
+    TRAINING$settings_file <- NA
+  }
+  
+  
+  
+  
+  #browser()
 
 
 

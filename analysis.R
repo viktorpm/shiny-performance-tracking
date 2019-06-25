@@ -5,6 +5,7 @@ library(padr)
 library(gridExtra)
 library(forcats)
 library(zoo)
+library(bdscale)
 
 ### Reading csv to tibble ----
 TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "output_data", "TRAINING.csv"))
@@ -13,7 +14,9 @@ TRAINING <- TRAINING %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
   mutate(session_length = save_time %>% chron(times. = .) - start_time %>% chron(times. = .)) %>%
   mutate(settings_file = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)) %>%
-  mutate(stage = replace(stage, A2_time > 0 & A2_time < 0.5, 2)) %>%
+  mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
+  mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
+  mutate(stage = replace(stage, A2_time > 0 & A2_time < 0.5, "2_intord_stim")) %>%
   mutate(rig = ifelse(animal_id %in% c("AA01", "VP01", "SC03", "DO05", "AA07"), yes = 1,
     ifelse(animal_id %in% c("AA02", "VP02", "SC04", "DO06", "AA08"), yes = 2,
       ifelse(animal_id %in% c("DO01", "AA03", "VP03", "SC05", "DO07"), yes = 3,
@@ -188,12 +191,12 @@ ggplot(
 geom_line(mapping = aes(col = animal_id))
 
 
-### PLOT: stage tranzition track
+### PLOT: stage transition track
 ggplot(data = TRAINING,
        mapping = aes(x = date, y = animal_id)) + 
   geom_point(aes(col = as.character(stage)), size = 6)+
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
-  theme(axis.text.x = element_text(angle = 90, vjust = -0.001))
+  theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) 
  
   geom_label_repel(aes(label = animal_id),
                    direction = "y",
