@@ -12,6 +12,7 @@ TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "rat_wm_training",
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
+  dplyr::filter(animal_id != "RATNAME") %>% 
   mutate(session_length = save_time %>% chron(times. = .) - start_time %>% chron(times. = .)) %>%
   mutate(settings_file = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)) %>%
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
@@ -210,7 +211,7 @@ recording_dates <- TRAINING %>%
   dplyr::filter(choice_direction == "left_trials") %>%
   group_by(animal_id) %>%
   mutate(trained = T) %>%
-  pad(start_val = as.Date("2019-04-25"), end_val = as.Date("2019-06-24")) %>%
+  pad(start_val = as.Date("2019-04-25"), end_val = as.Date("2019-06-25")) %>%
   mutate(day_name = weekdays(date)) %>%
   mutate(weekend = is.weekend(date)) %>%
   select(date, day_name, trained, rig) %>%
@@ -238,7 +239,7 @@ recording_dates <- TRAINING %>%
   ))
 
 
-ggplot(recording_dates, aes(x = rig, y = animal_id)) + geom_point()
+# ggplot(recording_dates, aes(x = rig, y = animal_id)) + geom_point()
 
 
 
