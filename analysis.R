@@ -181,7 +181,7 @@ ggplot(
 ######################################
 
 ggplot(
-  data = TRAINING %>% dplyr::filter(stage == 1),
+  data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
   mapping = aes(
     x = date,
     y = done_trials / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
@@ -204,8 +204,8 @@ ggplot(
   geom_label_repel(
     data = TRAINING %>%
       dplyr::filter(
-        stage == 2,
-        date == "2019-06-19" | date == "2019-06-20" | date == "2019-06-21",
+        stage == "1_center_poke_on",
+        date == max(date),
         choice_direction == "right_trials"
       ),
     mapping = aes(label = animal_id, col = animal_id),
@@ -224,11 +224,10 @@ ggplot(
 #############################################
 
 ggplot(
-  data = TRAINING %>% dplyr::filter(stage == 1),
+  data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
   mapping = aes(y = done_trials, x = total_CP)
 ) +
   geom_point(mapping = aes(col = animal_id))
-geom_line(mapping = aes(col = animal_id))
 
 
 
@@ -242,9 +241,11 @@ ggplot(data = TRAINING,
        mapping = aes(x = date, y = animal_id)) + 
   geom_point(aes(col = as.character(stage)), size = 6)+
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
-  theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) 
+  theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) +
  
-  geom_label_repel(aes(label = animal_id),
+  geom_label_repel(data = TRAINING %>% 
+                     dplyr::filter(date == max(date), choice_direction == "left_trials"),
+                   mapping = aes(label = animal_id),
                    direction = "y",
                    hjust = -0.5)
 
@@ -256,7 +257,7 @@ recording_dates <- TRAINING %>%
   dplyr::filter(choice_direction == "left_trials") %>%
   group_by(animal_id) %>%
   mutate(trained = T) %>%
-  pad(start_val = as.Date("2019-04-25"), end_val = as.Date("2019-06-26")) %>%
+  pad(start_val = TRAINING$date %>% min(), end_val = TRAINING$date %>% max()) %>%
   mutate(day_name = weekdays(date)) %>%
   mutate(weekend = is.weekend(date)) %>%
   select(date, day_name, trained, rig) %>%
@@ -306,12 +307,6 @@ ggplot(
     hjust = -1
   ) +
   labs(fill = "Rig") 
-  geom_text_repel(
-    data = recording_dates %>% dplyr::filter(date == max(date)),
-    mapping = aes(label = session, fill = as.character(session)),
-    direction = "y",
-    hjust = -3
-    )
 
 
 
