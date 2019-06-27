@@ -7,12 +7,20 @@ library(forcats)
 library(zoo)
 library(bdscale)
 
+
+##############################
 ### Reading csv to tibble ----
+##############################
+
 TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "output_data", "TRAINING.csv"))
 
 
 
-### filtering and tidying up original csv 
+
+##############################################
+### filtering and tidying up original csv ----
+##############################################
+
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
@@ -43,18 +51,21 @@ TRAINING <- TRAINING %>%
     )
   )) %>%
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
-# ifelse(animal_id == "AA01" | "AA02" | "DO01" | "DO02" | "SC01" | "SC02", yes = 1, no = NA)
+
+
+
+
+### Session length distribution
 TRAINING$session_length %>% hist(breaks = 70)
-
-
-
 
 
 
 ### PLOTTING ----
 
-
+#######################################
 ### PLOT: session length over time ----
+#######################################
+
 ggplot(
   data = TRAINING,
   mapping = aes(
@@ -70,9 +81,18 @@ ggplot(
 
 
 
+
+#######################################
 ### PLOT: No. left and right pokes ----
+#######################################
+
+### "stage" values:
+### "0_side_poke_on"  
+### "1_center_poke_on"
+### "2_intord_stim"  
+
 ggplot(
-  data = TRAINING %>% dplyr::filter(stage == 1),
+  data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
   mapping = aes(
     x = animal_id,
     y = No_pokes
@@ -85,9 +105,13 @@ ggplot(
 
 
 
+
+##################################
 ### PLOT: done trials/animals ----
+##################################
+
 ggplot(
-  data = TRAINING %>% dplyr::filter(stage == 1),
+  data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
 
   mapping = aes(
     x = animal_id,
@@ -98,10 +122,14 @@ ggplot(
 
 
 
+
+##########################
 ### PLOT: CP duration ----
+##########################
+
 ggplot(
   data = TRAINING %>%
-    dplyr::filter(stage == 1),
+    dplyr::filter(stage == "1_center_poke_on"),
 
   mapping = aes(
     col = animal_id,
@@ -127,8 +155,8 @@ ggplot(
   geom_label_repel(
     data = TRAINING %>%
       dplyr::filter(
-        stage == 1,
-        date == "2019-06-24",
+        stage == "1_center_poke_on",
+        date == max(date),
           #max(date),
         #"2019-06-19" | date == "2019-06-20" | ,
         choice_direction == "right_trials"
@@ -145,11 +173,13 @@ ggplot(
   ) +
   geom_hline(yintercept = 6)
 
-TRAINING %>% 
-  dplyr::filter(date == "21-06-2019") %>%
-  select(stage)
 
+
+
+######################################
 ### PLOT: No. done trials vs date ----
+######################################
+
 ggplot(
   data = TRAINING %>% dplyr::filter(stage == 1),
   mapping = aes(
@@ -187,7 +217,12 @@ ggplot(
   )
 
 
+
+
+#############################################
 ### PLOT: CP duration vs No. done trials ----
+#############################################
+
 ggplot(
   data = TRAINING %>% dplyr::filter(stage == 1),
   mapping = aes(y = done_trials, x = total_CP)
@@ -196,7 +231,13 @@ ggplot(
 geom_line(mapping = aes(col = animal_id))
 
 
-### PLOT: stage transition track
+
+
+
+#####################################
+### PLOT: stage transition track ----
+#####################################
+
 ggplot(data = TRAINING,
        mapping = aes(x = date, y = animal_id)) + 
   geom_point(aes(col = as.character(stage)), size = 6)+
@@ -243,19 +284,12 @@ recording_dates <- TRAINING %>%
   ))
 
 
-# ggplot(recording_dates, aes(x = rig, y = animal_id)) + geom_point()
 
 
+########################################
+### PLOT: missing data points track ----
+########################################
 
-# ungroup() %>%
-# mutate(rig = na.locf0(.$rig))
-
-
-
-# recording_dates$rig %>% na.locf0()
-
-
-### PLOT: missing data points track
 ggplot(
   data = recording_dates %>%
     mutate(animal_id = fct_reorder(animal_id, as.numeric(rig))),
@@ -282,10 +316,3 @@ ggplot(
 
 
 
-
-
-# scale_color_brewer(
-#   palette = "Set3",
-#   name = "Animal"
-#   # guide = FALSE
-# )
