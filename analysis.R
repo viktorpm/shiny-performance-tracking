@@ -9,10 +9,14 @@ library(bdscale)
 
 ### Reading csv to tibble ----
 TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "output_data", "TRAINING.csv"))
+
+
+
+### filtering and tidying up original csv 
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
-  dplyr::filter(animal_id != "RATNAME") %>% 
+  dplyr::filter(animal_id != "RATNAME", animal_id != "SOUNDRAT", animal_id != "TEST01") %>% 
   mutate(session_length = save_time %>% chron(times. = .) - start_time %>% chron(times. = .)) %>%
   mutate(settings_file = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)) %>%
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
@@ -40,7 +44,7 @@ TRAINING <- TRAINING %>%
   )) %>%
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
 # ifelse(animal_id == "AA01" | "AA02" | "DO01" | "DO02" | "SC01" | "SC02", yes = 1, no = NA)
-TRAINING$session_length %>% hist(breaks = 50)
+TRAINING$session_length %>% hist(breaks = 70)
 
 
 
@@ -211,7 +215,7 @@ recording_dates <- TRAINING %>%
   dplyr::filter(choice_direction == "left_trials") %>%
   group_by(animal_id) %>%
   mutate(trained = T) %>%
-  pad(start_val = as.Date("2019-04-25"), end_val = as.Date("2019-06-25")) %>%
+  pad(start_val = as.Date("2019-04-25"), end_val = as.Date("2019-06-26")) %>%
   mutate(day_name = weekdays(date)) %>%
   mutate(weekend = is.weekend(date)) %>%
   select(date, day_name, trained, rig) %>%

@@ -1,6 +1,7 @@
-ReadData <- function(file) {
+ReadData <- function(rds_file) {
   library(R.matlab)
   library(tidyverse)
+  library(purrr)
 
   # TRAINING <- tibble(
   #   date = character(),
@@ -33,7 +34,7 @@ ReadData <- function(file) {
   #   stop = filename_pos - 1
   # )
 
-  rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files"), "/", file))
+  rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files"), "/", rds_file))
 
   filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.data.file %>% as.character(),
     pattern = "\\\\"
@@ -51,8 +52,10 @@ ReadData <- function(file) {
 
 
   TRAINING <- list(
-    file = rat_data$saved[, , ]$SavingSection.data.file %>% as.character() %>%
-      substr(start = filename_pos, stop = nchar(.)),
+    # file = rat_data$saved[, , ]$SavingSection.data.file %>% as.character() %>%
+    #   substr(start = filename_pos, stop = nchar(.)),
+    
+    file = rds_file,
     
     settings_file = rat_data$saved[, , ]$SavingSection.settings.file %>% as.character() %>%
       substr(start = settings_filename_pos, stop = nchar(.)), 
@@ -104,19 +107,22 @@ ReadData <- function(file) {
     reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character() 
   )
   
-  
-
   # browser()
   
-  # TRAINING <- lapply(TRAINING, function(x) if(identical(x,character(0))) NA else x)
+  
+  ### converts empty elements (character(0), num(0)) to text otherwise in TRAININGtoCSV as_tibble function won't save those rows  
+  
+  TRAINING <- lapply(TRAINING, function(x) ifelse(is_empty(x), yes = "empty_field_in_mat_file", no = x)) 
 
   
-  ### convert character(0) to NA otherwise in TRAININGtoCSV as_tibble function won't save those rows  
-  if (identical(TRAINING$settings_file, character(0))){
-    TRAINING$settings_file <- NA
-  }
-  
-  
+  # if (identical(TRAINING$settings_file, character(0))){
+  #   TRAINING$settings_file <- "empty_field_in_mat_file"
+  # }
+  # 
+  # if (identical(TRAINING$file, character(0))){
+  #    TRAINING$file <- "empty_field_in_mat_file"
+  # }
+   
   
   
   #browser()

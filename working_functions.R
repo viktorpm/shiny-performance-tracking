@@ -23,17 +23,21 @@ full_path <- paste0(in_path, "/", file_list) %>% as.list()
 ### converting mat files to rds ----
 walk(full_path, ~ ConvertToRDS(file = .x))
 
-
+# ConvertToRDS("D:/_Rig_data/SoloData/Data/viktor/VP05/data_@AthenaDelayComp_viktor_VP05_190626a.mat")
 
 ### reading the converted rds filenames to a list
 ### reading rds files to a tibble and saving them to a csv file ----
 rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files")) %>% as.list()
-walk(rds_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
+walk(rds_list, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 
 # ReadData("data_@AthenaDelayComp_athena_AA01_190612b.mat.rds") %>% TRAININGtoCSV()
-# ReadData("data_@AthenaDelayComp_athena_AA01_190611a.mat.rds") %>% TRAININGtoCSV()
+# ReadData("data_@AthenaDelayComp_dammy_DO07_190625a.mat.rds") %>% TRAININGtoCSV()
+# ReadData("data_@AthenaDelayComp_athena_AA01_190508a.mat.rds") %>% TRAININGtoCSV()
+ 
+ 
+# ReadData("data_@SoundCategorization_experimenter_ratname_190620_ASV.mat.rds") %>% TRAININGtoCSV()
 
-
+setdiff(rds_list %>% unlist(), TRAINING$file %>% unlist()) 
 
 system2("D:", invisible = F)
 system2("cd _Rig_data")
@@ -58,5 +62,6 @@ shell("ssh -f vplattner@192.168.238.210 -L 8080:172.24.155.100:80 -N" ,intern = 
 
 
 shell("ls", intern = T, shell = "bash")
+
 
 
