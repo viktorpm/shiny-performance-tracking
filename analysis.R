@@ -8,7 +8,7 @@ library(zoo)
 library(bdscale)
 
 ### Reading csv to tibble ----
-TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "output_data", "TRAINING.csv"))
+TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "output_data", "TRAINING.csv"))
 
 
 
