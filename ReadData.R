@@ -34,7 +34,7 @@ ReadData <- function(rds_file) {
   #   stop = filename_pos - 1
   # )
 
-  rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files"), "/", rds_file))
+  rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files"), "/", rds_file))
 
   filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.data.file %>% as.character(),
     pattern = "\\\\"

@@ -27,7 +27,7 @@ walk(full_path, ~ ConvertToRDS(file = .x))
 
 ### reading the converted rds filenames to a list
 ### reading rds files to a tibble and saving them to a csv file ----
-rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files")) %>% as.list()
+rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
 walk(rds_list, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 
 # ReadData("data_@AthenaDelayComp_athena_AA01_190612b.mat.rds") %>% TRAININGtoCSV()

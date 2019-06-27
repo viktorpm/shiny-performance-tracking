@@ -4,7 +4,7 @@ ConvertToRDS <- function(file, save_path) {
 
   ### tests if save_path was defined
   if (missing(save_path) == T) {
-    save_path <- file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files")
+    save_path <- file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")
   }
 
 

@@ -79,7 +79,7 @@ TRAINING <- add_row(TRAINING,
 
 ### read and extract data automatically
 # CHECK ALL SUBDIRECTORIES
-file_list <- list.files(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data"),recursive = T) %>% as.list()
+file_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data"),recursive = T) %>% as.list()
 walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
 
 list.dirs(file.path("D:","_Rig_data","SoloData","Data"), full.names = TRUE, recursive = TRUE)
@@ -96,7 +96,7 @@ walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
 
 
 rat_data = readRDS(file.path("D:", "_R_WD", "git_projects", 
-                             "rat_wm_training", "data",
+                             "r_codes_rat_wm", "data",
                              "rds_files",
                              "data_@AthenaDelayComp_sharbat_SC05_190624a.mat.rds")) 
 
@@ -118,7 +118,7 @@ rat_data$saved[, , ]$WaterValvesSection.RigID
 
 
 
-rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "rat_wm_training", "data", "rds_files"), "/", "data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds"))
+rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files"), "/", "data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds"))
 
 
 ReadData("data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds")
