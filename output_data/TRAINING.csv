@@ -1287,3 +1287,14 @@ data_@AthenaDelayComp_viktor_VP01_190627a.mat.rds,settings_@AthenaDelayComp_athe
 data_@AthenaDelayComp_viktor_VP02_190627a.mat.rds,settings_@AthenaDelayComp_athena_AA02_190626a.mat,viktor,VP02,27-Jun-2019,09:09:46,13:06:07,2,1,1,0.05,7.4998000000000005,9,0.4574,Always
 data_@AthenaDelayComp_viktor_VP03_190627a.mat.rds,settings_@AthenaDelayComp_athena_AA03_190626a.mat,viktor,VP03,27-Jun-2019,11:04:50,14:51:08,47,35,1,0.05,7.4998000000000005,158,0.4574,Always
 data_@AthenaDelayComp_viktor_VP04_190627a.mat.rds,settings_@AthenaDelayComp_athena_AA04_190626a.mat,viktor,VP04,27-Jun-2019,11:05:17,14:51:18,8,4,1,0.05,7.063000000000001,69,0,Always
+data_@AthenaDelayComp_athena_AA07_190627a.mat.rds,settings_@AthenaDelayComp_dammy_DO05_190626b.mat,athena,AA07,27-Jun-2019,14:54:08,17:42:22,112,144,1,0.05,1.9300000000000002,356,0.03,Always
+data_@AthenaDelayComp_dammy_DO05_190627a.mat.rds,settings_@AthenaDelayComp_sharbat_SC03_190626a.mat,dammy,DO05,27-Jun-2019,13:10:01,16:20:50,154,148,1,0.05,1.7069999999999999,335,0.03,Always
+data_@AthenaDelayComp_dammy_DO06_190627a.mat.rds,settings_@AthenaDelayComp_sharbat_SC04_190626a.mat,dammy,DO06,27-Jun-2019,13:10:42,16:21:26,42,39,1,0.05,7.4998000000000005,142,0.4569,Always
+data_@AthenaDelayComp_dammy_DO07_190627a.mat.rds,settings_@AthenaDelayComp_sharbat_SC05_190626a.mat,dammy,DO07,27-Jun-2019,14:54:37,17:44:03,17,14,1,0.05,6.756,90,0,Always
+data_@AthenaDelayComp_dammy_DO08_190627a.mat.rds,settings_@AthenaDelayComp_sharbat_SC06_190626a.mat,dammy,DO08,27-Jun-2019,14:54:56,17:44:15,101,93,1,0.05,1.9300000000000002,341,0.03,Always
+data_@AthenaDelayComp_sharbat_SC05_190627a.mat.rds,settings_@AthenaDelayComp_viktor_VP03_190626a.mat,sharbat,SC05,27-Jun-2019,13:10:39,16:24:48,48,56,1,0.05,1.2530000000000001,175,0,Always
+data_@AthenaDelayComp_sharbat_SC06_190627a.mat.rds,settings_@AthenaDelayComp_viktor_VP04_190626a.mat,sharbat,SC06,27-Jun-2019,13:10:56,16:24:59,88,80,1,0.05,7.4998000000000005,228,0.4569,Always
+data_@AthenaDelayComp_viktor_VP05_190627a.mat.rds,settings_@AthenaDelayComp_athena_AA05_190626a.mat,viktor,VP05,27-Jun-2019,13:10:16,16:29:20,70,48,1,0.05,0.4490000000000002,246,0,Always
+data_@AthenaDelayComp_viktor_VP06_190627a.mat.rds,settings_@AthenaDelayComp_athena_AA06_190626a.mat,viktor,VP06,27-Jun-2019,13:10:16,16:29:13,16,6,1,0.05,7.499600000000001,102,0.2368,Always
+data_@AthenaDelayComp_viktor_VP07_190627a.mat.rds,settings_@AthenaDelayComp_viktor_VP05_190626a.mat,viktor,VP07,27-Jun-2019,14:55:16,17:46:26,2,1,1,0.05,0.30000000000000016,38,0,Always
+data_@AthenaDelayComp_viktor_VP08_190627a.mat.rds,settings_@AthenaDelayComp_viktor_VP06_190626a.mat,viktor,VP08,27-Jun-2019,14:55:16,17:46:18,92,103,1,0.05,1.9300000000000002,329,0.03,Always

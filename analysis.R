@@ -6,6 +6,7 @@ library(gridExtra)
 library(forcats)
 library(zoo)
 library(bdscale)
+library(ggalluvial)
 
 
 ##############################
@@ -24,7 +25,7 @@ TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", 
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
-  dplyr::filter(animal_id != "RATNAME", animal_id != "SOUNDRAT", animal_id != "TEST01") %>% 
+  dplyr::filter(animal_id != "RATNAME", animal_id != "SOUNDRAT", animal_id != "TEST01") %>%
   mutate(session_length = save_time %>% chron(times. = .) - start_time %>% chron(times. = .)) %>%
   mutate(settings_file = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)) %>%
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
@@ -87,9 +88,9 @@ ggplot(
 #######################################
 
 ### "stage" values:
-### "0_side_poke_on"  
+### "0_side_poke_on"
 ### "1_center_poke_on"
-### "2_intord_stim"  
+### "2_intord_stim"
 
 ggplot(
   data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
@@ -147,7 +148,7 @@ ggplot(
     date_breaks = "1 day",
     date_labels = "%b %d",
     minor_breaks = "1 day"
-    #limits = c(as.Date("2019-06-18"), as.Date("2019-06-21"))
+    # limits = c(as.Date("2019-06-18"), as.Date("2019-06-21"))
   ) +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
   ylab("CP duration (stage 1) [s]") +
@@ -157,10 +158,10 @@ ggplot(
       dplyr::filter(
         stage == "1_center_poke_on",
         date == max(date),
-          #max(date),
-        #"2019-06-19" | date == "2019-06-20" | ,
+        # max(date),
+        # "2019-06-19" | date == "2019-06-20" | ,
         choice_direction == "right_trials"
-        #total_CP > 6
+        # total_CP > 6
       ), # %>%
     # arrange(total_CP) %>%
     # slice(1:6),
@@ -237,18 +238,48 @@ ggplot(
 ### PLOT: stage transition track ----
 #####################################
 
-ggplot(data = TRAINING,
-       mapping = aes(x = date, y = animal_id)) + 
-  geom_point(aes(col = as.character(stage)), size = 6)+
+ggplot(
+  data = TRAINING,
+  mapping = aes(x = date, y = animal_id)
+) +
+  geom_point(aes(col = as.character(stage)), size = 6) +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) +
- 
-  geom_label_repel(data = TRAINING %>% 
-                     dplyr::filter(date == max(date), choice_direction == "left_trials"),
-                   mapping = aes(label = animal_id),
-                   direction = "y",
-                   hjust = -0.5)
+  geom_label_repel(
+    data = TRAINING %>%
+      dplyr::filter(date == max(date), choice_direction == "left_trials"),
+    mapping = aes(label = animal_id),
+    direction = "y",
+    hjust = -0.5
+  )
 
+
+
+# pos = position_jitter(width = 0,seed = 1)
+# ggplot(data = TRAINING %>% group_by(stage, animal_id),
+#        mapping = aes(x = stage, axis1 = animal_id, axis2 = animal_id)) +
+#   geom_alluvium(aes(fill = length(animal_id)))+
+#   geom_stratum(width = 1/12, fill = "black", color = "grey") +
+#   geom_label(stat = "stratum", label.strata = TRUE)
+#
+#
+#   geom_point(aes(shape = as.character(stage), col = animal_id),
+#              position = pos,
+#              alpha = 0.7) +
+#   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
+#   theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) +
+#   geom_label_repel(data = TRAINING %>%
+#                      dplyr::filter(date == max(date), choice_direction == "left_trials"),
+#                    mapping = aes(label = animal_id),
+#                    direction = "y",
+#                    hjust = -0.5,
+#                    position = pos)
+#
+# TRAINING %>%
+#   pad(start_val = min(.$date), end_val = max(.$date)) %>%
+#   group_by(stage,date) %>%
+#   summarise(length(animal_id)) %>%
+#   arrange(date) %>%  View()
 
 
 
@@ -306,8 +337,4 @@ ggplot(
     direction = "y",
     hjust = -1
   ) +
-  labs(fill = "Rig") 
-
-
-
-
+  labs(fill = "Rig")
