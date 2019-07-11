@@ -4,16 +4,18 @@ TRAININGtoCSV <- function(data) {
     "output_data"
   )
 
-  
-  
-  # browser() 
-  write_TRAINING <- as_tibble(data, .name_repair = "minimal")
+  # browser()
+   
+
+
 
   csv_exists <- file.exists(file.path(path, "TRAINING.csv"))
 
 
   if (csv_exists == T) {
-    read_TRAINING <- read_csv(file.path(path, "TRAINING.csv"))
+    read_TRAINING <- suppressMessages(suppressWarnings(
+      read_csv(file.path(path, "TRAINING.csv")))
+      )
     file_processed_test <- str_detect(
       read_TRAINING$file,
       regex(paste0(data$file))
@@ -27,13 +29,8 @@ TRAININGtoCSV <- function(data) {
 
 
 
-  if (any(file_processed_test) == T) {
-    warning(paste0(
-      data$file,
-      # ".mat: ",
-      "File has already been processed"
-    ))
-  } else {
+  if (all(file_processed_test == F)) {
+    write_TRAINING <- as_tibble(data, .name_repair = "minimal")
     write_csv(
       write_TRAINING,
       file.path(
@@ -43,5 +40,11 @@ TRAININGtoCSV <- function(data) {
       append = T,
       col_names = !csv_exists
     )
+  } else {
+    warning(paste0(
+      data$file,
+      # ".mat: ",
+      "File has already been processed"
+    ))
   }
 }

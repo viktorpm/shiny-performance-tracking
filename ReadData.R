@@ -96,7 +96,7 @@ ReadData <- function(rds_file) {
     
     stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
     
-    inti_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
+    init_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
     
     total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
     
