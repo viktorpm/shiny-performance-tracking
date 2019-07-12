@@ -98,11 +98,11 @@ walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
 rat_data = readRDS(file.path("D:", "_R_WD", "git_projects", 
                              "r_codes_rat_wm", "data",
                              "rds_files",
-                             "data_@AthenaDelayComp_sharbat_SC05_190624a.mat.rds")) 
+                             "data_@AthenaDelayComp_viktor_VP08_190710a.mat.rds")) 
 
 names <- rat_data$saved[,,] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names,pattern = regex("address", ignore_case = T))]
+names[str_detect(names,pattern = regex("box", ignore_case = T))]
 
 
 

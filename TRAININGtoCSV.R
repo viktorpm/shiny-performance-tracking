@@ -5,7 +5,7 @@ TRAININGtoCSV <- function(data) {
   )
 
   # browser()
-   
+
 
 
 
@@ -13,9 +13,11 @@ TRAININGtoCSV <- function(data) {
 
 
   if (csv_exists == T) {
-    read_TRAINING <- suppressMessages(suppressWarnings(
-      read_csv(file.path(path, "TRAINING.csv")))
+    read_TRAINING <- suppressMessages(
+      suppressWarnings(
+        read_csv(file.path(path, "TRAINING.csv"))
       )
+    )
     file_processed_test <- str_detect(
       read_TRAINING$file,
       regex(paste0(data$file))

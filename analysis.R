@@ -13,7 +13,19 @@ library(ggalluvial)
 ### Reading csv to tibble ----
 ##############################
 
-TRAINING <- read_csv(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "output_data", "TRAINING.csv"))
+TRAINING <- read_csv(file.path("output_data", "TRAINING.csv"))
+
+
+
+################################
+### Creating session matrix ----
+################################
+
+rigs_sessions <- matrix(data = c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02","VP01", "VP02", "AA03", "AA04", "DO03", "DO04","SC03", "SC04", "VP03", "VP04", "AA05", "AA06","DO05", "DO06", "SC05", "SC06", "VP05", "VP06","AA07", "AA08", "DO07", "DO08", "VP07", "VP08"),
+                        nrow = 6,
+                        ncol = 5)
+rownames(rigs_sessions) <- c("rig_1","rig_2","rig_3","rig_4","rig_5","rig_6")
+colnames(rigs_sessions) <- c("session_1","session_2","session_3","session_4","session_5")
 
 
 
@@ -26,38 +38,30 @@ TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
   dplyr::filter(animal_id != "RATNAME", animal_id != "SOUNDRAT", animal_id != "TEST01") %>%
-  mutate(session_length = save_time %>% chron(times. = .) - start_time %>% chron(times. = .)) %>%
-  mutate(settings_file = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)) %>%
+  mutate(session_length = difftime(save_time, start_time, units = "mins")) %>% 
+  mutate(settings_file = ifelse(settings_file == "empty_field_in_mat_file", 
+                                yes = "empty_field_in_mat_file",
+                                no = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)
+                                )
+         ) %>% 
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
   mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
   mutate(stage = replace(stage, A2_time > 0 & A2_time < 0.5, "2_intord_stim")) %>%
-  mutate(rig = ifelse(animal_id %in% c("AA01", "VP01", "SC03", "DO05", "AA07"), yes = 1,
-    ifelse(animal_id %in% c("AA02", "VP02", "SC04", "DO06", "AA08"), yes = 2,
-      ifelse(animal_id %in% c("DO01", "AA03", "VP03", "SC05", "DO07"), yes = 3,
-        ifelse(animal_id %in% c("DO02", "AA04", "VP04", "SC06", "DO08"), yes = 4,
-          ifelse(animal_id %in% c("SC01", "DO03", "AA05", "VP05", "VP07"), yes = 5,
-            ifelse(animal_id %in% c("SC02", "DO04", "AA06", "VP06", "VP08"), yes = 6, no = NA)
-          )
-        )
-      )
-    )
-  )) %>%
-  mutate(session = ifelse(animal_id %in% c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02"), yes = "session_1",
-    ifelse(animal_id %in% c("VP01", "VP02", "AA03", "AA04", "DO03", "DO04"), yes = "session_2",
-      ifelse(animal_id %in% c("SC03", "SC04", "VP03", "VP04", "AA05", "AA06"), yes = "session_3",
-        ifelse(animal_id %in% c("DO05", "DO06", "SC05", "SC06", "VP05", "VP06"), yes = "session_4",
-          ifelse(animal_id %in% c("AA07", "AA08", "DO07", "DO08", "VP07", "VP08"), yes = "session_5", no = NA)
-        )
-      )
-    )
-  )) %>%
+  rowwise() %>% 
+  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1] ) %>% 
+  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
+  ungroup() %>% 
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
 
 
 
-
 ### Session length distribution
-TRAINING$session_length %>% hist(breaks = 70)
+ggplot(data = TRAINING %>% 
+         dplyr::filter(session_length > 0) %>% 
+         select(session_length),
+       mapping = aes(x = session_length)) + 
+  geom_histogram(bins = 70) + 
+  scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F)
 
 
 
@@ -254,36 +258,6 @@ ggplot(
   )
 
 
-
-# pos = position_jitter(width = 0,seed = 1)
-# ggplot(data = TRAINING %>% group_by(stage, animal_id),
-#        mapping = aes(x = stage, axis1 = animal_id, axis2 = animal_id)) +
-#   geom_alluvium(aes(fill = length(animal_id)))+
-#   geom_stratum(width = 1/12, fill = "black", color = "grey") +
-#   geom_label(stat = "stratum", label.strata = TRUE)
-#
-#
-#   geom_point(aes(shape = as.character(stage), col = animal_id),
-#              position = pos,
-#              alpha = 0.7) +
-#   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
-#   theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) +
-#   geom_label_repel(data = TRAINING %>%
-#                      dplyr::filter(date == max(date), choice_direction == "left_trials"),
-#                    mapping = aes(label = animal_id),
-#                    direction = "y",
-#                    hjust = -0.5,
-#                    position = pos)
-#
-# TRAINING %>%
-#   pad(start_val = min(.$date), end_val = max(.$date)) %>%
-#   group_by(stage,date) %>%
-#   summarise(length(animal_id)) %>%
-#   arrange(date) %>%  View()
-
-
-
-
 recording_dates <- TRAINING %>%
   dplyr::filter(choice_direction == "left_trials") %>%
   group_by(animal_id) %>%
@@ -294,28 +268,33 @@ recording_dates <- TRAINING %>%
   select(date, day_name, trained, rig) %>%
   mutate(trained = replace(trained, is.na(trained), F)) %>%
   ungroup() %>%
-  mutate(rig = ifelse(animal_id %in% c("AA01", "VP01", "SC03", "DO05", "AA07"), yes = 1,
-    ifelse(animal_id %in% c("AA02", "VP02", "SC04", "DO06", "AA08"), yes = 2,
-      ifelse(animal_id %in% c("DO01", "AA03", "VP03", "SC05", "DO07"), yes = 3,
-        ifelse(animal_id %in% c("DO02", "AA04", "VP04", "SC06", "DO08"), yes = 4,
-          ifelse(animal_id %in% c("SC01", "DO03", "AA05", "VP05", "VP07"), yes = 5,
-            ifelse(animal_id %in% c("SC02", "DO04", "AA06", "VP06", "VP08"), yes = 6, no = NA)
+  rowwise() %>% 
+  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>% 
+  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
+  ungroup()
+  
+  
+  
+  mutate(rig = ifelse(animal_id %in% rigs_sessions["rig_1", ], yes = 1,
+    ifelse(animal_id %in% rigs_sessions["rig_2", ], yes = 2,
+      ifelse(animal_id %in% rigs_sessions["rig_3", ], yes = 3,
+        ifelse(animal_id %in% rigs_sessions["rig_4", ], yes = 4,
+          ifelse(animal_id %in% rigs_sessions["rig_5", ], yes = 5,
+            ifelse(animal_id %in% rigs_sessions["rig_6", ], yes = 6, no = NA)
           )
         )
       )
     )
   )) %>%
-  mutate(session = ifelse(animal_id %in% c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02"), yes = "session_1",
-    ifelse(animal_id %in% c("VP01", "VP02", "AA03", "AA04", "DO03", "DO04"), yes = "session_2",
-      ifelse(animal_id %in% c("SC03", "SC04", "VP03", "VP04", "AA05", "AA06"), yes = "session_3",
-        ifelse(animal_id %in% c("DO05", "DO06", "SC05", "SC06", "VP05", "VP06"), yes = "session_4",
-          ifelse(animal_id %in% c("AA07", "AA08", "DO07", "DO08", "VP07", "VP08"), yes = "session_5", no = NA)
+  mutate(session = ifelse(animal_id %in% rigs_sessions[, "session_1"], yes = "session_1",
+    ifelse(animal_id %in% rigs_sessions[, "session_2"], yes = "session_2",
+      ifelse(animal_id %in% rigs_sessions[, "session_3"], yes = "session_3",
+        ifelse(animal_id %in% rigs_sessions[, "session_4"], yes = "session_4",
+          ifelse(animal_id %in% rigs_sessions[, "session_5"], yes = "session_5", no = NA)
         )
       )
     )
   ))
-
-
 
 
 ########################################
@@ -323,16 +302,17 @@ recording_dates <- TRAINING %>%
 ########################################
 
 ggplot(
-  data = recording_dates %>%
-    mutate(animal_id = fct_reorder(animal_id, as.numeric(rig))),
-  mapping = aes(x = date, y = animal_id)
+  data = recording_dates,
+    #mutate(animal_id = fct_reorder(animal_id, rig)),
+  mapping = aes(x = date, y = fct_reorder(animal_id, rig))
 ) +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) +
   # geom_raster(aes(fill = trained))
   geom_point(aes(size = trained, col = trained)) +
   geom_label_repel(
-    data = recording_dates %>% dplyr::filter(date == max(date)),
+    data = recording_dates %>% 
+      dplyr::filter(date == max(date)),
     mapping = aes(label = rig, fill = as.character(rig)),
     direction = "y",
     hjust = -1
