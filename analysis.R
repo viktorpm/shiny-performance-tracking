@@ -272,29 +272,7 @@ recording_dates <- TRAINING %>%
   mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>% 
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
   ungroup()
-  
-  
-  
-  mutate(rig = ifelse(animal_id %in% rigs_sessions["rig_1", ], yes = 1,
-    ifelse(animal_id %in% rigs_sessions["rig_2", ], yes = 2,
-      ifelse(animal_id %in% rigs_sessions["rig_3", ], yes = 3,
-        ifelse(animal_id %in% rigs_sessions["rig_4", ], yes = 4,
-          ifelse(animal_id %in% rigs_sessions["rig_5", ], yes = 5,
-            ifelse(animal_id %in% rigs_sessions["rig_6", ], yes = 6, no = NA)
-          )
-        )
-      )
-    )
-  )) %>%
-  mutate(session = ifelse(animal_id %in% rigs_sessions[, "session_1"], yes = "session_1",
-    ifelse(animal_id %in% rigs_sessions[, "session_2"], yes = "session_2",
-      ifelse(animal_id %in% rigs_sessions[, "session_3"], yes = "session_3",
-        ifelse(animal_id %in% rigs_sessions[, "session_4"], yes = "session_4",
-          ifelse(animal_id %in% rigs_sessions[, "session_5"], yes = "session_5", no = NA)
-        )
-      )
-    )
-  ))
+
 
 
 ########################################
