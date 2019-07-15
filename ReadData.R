@@ -3,117 +3,113 @@ ReadData <- function(rds_file) {
   library(tidyverse)
   library(purrr)
 
-  # TRAINING <- tibble(
-  #   date = character(),
-  #   time = character(),
-  #   animal_id = character(),
-  #   experimenter = character(),
-  #   right_trials = numeric(),
-  #   left_trials = numeric()
-  # )
-
   # browser()
 
-
-  # filename_pos <- gregexpr(file,
-  #                          pattern = "/"
-  # ) %>%
-  #   unlist() %>%
-  #   `[[`(length(.)) + 1
-  #
-  # filename <- substr(
-  #   file,
-  #   start = filename_pos,
-  #   stop = nchar(file)
-  # )
-  #
-  #
-  # file_path <- substr(
-  #   file,
-  #   start = 1,
-  #   stop = filename_pos - 1
-  # )
-
-  rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files"), "/", rds_file))
-
-  filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.data.file %>% as.character(),
-    pattern = "\\\\"
-  ) %>%
-    unlist() %>%
-    `[[`(length(.)) + 1
-  
-  
-  settings_filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.settings.file %>% as.character(),
-                           pattern = "\\\\"
-  ) %>%
-    unlist() %>%
-    `[[`(length(.)) + 1
-
-
-
-  TRAINING <- list(
-    # file = rat_data$saved[, , ]$SavingSection.data.file %>% as.character() %>%
-    #   substr(start = filename_pos, stop = nchar(.)),
-    
-    file = rds_file,
-    
-    settings_file = rat_data$saved[, , ]$SavingSection.settings.file %>% as.character() %>%
-      substr(start = settings_filename_pos, stop = nchar(.)), 
-    
-    experimenter = rat_data$saved[, , ]$SavingSection.experimenter %>%
-      as.character(),
-    
-    animal_id = rat_data$saved[, , ]$SavingSection.ratname %>%
-      as.character(),
-    
-    date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
-      as.character() %>%
-      substr(1, 11), # %>%
-    # strptime(format = "%d-%b-%Y") %>%
-    # as.POSIXct(),
-    
-    # MATLAB TIME FORMAT TO R: https://stackoverflow.com/questions/30072063/how-to-extract-the-time-using-r-from-a-matlab-serial-date-number
-    start_time = rat_data$saved[, , ]$SavingSection.settings.file.load.time %>% 
-      as.numeric() %>% `-` (719529) %>% `*`(86400) %>% 
-      as.POSIXct( origin = "1970-01-01", tz = "UTC") %>% 
-      as.character() %>%
-      substr(12, 20),
-    
-    
-    save_time = rat_data$saved[, , ]$SavingSection.SaveTime %>%
-      as.character() %>%
-      substr(13, 20),
-    
-    right_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass1 %>% as.double() +
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass2 %>% as.double() +
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass3 %>% as.double() +
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass4 %>% as.double(),
-    
-    left_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass5 %>% as.double() +
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass6 %>% as.double() +
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass7 %>% as.double() +
-      rat_data$saved[, , ]$StimulusSection.nTrialsClass8 %>% as.double(),
-    
-    stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
-    
-    init_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
-    
-    total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
-    
-    done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric(),
-    
-    A2_time = rat_data$saved[, , ]$SideSection.A2.time %>% as.numeric(),
-    
-    reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character() 
+  path <- file.path(
+    "output_data"
   )
-  
-  # browser()
-  
-  
-  ### converts empty elements (character(0), num(0)) to text otherwise in TRAININGtoCSV as_tibble function won't save those rows  
-  
-  TRAINING <- lapply(TRAINING, function(x) ifelse(is_empty(x), yes = "empty_field_in_mat_file", no = x)) 
+
+  ### cheks if CSV file exists
+  csv_exists <- file.exists(file.path(path, "TRAINING.csv"))
 
 
-  return(TRAINING)
+  ### cheks if the rds_file has been processed (can be found in the CSV file)
+  if (csv_exists == T) {
+    read_TRAINING <- suppressMessages(
+      suppressWarnings(
+        read_csv(file.path(path, "TRAINING.csv"))
+      )
+    )
+    file_processed_test <- str_detect(
+      read_TRAINING$file,
+      regex(paste0(rds_file))
+    )
+
+
+    ### pulls data from rds file if it has not been processed before and returns a list with the data
+    ### (else i treturns NULL)
+    if (all(file_processed_test == F)) {
+      rat_data <- readRDS(paste0(file.path("data", "rds_files"), "/", rds_file))
+
+      filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.data.file %>% as.character(),
+        pattern = "\\\\"
+      ) %>%
+        unlist() %>%
+        `[[`(length(.)) + 1
+
+
+      settings_filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.settings.file %>% as.character(),
+        pattern = "\\\\"
+      ) %>%
+        unlist() %>%
+        `[[`(length(.)) + 1
+
+
+      ### pulls data from rds file
+      TRAINING <- list(
+        file = rds_file,
+
+        settings_file = rat_data$saved[, , ]$SavingSection.settings.file %>% as.character() %>%
+          substr(start = settings_filename_pos, stop = nchar(.)),
+
+        experimenter = rat_data$saved[, , ]$SavingSection.experimenter %>%
+          as.character(),
+
+        animal_id = rat_data$saved[, , ]$SavingSection.ratname %>%
+          as.character(),
+
+        date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
+          as.character() %>%
+          substr(1, 11),
+
+        ### MATLAB TIME FORMAT TO R:
+        ### https://stackoverflow.com/questions/30072063/how-to-extract-the-time-using-r-from-a-matlab-serial-date-number
+        start_time = rat_data$saved[, , ]$SavingSection.settings.file.load.time %>%
+          as.numeric() %>% `-`(719529) %>% `*`(86400) %>%
+          as.POSIXct(origin = "1970-01-01", tz = "UTC") %>%
+          as.character() %>%
+          substr(12, 20),
+
+
+        save_time = rat_data$saved[, , ]$SavingSection.SaveTime %>%
+          as.character() %>%
+          substr(13, 20),
+
+        right_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass1 %>% as.double() +
+          rat_data$saved[, , ]$StimulusSection.nTrialsClass2 %>% as.double() +
+          rat_data$saved[, , ]$StimulusSection.nTrialsClass3 %>% as.double() +
+          rat_data$saved[, , ]$StimulusSection.nTrialsClass4 %>% as.double(),
+
+        left_trials = rat_data$saved[, , ]$StimulusSection.nTrialsClass5 %>% as.double() +
+          rat_data$saved[, , ]$StimulusSection.nTrialsClass6 %>% as.double() +
+          rat_data$saved[, , ]$StimulusSection.nTrialsClass7 %>% as.double() +
+          rat_data$saved[, , ]$StimulusSection.nTrialsClass8 %>% as.double(),
+
+        stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
+
+        init_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
+
+        total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
+
+        done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric(),
+
+        A2_time = rat_data$saved[, , ]$SideSection.A2.time %>% as.numeric(),
+
+        reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character()
+      )
+
+
+      ### converts empty elements (character(0), num(0)) to text
+      ### otherwise in TRAININGtoCSV as_tibble function won't save those rows
+      TRAINING <- lapply(TRAINING, function(x) ifelse(is_empty(x), yes = "empty_field_in_mat_file", no = x))
+      return(TRAINING)
+    } else {
+      warning(paste0(
+        rds_file,
+        # ".mat: ",
+        " file has already been processed"
+      ))
+      return(NULL)
+    }
+  }
 }
