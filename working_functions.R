@@ -23,13 +23,19 @@ full_path <- paste0(in_path, "/", file_list) %>% as.list()
 ### converting mat files to rds ----
 walk(full_path, ~ ConvertToRDS(file = .x))
 
-# ConvertToRDS("D:/_Rig_data/SoloData/Data/viktor/VP05/data_@AthenaDelayComp_viktor_VP05_190626a.mat")
+
 
 ### reading the converted rds filenames to a list
 ### reading rds files to a tibble and saving them to a csv file ----
 rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
 walk(rds_list, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 
+
+
+
+
+
+# ConvertToRDS("D:/_Rig_data/SoloData/Data/viktor/VP05/data_@AthenaDelayComp_viktor_VP05_190626a.mat")
 # ReadData("data_@AthenaDelayComp_athena_AA01_190612b.mat.rds") %>% TRAININGtoCSV()
 # ReadData("data_@AthenaDelayComp_dammy_DO07_190625a.mat.rds") %>% TRAININGtoCSV()
 # ReadData("data_@AthenaDelayComp_athena_AA01_190508a.mat.rds") %>% TRAININGtoCSV()
