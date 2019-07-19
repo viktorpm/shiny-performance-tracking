@@ -46,7 +46,10 @@ TRAINING <- TRAINING %>%
          ) %>% 
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
   mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
-  mutate(stage = replace(stage, A2_time > 0 & A2_time < 0.5, "2_intord_stim")) %>%
+  mutate(stage = replace(stage, 
+                         A2_time > 0 & A2_time < 0.5 & reward_type == "Always", 
+                         "2_intord_stim")) %>%
+  mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>% 
   rowwise() %>% 
   mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1] ) %>% 
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
@@ -62,6 +65,19 @@ ggplot(data = TRAINING %>%
        mapping = aes(x = session_length)) + 
   geom_histogram(bins = 70) + 
   scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F)
+
+
+
+
+
+ggplot(
+  data = TRAINING,
+  mapping = aes(x = date, y = A2_time)
+) 
+
+
+
+
 
 
 
@@ -134,7 +150,7 @@ ggplot(
 
 ggplot(
   data = TRAINING %>%
-    dplyr::filter(stage == "1_center_poke_on"),
+    dplyr::filter(stage == "1_center_poke_on", date > "2019-06-24"),
 
   mapping = aes(
     col = animal_id,
@@ -189,7 +205,7 @@ ggplot(
   data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
   mapping = aes(
     x = date,
-    y = done_trials / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+    y = done_trials #/ ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
   )
 ) +
 
@@ -223,6 +239,9 @@ ggplot(
 
 
 
+# RAINING$file[str_detect(TRAINING$file,pattern = regex("", ignore_case = T))]
+
+# TRAINING$file %>% str_detect(pattern = regex("delay", ignore_case = T))
 
 #############################################
 ### PLOT: CP duration vs No. done trials ----

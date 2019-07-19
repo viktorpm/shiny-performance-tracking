@@ -4,7 +4,7 @@
 
 all_plots <- function(plottype, datelim, stage_filter) {
 
-#   browser()
+  #   browser()
 
 
 
@@ -31,10 +31,12 @@ all_plots <- function(plottype, datelim, stage_filter) {
         minor_breaks = "1 day",
         limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
       ) +
-      theme(axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
-            axis.text.y = element_text(size = 12),
-            axis.title = element_text(size = 14, face = "bold")) +
-      ylab(paste0("CP duration [s] ",  stage_filter %>% paste(collapse = ", ") )) +
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold")
+      ) +
+      ylab(paste0("CP duration [s] ", stage_filter %>% paste(collapse = ", "))) +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
@@ -79,15 +81,18 @@ all_plots <- function(plottype, datelim, stage_filter) {
       geom_point(mapping = aes(col = animal_id)) +
 
       ### scales, labels, themes
-      scale_x_date(date_breaks = "1 day", 
-                   date_labels = "%b %d", 
-                   minor_breaks = "1 day",
-                   limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
-                   ) +
-      theme(axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
-            axis.text.y = element_text(size = 12),
-            axis.title = element_text(size = 14, face = "bold")) +
-      ylab(paste0("Norm. No. done trials ", stage_filter %>% paste(collapse = ", ") )) +
+      scale_x_date(
+        date_breaks = "1 day",
+        date_labels = "%b %d",
+        minor_breaks = "1 day",
+        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+      ) +
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold")
+      ) +
+      ylab(paste0("Norm. No. done trials ", stage_filter %>% paste(collapse = ", "))) +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
@@ -103,7 +108,7 @@ all_plots <- function(plottype, datelim, stage_filter) {
         # nudge_y = 2.5,
         # check_overlap = F # geom_text parameter
       )
-    
+
     plot(trial_plot)
   }
 
@@ -114,16 +119,19 @@ all_plots <- function(plottype, datelim, stage_filter) {
       mapping = aes(x = date, y = animal_id)
     ) +
       geom_point(aes(col = as.character(stage)), size = 6) +
-      scale_x_date(date_breaks = "1 day", 
-                   date_labels = "%b %d", 
-                   minor_breaks = "1 day",
-                   limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
-                   ) +
-      theme(axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
-            axis.text.y = element_text(size = 12),
-            axis.title = element_text(size = 14, face = "bold")) +
+      scale_x_date(
+        date_breaks = "1 day",
+        date_labels = "%b %d",
+        minor_breaks = "1 day",
+        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+      ) +
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold")
+      ) +
       xlab("Date [day]") +
-      ylab("Animals") + 
+      ylab("Animals") +
       geom_label_repel(
         data = TRAINING %>%
           dplyr::filter(date == max(date), choice_direction == "left_trials"),
@@ -157,16 +165,19 @@ all_plots <- function(plottype, datelim, stage_filter) {
       # mutate(animal_id = fct_reorder(animal_id, rig)),
       mapping = aes(x = date, y = fct_reorder(animal_id, rig))
     ) +
-      scale_x_date(date_breaks = "1 day", 
-                   date_labels = "%b %d", 
-                   minor_breaks = "1 day",
-                   limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
-                   ) +
-      theme(axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
-            axis.text.y = element_text(size = 12),
-            axis.title = element_text(size = 14, face = "bold")) +
+      scale_x_date(
+        date_breaks = "1 day",
+        date_labels = "%b %d",
+        minor_breaks = "1 day",
+        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+      ) +
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold")
+      ) +
       xlab("Date [day]") +
-      ylab("Animals") + 
+      ylab("Animals") +
       geom_point(aes(size = trained, col = trained)) +
       geom_label_repel(
         data = recording_dates %>%
@@ -176,7 +187,7 @@ all_plots <- function(plottype, datelim, stage_filter) {
         hjust = -1
       ) +
       labs(fill = "Rig")
-    
+
     plot(missing_plot)
   }
 }

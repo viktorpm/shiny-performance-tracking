@@ -23,7 +23,9 @@ ReadData <- function(rds_file) {
     file_processed_test <- str_detect(
       read_TRAINING$file,
       regex(paste0(rds_file))
-    )
+    )} else {
+      file_processed_test <- F
+    }
 
 
     ### pulls data from rds file if it has not been processed before and returns a list with the data
@@ -51,6 +53,11 @@ ReadData <- function(rds_file) {
 
         settings_file = rat_data$saved[, , ]$SavingSection.settings.file %>% as.character() %>%
           substr(start = settings_filename_pos, stop = nchar(.)),
+        
+        protocol = substr(rds_file,
+                          start = rds_file %>% gregexpr(pattern = "@") %>% unlist(),
+                          stop = rds_file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2)-1 
+                          ),
 
         experimenter = rat_data$saved[, , ]$SavingSection.experimenter %>%
           as.character(),
@@ -92,7 +99,9 @@ ReadData <- function(rds_file) {
         total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
 
         done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric(),
-
+        
+        A1_time = rat_data$saved[, , ]$SideSection.A1.time %>% as.numeric(),
+        
         A2_time = rat_data$saved[, , ]$SideSection.A2.time %>% as.numeric(),
 
         reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character()
@@ -111,5 +120,5 @@ ReadData <- function(rds_file) {
       ))
       return(NULL)
     }
-  }
+  
 }

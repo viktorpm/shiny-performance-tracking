@@ -30,44 +30,90 @@ source(file.path("all_plots.R"))
 source(file.path("load_data.R"))
 
 ui <- fluidPage(
-  sidebarLayout(
-    
-    sidebarPanel(
-      width = 3,
-      selectInput(
-        inputId = "plot_type",
-        label = "Select plot type",
-        choices = c(
-          "CP duration",
-          "Stage tracking",
-          "No. done trials",
-          "Missing data"
+  navbarPage(
+    tabPanel(
+      "Delayed comparision protocol",
+      sidebarLayout(
+        sidebarPanel(
+          width = 3,
+          selectInput(
+            inputId = "plot_type",
+            label = "Select plot type",
+            choices = c(
+              "CP duration",
+              "Stage tracking",
+              "No. done trials",
+              "Missing data"
+            )
+          ),
+          sliderInput(
+            inputId = "setdate",
+            label = "Date",
+            min = min(TRAINING$date),
+            max = max(TRAINING$date),
+            value = c(min(TRAINING$date), max(TRAINING$date))
+          ),
+
+          checkboxGroupInput(
+            inputId = "stage",
+            label = "Select stages to show",
+            choices = TRAINING$stage %>% unique() %>% as.vector(),
+            selected = TRAINING$stage %>% unique() %>% as.vector()
+          )
+
+
+          # actionButton(inputId = "gobtn", label = "Draw plot")
+        ),
+
+        mainPanel(
+          width = 9,
+          plotOutput(outputId = "plot", height = 1000)
         )
-      ),
-      sliderInput(inputId = "setdate",
-                  label = "Date",
-                  min = min(TRAINING$date), 
-                  max = max(TRAINING$date),
-                  value = c(min(TRAINING$date),max(TRAINING$date))),
-      
-      checkboxGroupInput(inputId = "stage",
-                         label = "Select stages to show",
-                         choices =  TRAINING$stage %>% unique() %>% as.vector(),
-                         selected = TRAINING$stage %>% unique() %>% as.vector())
-      
-      
-      #actionButton(inputId = "gobtn", label = "Draw plot")
+      )
     ),
 
-    mainPanel(
-      width = 9,
-      plotOutput(outputId = "plot", height = 1000)
+    tabPanel(
+      "Delayed comparision protocol",
+      sidebarLayout(
+        sidebarPanel(
+          width = 3,
+          selectInput(
+            inputId = "plot_type",
+            label = "Select plot type",
+            choices = c(
+              "CP duration",
+              "Stage tracking",
+              "No. done trials",
+              "Missing data"
+            )
+          ),
+          sliderInput(
+            inputId = "setdate",
+            label = "Date",
+            min = min(TRAINING$date),
+            max = max(TRAINING$date),
+            value = c(min(TRAINING$date), max(TRAINING$date))
+          ),
+
+          checkboxGroupInput(
+            inputId = "stage",
+            label = "Select stages to show",
+            choices = TRAINING$stage %>% unique() %>% as.vector(),
+            selected = TRAINING$stage %>% unique() %>% as.vector()
+          )
+
+
+          # actionButton(inputId = "gobtn", label = "Draw plot")
+        ),
+
+        mainPanel(
+          width = 9,
+          plotOutput(outputId = "plot", height = 1000)
+        )
+      )
     )
   )
 )
-
-
-
 
 
 ###################
@@ -75,27 +121,26 @@ ui <- fluidPage(
 ###################
 
 server <- function(input, output, session) {
-  
-  
   create_plot <- reactive({
-   # isolate({
-      all_plots(plottype = input$plot_type,
-                datelim = input$setdate,
-                stage_filter = input$stage)
-    #})
+    # isolate({
+    all_plots(
+      plottype = input$plot_type,
+      datelim = input$setdate,
+      stage_filter = input$stage
+    )
+    # })
   })
 
   output$plot <- renderPlot({
     create_plot()
   })
 
-# 
-#   observeEvent(input$gobtn, {
-#     output$plot <- renderPlot({
-#       create_plot()
-#     })
-#   })
-  
+  #
+  #   observeEvent(input$gobtn, {
+  #     output$plot <- renderPlot({
+  #       create_plot()
+  #     })
+  #   })
 }
 
 shinyApp(ui, server)

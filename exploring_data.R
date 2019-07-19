@@ -106,10 +106,22 @@ names[str_detect(names,pattern = regex("box", ignore_case = T))]
 
 
 
+file <- "data_@AthenaDelayComp_viktor_VP08_190710a.mat.rds"
+
+
+file %>% substr(start = file %>% gregexpr(pattern = "@") %>% unlist(),
+                stop = file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2)-1 )
+
+
+
+
+
+rat_data$saved[, , ]$SavingSection.data.file
+
 rat_data$saved[, , ]$SavingSection.hostname
 rat_data$saved[, , ]$SideSection.reward.type
 
-rat_data$saved[, , ]$SideSection.init.CP.duration
+rat_data$saved[, , ]$SideSection.A1.time
 rat_data$saved[, , ]$SideSection.Total.CP.duration
 
 
