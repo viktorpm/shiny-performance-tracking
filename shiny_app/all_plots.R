@@ -1,42 +1,38 @@
-##########################
-### PLOT: CP duration ----
-##########################
-
 all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animals) {
 
-   #  browser()
+  #  browser()
 
-  # if (all_animals == T) {
-  #   animal_filter = TRAINING$animal_id %>% unique() %>% as.vector()
-  # }
+  #############################
+  ### Filtering data table ----
+  #############################
   
-  
- 
   if (all_animals == T) {
-    TRAINING <- TRAINING %>% 
-      dplyr::filter(choice_direction ==  "right_trials", 
-                    stage %in% stage_filter,
-                    date >= datelim[1], date <= datelim[2])
+    TRAINING <- TRAINING %>%
+      dplyr::filter(
+        choice_direction == "right_trials",
+        stage %in% stage_filter,
+        date >= datelim[1], date <= datelim[2]
+      )
   } else {
-    TRAINING <- TRAINING %>% 
-      dplyr::filter(choice_direction ==  "right_trials", 
-                    stage %in% stage_filter,
-                    date >= datelim[1], date <= datelim[2], 
-                    animal_id == animal_filter)
-    
+    TRAINING <- TRAINING %>%
+      dplyr::filter(
+        choice_direction == "right_trials",
+        stage %in% stage_filter,
+        date >= datelim[1], date <= datelim[2],
+        animal_id == animal_filter
+      )
   }
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+  ##########################
+  ### PLOT: CP duration ----
+  ##########################
+
   if (plottype == "CP duration") {
     cp_plot <- ggplot(
-      data = TRAINING, #%>% 
-        #dplyr::filter(stage == c(stage_filter)),
-
+      data = TRAINING,
       mapping = aes(
         col = animal_id,
         x = date,
@@ -46,7 +42,7 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
 
       ### lines and points
       geom_line(linetype = "dashed", alpha = 0.4) +
-      geom_point() +
+      geom_point(size = 3) +
 
       ### scales, labels, themes
       scale_x_date(
@@ -64,18 +60,25 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
-           dplyr::filter(
-            date == max(date)),
+          dplyr::filter(
+            date == max(date)
+          ),
 
         mapping = aes(label = animal_id, col = animal_id),
 
         hjust = -0.9,
         direction = "y"
-      ) 
+      )
 
     plot(cp_plot)
   }
 
+  
+  
+  
+  ##########################
+  ### PLOT: done trials ----
+  ##########################
 
   if (plottype == "No. done trials") {
     trial_plot <- ggplot(
@@ -92,7 +95,7 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         linetype = "dashed",
         alpha = 0.4
       ) +
-      geom_point(mapping = aes(col = animal_id)) +
+      geom_point(mapping = aes(col = animal_id), size = 3) +
 
       ### scales, labels, themes
       scale_x_date(
@@ -122,13 +125,34 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
     plot(trial_plot)
   }
 
+  
+  
+  
+  #############################
+  ### PLOT: stage tracking ----
+  #############################
+  
+  
+  
+  
+  scale_fill_viktor <- function(...) {
+    ggplot2:::manual_scale(
+      "col",
+      values = setNames(c("#F8766D", "#00BFC4", "#7CAE00"), 
+                        c("0_side_poke_on", "1_center_poke_on", "2_intord_stim")), 
+      ...
+    )
+  }
+  
 
   if (plottype == "Stage tracking") {
     stage_plot <- ggplot(
       data = TRAINING,
-      mapping = aes(x = date, y = animal_id)
+      mapping = aes(x = date, y = animal_id, col = stage)
     ) +
-      geom_point(aes(col = as.character(stage)), size = 6) +
+      geom_point(aes(col = stage), size = 6) +
+      
+      ### scales, labels, themes
       scale_x_date(
         date_breaks = "1 day",
         date_labels = "%b %d",
@@ -148,15 +172,21 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         mapping = aes(label = animal_id),
         direction = "y",
         hjust = -0.5
-      )
+      ) +
+      scale_fill_viktor()
 
     plot(stage_plot)
   }
 
-
+  
+  
+  
+  ############################
+  ### PLOT: Missing data ----
+  ############################
+  
   if (plottype == "Missing data") {
     recording_dates <- TRAINING %>%
-      dplyr::filter(choice_direction == "left_trials") %>%
       group_by(animal_id) %>%
       mutate(trained = T) %>%
       pad(start_val = TRAINING$date %>% min(), end_val = TRAINING$date %>% max()) %>%
