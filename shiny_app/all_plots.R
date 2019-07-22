@@ -5,7 +5,9 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
   #############################
   ### Filtering data table ----
   #############################
+
   
+  ### if all animals are plotted
   if (all_animals == T) {
     TRAINING <- TRAINING %>%
       dplyr::filter(
@@ -13,6 +15,15 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         stage %in% stage_filter,
         date >= datelim[1], date <= datelim[2]
       )
+
+    col_by <- "animal_id"
+    col_lab_name <- "Animals"
+    lines <- geom_line(aes(col = eval(parse(text = col_by))),
+      linetype = "dashed",
+      alpha = 0.4
+    )
+    
+  ### if only one selected animal is plotted  
   } else {
     TRAINING <- TRAINING %>%
       dplyr::filter(
@@ -21,10 +32,14 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         date >= datelim[1], date <= datelim[2],
         animal_id == animal_filter
       )
+
+    col_by <- "stage"
+    col_lab_name <- "Stages"
+    lines <- geom_line(linetype = "dashed", alpha = 0.4)
   }
+  
 
-
-
+  # browser()
 
   ##########################
   ### PLOT: CP duration ----
@@ -34,15 +49,16 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
     cp_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
-        col = animal_id,
         x = date,
         y = total_CP # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
       )
     ) +
 
       ### lines and points
-      geom_line(linetype = "dashed", alpha = 0.4) +
-      geom_point(size = 3) +
+      lines +
+      geom_point(aes(col = eval(parse(text = col_by))),
+        size = 3
+      ) +
 
       ### scales, labels, themes
       scale_x_date(
@@ -64,19 +80,19 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
             date == max(date)
           ),
 
-        mapping = aes(label = animal_id, col = animal_id),
+        mapping = aes(label = animal_id, col = eval(parse(text = col_by))),
 
         hjust = -0.9,
         direction = "y"
       ) +
-      labs(col = "Animals")
+      labs(col = eval(parse(text = "col_lab_name"))) 
 
     plot(cp_plot)
   }
 
-  
-  
-  
+
+
+
   ##########################
   ### PLOT: done trials ----
   ##########################
@@ -86,17 +102,14 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
       data = TRAINING,
       mapping = aes(
         x = date,
-        y = done_trials / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+        y = done_trials #/ ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
       )
     ) +
 
       ### lines and points
-      geom_line(
-        mapping = aes(col = animal_id),
-        linetype = "dashed",
-        alpha = 0.4
-      ) +
-      geom_point(mapping = aes(col = animal_id), size = 3) +
+      lines +
+      geom_point(mapping = aes(col = eval(parse(text = col_by))), 
+                 size = 3) +
 
       ### scales, labels, themes
       scale_x_date(
@@ -117,32 +130,34 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
           dplyr::filter(
             date == max(date)
           ),
-        mapping = aes(label = animal_id, col = animal_id),
+        mapping = aes(label = animal_id, col = eval(parse(text = col_by))),
 
         hjust = -0.5,
         direction = "y"
       ) +
-      labs(col = "Animals")
+      labs(col = eval(parse(text = "col_lab_name")))
 
     plot(trial_plot)
   }
 
-  
-  
-  
+
+
+
   #############################
   ### PLOT: stage tracking ----
   #############################
-  
+
   scale_fill_viktor <- function(...) {
     ggplot2:::manual_scale(
       "col",
-      values = setNames(c("#F8766D", "#00BFC4", "#7CAE00"), 
-                        c("0_side_poke_on", "1_center_poke_on", "2_intord_stim")), 
+      values = setNames(
+        c("#F8766D", "#00BFC4", "#7CAE00"),
+        c("0_side_poke_on", "1_center_poke_on", "2_intord_stim")
+      ),
       ...
     )
   }
-  
+
 
   if (plottype == "Stage tracking") {
     stage_plot <- ggplot(
@@ -150,7 +165,7 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
       mapping = aes(x = date, y = animal_id, col = stage)
     ) +
       geom_point(aes(col = stage), size = 6) +
-      
+
       ### scales, labels, themes
       scale_x_date(
         date_breaks = "1 day",
@@ -178,13 +193,12 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
     plot(stage_plot)
   }
 
-  
-  
-  
+
+
   ############################
   ### PLOT: Missing data ----
   ############################
-  
+
   if (plottype == "Missing data") {
     recording_dates <- TRAINING %>%
       group_by(animal_id) %>%
@@ -202,7 +216,6 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
 
     missing_plot <- ggplot(
       data = recording_dates,
-
       mapping = aes(x = date, y = fct_reorder(animal_id, rig))
     ) +
       scale_x_date(
@@ -226,7 +239,7 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         direction = "y",
         hjust = -1
       ) +
-      labs(fill = "Rig",) +
+      labs(fill = "Rig" ) +
       labs(col = "Training status") +
       labs(size = "Training status")
 

@@ -150,10 +150,10 @@ ggplot(
 
 ggplot(
   data = TRAINING %>%
-    dplyr::filter(stage == "1_center_poke_on", date > "2019-06-24"),
+    dplyr::filter(animal_id == "AA01"),
 
   mapping = aes(
-    col = animal_id,
+    #col = animal_id,
     x = date,
     y = total_CP # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
   )
@@ -161,7 +161,7 @@ ggplot(
 
   ### lines and points
   geom_line(linetype = "dashed", alpha = 0.4) +
-  geom_point() +
+  geom_point(aes(col = stage), size = 3) +
 
   ### scales, labels, themes
   scale_x_date(
@@ -176,7 +176,7 @@ ggplot(
   geom_label_repel(
     data = TRAINING %>%
       dplyr::filter(
-        stage == "1_center_poke_on",
+        animal_id == "AA01",
         date == max(date),
         # max(date),
         # "2019-06-19" | date == "2019-06-20" | ,
@@ -185,7 +185,7 @@ ggplot(
       ), # %>%
     # arrange(total_CP) %>%
     # slice(1:6),
-    mapping = aes(label = animal_id, col = animal_id),
+    mapping = aes(label = animal_id),
     # nudge_x = 2,
     hjust = -0.9,
     direction = "y"
