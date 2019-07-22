@@ -2,16 +2,40 @@
 ### PLOT: CP duration ----
 ##########################
 
-all_plots <- function(plottype, datelim, stage_filter) {
+all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animals) {
 
-  #   browser()
+   #  browser()
 
-
-
+  # if (all_animals == T) {
+  #   animal_filter = TRAINING$animal_id %>% unique() %>% as.vector()
+  # }
+  
+  
+ 
+  if (all_animals == T) {
+    TRAINING <- TRAINING %>% 
+      dplyr::filter(choice_direction ==  "right_trials", 
+                    stage %in% stage_filter,
+                    date >= datelim[1], date <= datelim[2])
+  } else {
+    TRAINING <- TRAINING %>% 
+      dplyr::filter(choice_direction ==  "right_trials", 
+                    stage %in% stage_filter,
+                    date >= datelim[1], date <= datelim[2], 
+                    animal_id == animal_filter)
+    
+  }
+  
+  
+  
+  
+  
+  
+  
   if (plottype == "CP duration") {
     cp_plot <- ggplot(
-      data = TRAINING %>%
-        dplyr::filter(stage == c(stage_filter)),
+      data = TRAINING, #%>% 
+        #dplyr::filter(stage == c(stage_filter)),
 
       mapping = aes(
         col = animal_id,
@@ -40,24 +64,14 @@ all_plots <- function(plottype, datelim, stage_filter) {
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
-          dplyr::filter(
-            stage == stage_filter,
-            date == max(date),
-            # max(date),
-            # "2019-06-19" | date == "2019-06-20" | ,
-            choice_direction == "right_trials"
-            # total_CP > 6
-          ), # %>%
-        # arrange(total_CP) %>%
-        # slice(1:6),
+           dplyr::filter(
+            date == max(date)),
+
         mapping = aes(label = animal_id, col = animal_id),
-        # nudge_x = 2,
+
         hjust = -0.9,
         direction = "y"
-        # nudge_y = 2.5,
-        # check_overlap = F # geom_text parameter
-      ) +
-      geom_hline(yintercept = 6)
+      ) 
 
     plot(cp_plot)
   }
@@ -65,7 +79,7 @@ all_plots <- function(plottype, datelim, stage_filter) {
 
   if (plottype == "No. done trials") {
     trial_plot <- ggplot(
-      data = TRAINING %>% dplyr::filter(stage == stage_filter),
+      data = TRAINING,
       mapping = aes(
         x = date,
         y = done_trials / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
@@ -97,16 +111,12 @@ all_plots <- function(plottype, datelim, stage_filter) {
       geom_label_repel(
         data = TRAINING %>%
           dplyr::filter(
-            stage == stage_filter,
-            date == max(date),
-            choice_direction == "right_trials"
+            date == max(date)
           ),
         mapping = aes(label = animal_id, col = animal_id),
-        # nudge_x = 0.5,
+
         hjust = -0.5,
         direction = "y"
-        # nudge_y = 2.5,
-        # check_overlap = F # geom_text parameter
       )
 
     plot(trial_plot)
@@ -134,7 +144,7 @@ all_plots <- function(plottype, datelim, stage_filter) {
       ylab("Animals") +
       geom_label_repel(
         data = TRAINING %>%
-          dplyr::filter(date == max(date), choice_direction == "left_trials"),
+          dplyr::filter(date == max(date)),
         mapping = aes(label = animal_id),
         direction = "y",
         hjust = -0.5
@@ -162,7 +172,7 @@ all_plots <- function(plottype, datelim, stage_filter) {
 
     missing_plot <- ggplot(
       data = recording_dates,
-      # mutate(animal_id = fct_reorder(animal_id, rig)),
+
       mapping = aes(x = date, y = fct_reorder(animal_id, rig))
     ) +
       scale_x_date(

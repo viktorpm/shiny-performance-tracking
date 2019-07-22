@@ -28,11 +28,11 @@ library(purrr)
 
 source(file.path("all_plots.R"))
 source(file.path("load_data.R"))
-
 ui <- fluidPage(
   navbarPage(
+    "Protocols",
     tabPanel(
-      "Delayed comparision protocol",
+      "@AthenaDelayComp",
       sidebarLayout(
         sidebarPanel(
           width = 3,
@@ -46,6 +46,23 @@ ui <- fluidPage(
               "Missing data"
             )
           ),
+          
+          selectInput(
+            inputId = "animal_select",
+            label = "Select animals to show",
+            choices = TRAINING$animal_id %>% unique() %>% as.vector()
+          ),
+          
+          
+          
+          radioButtons(
+            inputId = "all_animals",
+            label = "Plot all animals",
+            choices = c("Yes" = T, "No" = F),
+            
+          ),
+          
+          
           sliderInput(
             inputId = "setdate",
             label = "Date",
@@ -60,6 +77,8 @@ ui <- fluidPage(
             choices = TRAINING$stage %>% unique() %>% as.vector(),
             selected = TRAINING$stage %>% unique() %>% as.vector()
           )
+          
+          
 
 
           # actionButton(inputId = "gobtn", label = "Draw plot")
@@ -73,42 +92,41 @@ ui <- fluidPage(
     ),
 
     tabPanel(
-      "Delayed comparision protocol",
+      "@SoundCategorization",
       sidebarLayout(
         sidebarPanel(
-          width = 3,
-          selectInput(
-            inputId = "plot_type",
-            label = "Select plot type",
-            choices = c(
-              "CP duration",
-              "Stage tracking",
-              "No. done trials",
-              "Missing data"
-            )
-          ),
-          sliderInput(
-            inputId = "setdate",
-            label = "Date",
-            min = min(TRAINING$date),
-            max = max(TRAINING$date),
-            value = c(min(TRAINING$date), max(TRAINING$date))
-          ),
-
-          checkboxGroupInput(
-            inputId = "stage",
-            label = "Select stages to show",
-            choices = TRAINING$stage %>% unique() %>% as.vector(),
-            selected = TRAINING$stage %>% unique() %>% as.vector()
-          )
+          # width = 3,
+          # selectInput(
+          #   inputId = "plot_type",
+          #   label = "Select plot type",
+          #   choices = c(
+          #     "CP duration",
+          #     "Stage tracking",
+          #     "No. done trials",
+          #     "Missing data"
+          #   )
+          # ),
+          # sliderInput(
+          #   inputId = "setdate",
+          #   label = "Date",
+          #   min = min(TRAINING$date),
+          #   max = max(TRAINING$date),
+          #   value = c(min(TRAINING$date), max(TRAINING$date))
+          # ),
+          # 
+          # checkboxGroupInput(
+          #   inputId = "stage",
+          #   label = "Select stages to show",
+          #   choices = TRAINING$stage %>% unique() %>% as.vector(),
+          #   selected = TRAINING$stage %>% unique() %>% as.vector()
+          # )
 
 
           # actionButton(inputId = "gobtn", label = "Draw plot")
         ),
 
         mainPanel(
-          width = 9,
-          plotOutput(outputId = "plot", height = 1000)
+          width = 9
         )
       )
     )
@@ -126,7 +144,9 @@ server <- function(input, output, session) {
     all_plots(
       plottype = input$plot_type,
       datelim = input$setdate,
-      stage_filter = input$stage
+      stage_filter = input$stage,
+      animal_filter = input$animal_select,
+      all_animals = input$all_animals
     )
     # })
   })
