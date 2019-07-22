@@ -12,7 +12,7 @@ library(tidyverse)
 library(R.matlab)
 library(stringr)
 library(purrr)
-
+library(shinyjs)
 
 
 
@@ -29,6 +29,7 @@ library(purrr)
 source(file.path("all_plots.R"))
 source(file.path("load_data.R"))
 ui <- fluidPage(
+  useShinyjs(),
   navbarPage(
     "Protocols",
     tabPanel(
@@ -47,19 +48,17 @@ ui <- fluidPage(
             )
           ),
           
-          selectInput(
-            inputId = "animal_select",
-            label = "Select animals to show",
-            choices = TRAINING$animal_id %>% unique() %>% as.vector()
-          ),
-          
-          
           
           radioButtons(
             inputId = "all_animals",
             label = "Plot all animals",
-            choices = c("Yes" = T, "No" = F),
-            
+            choices = c("Yes" = T, "No" = F)
+          ),
+          
+          selectInput(
+            inputId = "animal_select",
+            label = "Select animals to show",
+            choices = TRAINING$animal_id %>% unique() %>% as.vector()
           ),
           
           
@@ -150,17 +149,20 @@ server <- function(input, output, session) {
     )
     # })
   })
+  
+
+  observe({
+    if (input$all_animals == T) disable("animal_select") else enable("animal_select")
+  })
+  
+  
 
   output$plot <- renderPlot({
     create_plot()
   })
 
-  #
-  #   observeEvent(input$gobtn, {
-  #     output$plot <- renderPlot({
-  #       create_plot()
-  #     })
-  #   })
+  
+  
 }
 
 shinyApp(ui, server)

@@ -68,7 +68,8 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
 
         hjust = -0.9,
         direction = "y"
-      )
+      ) +
+      labs(col = "Animals")
 
     plot(cp_plot)
   }
@@ -120,7 +121,8 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
 
         hjust = -0.5,
         direction = "y"
-      )
+      ) +
+      labs(col = "Animals")
 
     plot(trial_plot)
   }
@@ -131,9 +133,6 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
   #############################
   ### PLOT: stage tracking ----
   #############################
-  
-  
-  
   
   scale_fill_viktor <- function(...) {
     ggplot2:::manual_scale(
@@ -173,7 +172,8 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         direction = "y",
         hjust = -0.5
       ) +
-      scale_fill_viktor()
+      scale_fill_viktor() +
+      labs(col = "Stage")
 
     plot(stage_plot)
   }
@@ -226,7 +226,9 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         direction = "y",
         hjust = -1
       ) +
-      labs(fill = "Rig")
+      labs(fill = "Rig",) +
+      labs(col = "Training status") +
+      labs(size = "Training status")
 
     plot(missing_plot)
   }
