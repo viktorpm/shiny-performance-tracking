@@ -147,22 +147,22 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
   ### PLOT: stage tracking ----
   #############################
 
-  scale_fill_viktor <- function(...) {
-    ggplot2:::manual_scale(
-      "col",
-      values = setNames(
-        c("#F8766D", "#00BFC4", "#7CAE00"),
-        c("0_side_poke_on", "1_center_poke_on", "2_intord_stim")
-      ),
-      ...
-    )
-  }
+  # scale_fill_viktor <- function(...) {
+  #   ggplot2:::manual_scale(
+  #     "col",
+  #     values = setNames(
+  #       c("#F8766D", "#00BFC4", "#7CAE00"),
+  #       c("0_side_poke_on", "1_center_poke_on", "2_intord_stim")
+  #     ),
+  #     ...
+  #   )
+  # }
 
 
   if (plottype == "Stage tracking") {
     stage_plot <- ggplot(
       data = TRAINING,
-      mapping = aes(x = date, y = animal_id, col = stage)
+      mapping = aes(x = date, y = animal_id)
     ) +
       geom_point(aes(col = stage), size = 6) +
 
@@ -187,7 +187,16 @@ all_plots <- function(plottype, datelim, stage_filter, animal_filter, all_animal
         direction = "y",
         hjust = -0.5
       ) +
-      scale_fill_viktor() +
+      geom_label_repel(
+        data = TRAINING %>%
+          dplyr::filter(date == max(date) - 1),
+        mapping = aes(label = protocol),
+        direction = "y",
+        hjust = 1.3,
+        vjust = 1
+      ) +
+    
+      #scale_fill_viktor() +
       labs(col = "Stage")
 
     plot(stage_plot)
