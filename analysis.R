@@ -7,13 +7,15 @@ library(forcats)
 library(zoo)
 library(bdscale)
 library(ggalluvial)
+library(magrittr)
+library(purrr)
 
 
 ##############################
 ### Reading csv to tibble ----
 ##############################
 
-TRAINING <- read_csv(file.path("output_data", "TRAINING.csv"))
+TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 
 
 
@@ -44,6 +46,14 @@ TRAINING <- TRAINING %>%
                                 no = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)
                                 )
          ) %>% 
+  mutate(protocol = file %>% substr(
+                           start = file %>% gregexpr(pattern = "@") %>% unlist(),
+                           stop =  file %>% 
+                             gregexpr(pattern = "_") %>% 
+                             map(~ .x[[2]]) %>% 
+  #https://community.rstudio.com/t/extract-single-list-element-as-part-of-a-pipeline/1095/5
+                             unlist() %>%  `-` (1))
+         ) %>% 
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
   mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
   mutate(stage = replace(stage, 
@@ -65,18 +75,6 @@ ggplot(data = TRAINING %>%
        mapping = aes(x = session_length)) + 
   geom_histogram(bins = 70) + 
   scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F)
-
-
-
-
-
-ggplot(
-  data = TRAINING,
-  mapping = aes(x = date, y = A2_time)
-) 
-
-
-
 
 
 
@@ -150,7 +148,7 @@ ggplot(
 
 ggplot(
   data = TRAINING %>%
-    dplyr::filter(animal_id == "AA01"),
+    dplyr::filter(animal_id == "AA02"),
 
   mapping = aes(
     #col = animal_id,
@@ -262,7 +260,7 @@ ggplot(
 #####################################
 
 ggplot(
-  data = TRAINING,
+  data = TRAINING ,
   mapping = aes(x = date, y = animal_id)
 ) +
   geom_point(aes(col = as.character(stage)), size = 6) +
@@ -274,8 +272,23 @@ ggplot(
     mapping = aes(label = animal_id),
     direction = "y",
     hjust = -0.5
+  ) +
+  geom_label_repel(
+    data = TRAINING %>%
+      dplyr::filter(date == max(date) - 1, choice_direction == "left_trials"),
+    mapping = aes(label = protocol),
+    direction = "y",
+    hjust = 1.3,
+    vjust = 1
   )
 
+
+
+
+
+########################################
+### PLOT: missing data points track ----
+########################################
 
 recording_dates <- TRAINING %>%
   dplyr::filter(choice_direction == "left_trials") %>%
@@ -291,12 +304,6 @@ recording_dates <- TRAINING %>%
   mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>% 
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
   ungroup()
-
-
-
-########################################
-### PLOT: missing data points track ----
-########################################
 
 ggplot(
   data = recording_dates,

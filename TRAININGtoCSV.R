@@ -1,7 +1,7 @@
 TRAININGtoCSV <- function(data) {
   library(tidyverse)
   path <- file.path(
-    "output_data"
+    "shiny_app"
   )
   # browser()
 

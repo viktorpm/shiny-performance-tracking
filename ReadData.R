@@ -6,7 +6,7 @@ ReadData <- function(rds_file) {
   # browser()
 
   path <- file.path(
-    "output_data"
+    "shiny_app"
   )
 
   ### cheks if CSV file exists
@@ -63,6 +63,9 @@ ReadData <- function(rds_file) {
           as.character(),
 
         animal_id = rat_data$saved[, , ]$SavingSection.ratname %>%
+          as.character(),
+        
+        rig_id = rat_data$saved[, , ]$WaterValvesSection.RigID %>% 
           as.character(),
 
         date = rat_data$saved[, , ]$SavingSection.SaveTime %>%

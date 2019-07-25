@@ -1,12 +1,4 @@
-library(R.matlab)
-library(rmatio)
 
-library(rstudioapi)
-library(tidyverse)
-library(data.tree)
-library(listviewer)
-library(stringr)
-library(purrr)
 
 ### loading functions ----
 source("ConvertToRDS.R") ### f. to convert mat files to rds
@@ -71,3 +63,4 @@ shell("ls", intern = T, shell = "bash")
 
 
 
+shell()

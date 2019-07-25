@@ -98,25 +98,27 @@ walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
 rat_data = readRDS(file.path("D:", "_R_WD", "git_projects", 
                              "r_codes_rat_wm", "data",
                              "rds_files",
-                             "data_@AthenaDelayComp_viktor_VP08_190710a.mat.rds")) 
+                             "data_@AthenaDelayComp_athena_AA04_190725a.mat.rds")) 
 
 names <- rat_data$saved[,,] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names,pattern = regex("box", ignore_case = T))]
+names[str_detect(names,pattern = regex("rig", ignore_case = T))]
 
 
 
-file <- "data_@AthenaDelayComp_viktor_VP08_190710a.mat.rds"
+file <- "data_@SoundCategorization_sharbat_SC04_190724a.mat.rds"
 
 
 file %>% substr(start = file %>% gregexpr(pattern = "@") %>% unlist(),
                 stop = file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2)-1 )
 
+gregexpr(file, pattern = "_") %>% unlist() %>% `[`(2)-1 
 
+rat_data$saved[, , ]$SavingSection.SaveTime %>%q
+  as.character() %>%
+  substr(1, 11)
 
-
-
-rat_data$saved[, , ]$SavingSection.data.file
+rat_data$saved[, , ]$WaterValvesSection
 
 rat_data$saved[, , ]$SavingSection.hostname
 rat_data$saved[, , ]$SideSection.reward.type
