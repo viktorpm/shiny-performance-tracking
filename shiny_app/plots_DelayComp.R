@@ -1,4 +1,8 @@
-plots_DelayComp <- function(plottype, datelim, stage_filter, animal_filter, all_animals) {
+plots_DelayComp <- function(plottype,
+                            datelim,
+                            stage_filter,
+                            animal_filter,
+                            all_animals) {
 
   #  browser()
 

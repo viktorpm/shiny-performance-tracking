@@ -1,8 +1,6 @@
-summary_plots <- function(plottype_sum,
-                      datelim_sum,
-                      stage_filter_sum,
-                      animal_filter_sum,
-                      all_animals_sum) {
+plots_summary <- function(plottype_sum,
+                          datelim_sum,
+                          pick_date) {
 
   #  browser()
 
@@ -10,54 +8,27 @@ summary_plots <- function(plottype_sum,
   ### Filtering data table ----
   #############################
 
-  
-  ### if all animals are plotted
-  if (all_animals_sum == T) {
-    TRAINING <- TRAINING %>%
-      dplyr::filter(
-        choice_direction == "right_trials",
-        stage %in% stage_filter_sum,
-        date >= datelim_sum[1], date <= datelim_sum[2]
-      )
 
-    col_by <- "animal_id"
-    col_lab_name <- "Animals"
-    lines <- geom_line(aes(col = eval(parse(text = col_by))),
-      linetype = "dashed",
-      alpha = 0.4
+  TRAINING <- TRAINING %>%
+    dplyr::filter(
+      choice_direction == "right_trials",
+      # stage %in% stage_filter_sum,
+      date >= datelim_sum[1], date <= datelim_sum[2]
     )
-    
-  ### if only one selected animal is plotted  
-  } else {
-    TRAINING <- TRAINING %>%
-      dplyr::filter(
-        choice_direction == "right_trials",
-        stage %in% stage_filter_sum,
-        date >= datelim_sum[1], date <= datelim_sum[2],
-        animal_id == animal_filter_sum
-      )
 
-    col_by <- "stage"
-    col_lab_name <- "Stages"
-    lines <- geom_line(linetype = "dashed", alpha = 0.4)
-  }
-  
+  col_by <- "animal_id"
+  col_lab_name <- "Animals"
+  lines <- geom_line(aes(col = eval(parse(text = col_by))),
+    linetype = "dashed",
+    alpha = 0.4
+  )
 
- 
+
+
+
   #############################
   ### PLOT: stage tracking ----
   #############################
-
-  # scale_fill_viktor <- function(...) {
-  #   ggplot2:::manual_scale(
-  #     "col",
-  #     values = setNames(
-  #       c("#F8766D", "#00BFC4", "#7CAE00"),
-  #       c("0_side_poke_on", "1_center_poke_on", "2_intord_stim")
-  #     ),
-  #     ...
-  #   )
-  # }
 
 
   if (plottype_sum == "Stage tracking") {
@@ -83,21 +54,21 @@ summary_plots <- function(plottype_sum,
       ylab("Animals") +
       geom_label_repel(
         data = TRAINING %>%
-          dplyr::filter(date == max(date)),
+          dplyr::filter(date == pick_date),
         mapping = aes(label = animal_id),
         direction = "y",
         hjust = -0.5
       ) +
       geom_label_repel(
         data = TRAINING %>%
-          dplyr::filter(date == max(date) - 1),
+          dplyr::filter(date == pick_date),
         mapping = aes(label = protocol),
         direction = "y",
         hjust = 1.3,
         vjust = 1
       ) +
-    
-      #scale_fill_viktor() +
+
+
       labs(col = "Stage")
 
     plot(stage_plot)
@@ -132,7 +103,7 @@ summary_plots <- function(plottype_sum,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_sum[1]), as.Date(datelim_sum[2]))
       ) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
@@ -144,12 +115,12 @@ summary_plots <- function(plottype_sum,
       geom_point(aes(size = trained, col = trained)) +
       geom_label_repel(
         data = recording_dates %>%
-          dplyr::filter(date == max(date)),
+          dplyr::filter(date == pick_date),
         mapping = aes(label = rig, fill = as.character(rig)),
         direction = "y",
         hjust = -1
       ) +
-      labs(fill = "Rig" ) +
+      labs(fill = "Rig") +
       labs(col = "Training status") +
       labs(size = "Training status")
 

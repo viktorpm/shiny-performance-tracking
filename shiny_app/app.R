@@ -29,6 +29,8 @@ library(shinyjs)
 source(file.path("load_data.R"))
 source(file.path("plots_DelayComp.R"))
 source(file.path("plots_SoundCateg.R"))
+source(file.path("plots_summary.R"))
+
 
 
 
@@ -38,10 +40,54 @@ ui <- fluidPage(
   useShinyjs(),
   navbarPage(
     "Protocols",
-    
+
+    ### Summary panel ----
+    ######################
+
+    tabPanel(
+      "Summary",
+      sidebarLayout(
+        sidebarPanel(
+          width = 3,
+          selectInput(
+            inputId = "plot_type_sum",
+            label = "Select plot type",
+            choices = c(
+              "Stage tracking",
+              "Missing data"
+            )
+          ),
+
+          sliderInput(
+            inputId = "setdate_sum",
+            label = "Dates to show",
+            min = min(TRAINING$date),
+            max = max(TRAINING$date),
+            value = c(max(TRAINING$date) - 56, max(TRAINING$date))
+          ),
+
+
+          selectInput(
+            inputId = "date_to_sum",
+            label = "Pick a date to summarize",
+            choices = TRAINING$date %>% unique(),
+            selected = TRAINING$date %>% unique() %>% max()
+          )
+        ),
+
+        mainPanel(
+          width = 9,
+          plotOutput(outputId = "plot_sum", height = 800),
+          tableOutput(outputId = "table_sum")
+        )
+      )
+    ),
+
+
+
     ### @AthenaDelayComp panel ----
     ###############################
-    
+
     tabPanel(
       "@AthenaDelayComp",
       sidebarLayout(
@@ -74,7 +120,7 @@ ui <- fluidPage(
 
           sliderInput(
             inputId = "setdate",
-            label = "Date (default: last 3 weeks)",
+            label = "Dates to show (default: last 3 weeks)",
             min = min(TRAINING$date),
             max = max(TRAINING$date),
             value = c(max(TRAINING$date) - 21, max(TRAINING$date))
@@ -86,11 +132,6 @@ ui <- fluidPage(
             choices = TRAINING$stage %>% unique() %>% as.vector(),
             selected = TRAINING$stage %>% unique() %>% as.vector()
           )
-
-
-
-
-          # actionButton(inputId = "gobtn", label = "Draw plot")
         ),
 
         mainPanel(
@@ -100,12 +141,12 @@ ui <- fluidPage(
       )
     ),
 
-    
-    
-    
+
+
+
     ### @SoundCategorization panel ----
     ###################################
-    
+
     tabPanel(
       "@SoundCategorization",
       sidebarLayout(
@@ -138,7 +179,7 @@ ui <- fluidPage(
 
           sliderInput(
             inputId = "setdate_SC",
-            label = "Date (default: last 3 weeks)",
+            label = "Dates to show (default: last 3 weeks)",
             min = min(TRAINING$date),
             max = max(TRAINING$date),
             value = c(max(TRAINING$date) - 21, max(TRAINING$date))
@@ -167,6 +208,46 @@ ui <- fluidPage(
 ###################
 
 server <- function(input, output, session) {
+  create_plot_sum <- reactive({
+    plots_summary(
+      plottype_sum = input$plot_type_sum,
+      datelim_sum = input$setdate_sum,
+      pick_date = input$date_to_sum
+    )
+  })
+
+
+  output$plot_sum <- renderPlot({
+    create_plot_sum()
+  })
+
+
+
+  output$table_sum <- renderTable(
+    bind_cols(
+      TRAINING %>%
+        dplyr::filter(
+          choice_direction == "right_trials",
+          date == input$date_to_sum
+        ) %>%
+        group_by(protocol, stage) %>%
+        summarize("No. animals" = length(animal_id)),
+
+
+      tmp <- TRAINING %>%
+        dplyr::filter(
+          choice_direction == "right_trials",
+          date == input$date_to_sum
+        ) %>%
+        group_by(protocol, stage) %>%
+        summarize("Animal names" = paste(animal_id, sep = "", collapse = ", ")) %>%
+        pull("Animal names") %>%
+        as.tibble() %>%
+        rename("Aimal names" = value)
+    )
+  )
+
+
 
   ### @AthenaDelayComp plots ----
   ###############################
@@ -201,11 +282,11 @@ server <- function(input, output, session) {
   create_plot_SC <- reactive({
     # isolate({
     plots_SoundCateg(
-      plottype = input$plot_type_SC,
-      datelim = input$setdate_SC,
-      stage_filter = input$stage_SC,
-      animal_filter = input$animal_select_SC,
-      all_animals = input$all_animals_SC
+      plottype_SC = input$plot_type_SC,
+      datelim_SC = input$setdate_SC,
+      stage_filter_SC = input$stage_SC,
+      animal_filter_SC = input$animal_select_SC,
+      all_animals_SC = input$all_animals_SC
     )
     # })
   })
