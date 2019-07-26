@@ -68,6 +68,7 @@ TRAINING <- TRAINING %>%
 
 
 
+
 ### Session length distribution
 ggplot(data = TRAINING %>% 
          dplyr::filter(session_length > 0) %>% 
