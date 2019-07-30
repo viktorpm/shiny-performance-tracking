@@ -2,17 +2,20 @@ plots_DelayComp <- function(plottype,
                             datelim,
                             stage_filter,
                             animal_filter,
-                            all_animals) {
+                            individ_plot,
+                            experimenter) {
 
-  #  browser()
-
+  
+  # if (experimenter == "All") {
+  #   experimenter = TRAINING$experimenter %>% unique() %>% as.vector()
+  # }
+  
+  #browser()
   #############################
   ### Filtering data table ----
   #############################
 
-
-  ### if all animals are plotted
-  if (all_animals == T) {
+  if (experimenter == "All" & individ_plot == F) {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
@@ -20,16 +23,16 @@ plots_DelayComp <- function(plottype,
         date >= datelim[1], date <= datelim[2],
         protocol == "@AthenaDelayComp"
       )
-
+    
     col_by <- "animal_id"
     col_lab_name <- "Animals"
     lines <- geom_line(aes(col = eval(parse(text = col_by))),
-      linetype = "dashed",
-      alpha = 0.4
+                       linetype = "dashed",
+                       alpha = 0.4
     )
-
-    ### if only one selected animal is plotted
-  } else {
+  }
+  
+  if (individ_plot == T) {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
@@ -38,12 +41,33 @@ plots_DelayComp <- function(plottype,
         animal_id == animal_filter,
         protocol == "@AthenaDelayComp"
       )
-
+    
     col_by <- "stage"
     col_lab_name <- "Stages"
     lines <- geom_line(linetype = "dashed", alpha = 0.4)
   }
-
+  
+  
+  if (experimenter != "All" & individ_plot == F) {
+    TRAINING <- TRAINING %>%
+      dplyr::filter(
+        choice_direction == "right_trials",
+        stage %in% stage_filter,
+        date >= datelim[1], date <= datelim[2],
+        protocol == "@AthenaDelayComp",
+        experimenter == as.character(experimenter)
+      )
+    
+    col_by <- "animal_id"
+    col_lab_name <- "Animals"
+    lines <- geom_line(aes(col = eval(parse(text = col_by))),
+                       linetype = "dashed",
+                       alpha = 0.4
+    )
+  }
+  
+  
+  
 
   # browser()
 

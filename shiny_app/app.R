@@ -13,6 +13,8 @@ library(R.matlab)
 library(stringr)
 library(purrr)
 library(shinyjs)
+library(DT)
+library(plotly)
 
 
 
@@ -58,27 +60,30 @@ ui <- fluidPage(
             )
           ),
 
-          sliderInput(
+
+          dateRangeInput(
             inputId = "setdate_sum",
             label = "Dates to show",
+            start = max(TRAINING$date) - 56,
+            end = max(TRAINING$date),
             min = min(TRAINING$date),
-            max = max(TRAINING$date),
-            value = c(max(TRAINING$date) - 56, max(TRAINING$date))
+            max = max(TRAINING$date)
           ),
 
 
-          selectInput(
+          dateInput(
             inputId = "date_to_sum",
             label = "Pick a date to summarize",
-            choices = TRAINING$date %>% unique(),
-            selected = TRAINING$date %>% unique() %>% max()
+            value = TRAINING$date %>% unique() %>% max(),
+            min = min(TRAINING$date),
+            max = max(TRAINING$date)
           )
         ),
 
         mainPanel(
           width = 9,
           plotOutput(outputId = "plot_sum", height = 800),
-          tableOutput(outputId = "table_sum")
+          dataTableOutput(outputId = "table_sum")
         )
       )
     ),
@@ -105,11 +110,28 @@ ui <- fluidPage(
           ),
 
 
+          # radioButtons(
+          #   inputId = "all_animals",
+          #   label = "Plot all animals",
+          #   choices = c("Yes" = T, "No" = F)
+          # ),
+          
           radioButtons(
-            inputId = "all_animals",
-            label = "Plot all animals",
-            choices = c("Yes" = T, "No" = F)
+            inputId = "exp_select",
+            label = "Select experimenter",
+            choices = c("All", TRAINING$experimenter %>% unique() %>% as.vector()),
+            selected = "viktor"
           ),
+          
+          
+          radioButtons(
+            inputId = "individ_plot",
+            label = "",
+            choices = c("Plot animals individually" = T, "Plot multiple animals" = F),
+            selected = c("Plot multiple animals" = F) 
+          ),
+          
+        
 
           selectInput(
             inputId = "animal_select",
@@ -118,13 +140,17 @@ ui <- fluidPage(
           ),
 
 
-          sliderInput(
+
+          dateRangeInput(
             inputId = "setdate",
             label = "Dates to show (default: last 3 weeks)",
+            start = max(TRAINING$date) - 21,
+            end = max(TRAINING$date),
             min = min(TRAINING$date),
-            max = max(TRAINING$date),
-            value = c(max(TRAINING$date) - 21, max(TRAINING$date))
+            max = max(TRAINING$date)
           ),
+
+
 
           checkboxGroupInput(
             inputId = "stage",
@@ -177,13 +203,17 @@ ui <- fluidPage(
           ),
 
 
-          sliderInput(
+
+          dateRangeInput(
             inputId = "setdate_SC",
             label = "Dates to show (default: last 3 weeks)",
+            start = max(TRAINING$date) - 21,
+            end = max(TRAINING$date),
             min = min(TRAINING$date),
-            max = max(TRAINING$date),
-            value = c(max(TRAINING$date) - 21, max(TRAINING$date))
+            max = max(TRAINING$date)
           ),
+
+
 
           checkboxGroupInput(
             inputId = "stage_SC",
@@ -223,7 +253,7 @@ server <- function(input, output, session) {
 
 
 
-  output$table_sum <- renderTable(
+  output$table_sum <- DT::renderDataTable(
     bind_cols(
       TRAINING %>%
         dplyr::filter(
@@ -259,14 +289,24 @@ server <- function(input, output, session) {
       datelim = input$setdate,
       stage_filter = input$stage,
       animal_filter = input$animal_select,
-      all_animals = input$all_animals
+      individ_plot = input$individ_plot,
+      experimenter = input$exp_select
     )
     # })
   })
 
   observe({
-    if (input$all_animals == T) disable("animal_select") else enable("animal_select")
+    if (input$individ_plot == F) {
+      disable("animal_select")
+      enable("exp_select")
+      } else {
+        enable("animal_select")
+        disable("exp_select")
+      }
   })
+  
+  
+  
 
   output$plot <- renderPlot({
     create_plot()

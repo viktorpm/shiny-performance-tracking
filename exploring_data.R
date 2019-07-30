@@ -102,9 +102,12 @@ rat_data = readRDS(file.path("D:", "_R_WD", "git_projects",
 
 names <- rat_data$saved[,,] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names,pattern = regex("rig", ignore_case = T))]
+names[str_detect(names,pattern = regex("violat", ignore_case = T))]
 
+AthenaDelayComp.timeout.history
+AthenaDelayComp.violation.history
 
+rat_data$saved[,,]$
 
 file <- "data_@SoundCategorization_sharbat_SC04_190724a.mat.rds"
 
