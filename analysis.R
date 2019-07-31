@@ -39,7 +39,6 @@ colnames(rigs_sessions) <- c("session_1","session_2","session_3","session_4","se
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
-  dplyr::filter(animal_id != "RATNAME", animal_id != "SOUNDRAT", animal_id != "TEST01") %>%
   mutate(session_length = difftime(save_time, start_time, units = "mins")) %>% 
   mutate(settings_file = ifelse(settings_file == "empty_field_in_mat_file", 
                                 yes = "empty_field_in_mat_file",
@@ -63,8 +62,23 @@ TRAINING <- TRAINING %>%
   rowwise() %>% 
   mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1] ) %>% 
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
-  ungroup() %>% 
+  ungroup() %>%   
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
+
+
+
+TRAINING %>% 
+  dplyr::filter(animal_id == "AA03", date == max(date)-1, choice_direction == "right_trials") %>% 
+  select(done_trials, violation_trials, hit_trials, timeoout_trials) 
+
+
+TRAINING %>% names
+
+TRAINING %>% 
+  dplyr::filter(stage != "0_side_poke_on") %>% 
+  mutate(donetrials2 = right_trials + left_trials) %>% 
+  mutate(difftrials = done_trials-donetrials2) %>% 
+  dplyr::filter(difftrials != 0) %>% View()
 
 
 
@@ -261,7 +275,7 @@ ggplot(
 #####################################
 
 ggplot(
-  data = TRAINING ,
+  data = TRAINING %>% dplyr::filter(experimenter == "athena") ,
   mapping = aes(x = date, y = animal_id)
 ) +
   geom_point(aes(col = as.character(stage)), size = 6) +

@@ -98,22 +98,38 @@ walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
 rat_data = readRDS(file.path("D:", "_R_WD", "git_projects", 
                              "r_codes_rat_wm", "data",
                              "rds_files",
-                             "data_@AthenaDelayComp_athena_AA04_190725a.mat.rds")) 
+                             "data_@SoundCategorization_viktor_VP08_190729a.mat.rds")) 
 
 names <- rat_data$saved[,,] %>% names()
 names %>% str_detect(pattern = "rew")
 names[str_detect(names,pattern = regex("violat", ignore_case = T))]
 
-AthenaDelayComp.timeout.history
-AthenaDelayComp.violation.history
+rat_data$saved[, , ]$AthenaDelayComp.timeout.history %>% sum()
+rat_data$saved[, , ]$AthenaDelayComp.violation.history %>% sum()
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% sum()
 
-rat_data$saved[,,]$
-
-file <- "data_@SoundCategorization_sharbat_SC04_190724a.mat.rds"
+rat_data$saved[, , ]$ProtocolsSection.n.done.trials
 
 
-file %>% substr(start = file %>% gregexpr(pattern = "@") %>% unlist(),
-                stop = file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2)-1 )
+
+rat_data$saved[, , ]$OverallPerformanceSection.violation.rate
+
+
+#file <- "data_@SoundCategorization_sharbat_SC04_190724a.mat.rds"
+file <- "data_@SoundCategorization_viktor_VP08_190729a.mat.rds"
+
+
+section_name <- file %>% substr(
+       start = file %>% gregexpr(pattern = "@") %>% unlist() %>% `+` (1) ,
+       stop = file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2)-1 
+)
+
+
+
+get(paste(section_name, ".violation.history", sep = ""), rat_data$saved[, , ]) %>% sum()
+
+
+
 
 gregexpr(file, pattern = "_") %>% unlist() %>% `[`(2)-1 
 
