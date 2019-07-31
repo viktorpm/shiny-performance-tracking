@@ -19,15 +19,6 @@ library(plotly)
 
 
 
-
-###################
-########## UI -----
-###################
-
-
-# source(file.path("..", "shiny_app", "all_plots.R"))
-# source(file.path("..", "shiny_app", "load_data.R"))
-
 source(file.path("load_data.R"))
 source(file.path("plots_DelayComp.R"))
 source(file.path("plots_SoundCateg.R"))
@@ -35,6 +26,10 @@ source(file.path("plots_summary.R"))
 
 
 
+
+###################
+########## UI -----
+###################
 
 
 
@@ -105,8 +100,9 @@ ui <- fluidPage(
             label = "Select plot type",
             choices = c(
               "CP duration",
-              "Stage tracking",
               "No. done trials",
+              "No. hit trials",
+              "Stage tracking",
               "Missing data"
             )
           ),
@@ -176,8 +172,9 @@ ui <- fluidPage(
             label = "Select plot type",
             choices = c(
               "CP duration",
-              "Stage tracking",
               "No. done trials",
+              "No. hit trials",
+              "Stage tracking",
               "Missing data"
             )
           ),
@@ -329,7 +326,8 @@ server <- function(input, output, session) {
             date <= input$setdate[2]
           ) %>%
           select(date, done_trials, violation_trials, hit_trials, timeoout_trials) %>% 
-          mutate(sum = violation_trials + hit_trials + timeoout_trials)
+          mutate(sum = violation_trials + hit_trials + timeoout_trials) %>% 
+          mutate(difference = done_trials-sum)
       )
     }
     
@@ -383,7 +381,8 @@ server <- function(input, output, session) {
             date <= input$setdate_SC[2]
           ) %>%
           select(date, done_trials, violation_trials, hit_trials, timeoout_trials) %>% 
-          mutate(sum = violation_trials + hit_trials + timeoout_trials)
+          mutate(sum = violation_trials + hit_trials + timeoout_trials) %>% 
+          mutate(difference = done_trials-sum)
       )
    
     }

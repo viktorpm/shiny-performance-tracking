@@ -146,12 +146,13 @@ plots_DelayComp <- function(plottype,
         minor_breaks = "1 day",
         limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
       ) +
+      ylim(0,max(TRAINING$done_trials)+10) + 
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14, face = "bold")
       ) +
-      ylab(paste0("Norm. No. done trials ", stage_filter %>% paste(collapse = ", "))) +
+      ylab(paste0("No. done trials ", stage_filter %>% paste(collapse = ", "))) +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
@@ -169,6 +170,60 @@ plots_DelayComp <- function(plottype,
   }
 
 
+  ##########################
+  ### PLOT: hit trials ----
+  ##########################
+  
+  
+  if (plottype == "No. hit trials") {
+    trial_plot <- ggplot(
+      data = TRAINING,
+      mapping = aes(
+        x = date,
+        y = hit_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+      )
+    ) +
+      
+      ### lines and points
+      lines +
+      geom_point(
+        mapping = aes(col = eval(parse(text = col_by))),
+        size = 3
+      ) +
+      
+      ### scales, labels, themes
+      scale_x_date(
+        date_breaks = "1 day",
+        date_labels = "%b %d",
+        minor_breaks = "1 day",
+        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+      ) +
+      ylim(0,max(TRAINING$done_trials)+10) + # max(done_trials): comparable to the done trial plot
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold")
+      ) +
+      ylab(paste0("No. hit trials", stage_filter %>% paste(collapse = ", "))) +
+      xlab("Date [day]") +
+      geom_label_repel(
+        data = TRAINING %>%
+          dplyr::filter(
+            date == max(date)
+          ),
+        mapping = aes(label = animal_id, col = eval(parse(text = col_by))),
+        
+        hjust = -0.5,
+        direction = "y"
+      ) +
+      labs(col = eval(parse(text = "col_lab_name")))
+    
+    plot(trial_plot)
+  }
+  
+  
+  
+  
 
 
   #############################
@@ -215,14 +270,14 @@ plots_DelayComp <- function(plottype,
         direction = "y",
         hjust = -0.5
       ) +
-      geom_label_repel(
-        data = TRAINING %>%
-          dplyr::filter(date == max(date) - 1),
-        mapping = aes(label = protocol),
-        direction = "y",
-        hjust = 1.3,
-        vjust = 1
-      ) +
+      # geom_label_repel(
+      #   data = TRAINING %>%
+      #     dplyr::filter(date == max(date) - 1),
+      #   mapping = aes(label = protocol),
+      #   direction = "y",
+      #   hjust = 1.3,
+      #   vjust = 1
+      # ) +
 
       # scale_fill_viktor() +
       labs(col = "Stage")

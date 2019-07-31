@@ -6,7 +6,6 @@ library(gridExtra)
 library(forcats)
 library(zoo)
 library(bdscale)
-library(ggalluvial)
 library(magrittr)
 library(purrr)
 
@@ -17,7 +16,7 @@ library(purrr)
 
 TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 
-
+TRAINING %>% names()
 
 ################################
 ### Creating session matrix ----
@@ -63,7 +62,10 @@ TRAINING <- TRAINING %>%
   mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1] ) %>% 
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
   ungroup() %>%   
-  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
+  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") %>% 
+  gather(done_trials, violation_trials, hit_trials, timeoout_trials,
+         key = "trial_type",
+         value = "No_trials")
 
 
 
@@ -163,18 +165,18 @@ ggplot(
 
 ggplot(
   data = TRAINING %>%
-    dplyr::filter(animal_id == "AA02"),
+    dplyr::filter(animal_id == "AA01", choice_direction == "left_trials"),
 
   mapping = aes(
-    #col = animal_id,
+    col = trial_type,
     x = date,
-    y = total_CP # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+    y = No_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
   )
 ) +
 
   ### lines and points
   geom_line(linetype = "dashed", alpha = 0.4) +
-  geom_point(aes(col = stage), size = 3) +
+  geom_point(size = 3) +
 
   ### scales, labels, themes
   scale_x_date(
