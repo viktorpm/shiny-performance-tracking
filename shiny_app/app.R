@@ -98,6 +98,8 @@ ui <- fluidPage(
       sidebarLayout(
         sidebarPanel(
           width = 3,
+
+
           selectInput(
             inputId = "plot_type",
             label = "Select plot type",
@@ -110,35 +112,26 @@ ui <- fluidPage(
           ),
 
 
-          # radioButtons(
-          #   inputId = "all_animals",
-          #   label = "Plot all animals",
-          #   choices = c("Yes" = T, "No" = F)
-          # ),
-          
           radioButtons(
+            inputId = "f_options",
+            label = "Filters",
+            choices = c("All animals", "Experimenter", "Individual animals"),
+            selected = "All animals"
+          ),
+
+
+          selectInput(
             inputId = "exp_select",
             label = "Select experimenter",
-            choices = c("All", TRAINING$experimenter %>% unique() %>% as.vector()),
-            selected = "viktor"
+            choices = TRAINING$experimenter %>% unique() %>% as.vector()
           ),
-          
-          
-          radioButtons(
-            inputId = "individ_plot",
-            label = "",
-            choices = c("Plot animals individually" = T, "Plot multiple animals" = F),
-            selected = c("Plot multiple animals" = F) 
-          ),
-          
-        
+
 
           selectInput(
             inputId = "animal_select",
             label = "Select animals to show",
             choices = TRAINING$animal_id %>% unique() %>% as.vector()
           ),
-
 
 
           dateRangeInput(
@@ -151,7 +144,6 @@ ui <- fluidPage(
           ),
 
 
-
           checkboxGroupInput(
             inputId = "stage",
             label = "Select stages to show",
@@ -162,7 +154,8 @@ ui <- fluidPage(
 
         mainPanel(
           width = 9,
-          plotOutput(outputId = "plot", height = 1000)
+          plotOutput(outputId = "plot", height = 1000),
+          dataTableOutput(outputId = "perform")
         )
       )
     ),
@@ -191,10 +184,20 @@ ui <- fluidPage(
 
 
           radioButtons(
-            inputId = "all_animals_SC",
-            label = "Plot all animals",
-            choices = c("Yes" = T, "No" = F)
+            inputId = "f_options_SC",
+            label = "Filters",
+            choices = c("All animals", "Experimenter", "Individual animals"),
+            selected = "All animals"
           ),
+
+
+          selectInput(
+            inputId = "exp_select_SC",
+            label = "Select experimenter",
+            choices = TRAINING$experimenter %>% unique() %>% as.vector()
+          ),
+
+
 
           selectInput(
             inputId = "animal_select_SC",
@@ -225,7 +228,8 @@ ui <- fluidPage(
 
         mainPanel(
           width = 9,
-          plotOutput(outputId = "plot_SC", height = 1000)
+          plotOutput(outputId = "plot_SC", height = 1000),
+          dataTableOutput(outputId = "perform_SC")
         )
       )
     )
@@ -238,6 +242,11 @@ ui <- fluidPage(
 ###################
 
 server <- function(input, output, session) {
+
+
+  ### Summary panel ----
+  ######################
+
   create_plot_sum <- reactive({
     plots_summary(
       plottype_sum = input$plot_type_sum,
@@ -288,26 +297,44 @@ server <- function(input, output, session) {
       plottype = input$plot_type,
       datelim = input$setdate,
       stage_filter = input$stage,
+      f_options = input$f_options,
       animal_filter = input$animal_select,
-      individ_plot = input$individ_plot,
-      experimenter = input$exp_select
+      exp = input$exp_select
     )
     # })
   })
 
   observe({
-    if (input$individ_plot == F) {
+    if (input$f_options == "All animals") {
       disable("animal_select")
-      enable("exp_select")
-      } else {
-        enable("animal_select")
-        disable("exp_select")
-      }
-  })
-  
-  
-  
+      disable("exp_select")
+    }
 
+    if (input$f_options == "Experimenter") {
+      enable("exp_select")
+      disable("animal_select")
+    }
+
+    if (input$f_options == "Individual animals") {
+      enable("animal_select")
+      disable("exp_select")
+
+      output$perform <- DT::renderDataTable(
+        TRAINING %>%
+          dplyr::filter(
+            animal_id == input$animal_select,
+            choice_direction == "right_trials",
+            protocol == "@AthenaDelayComp",
+            date >= input$setdate[1], 
+            date <= input$setdate[2]
+          ) %>%
+          select(date, done_trials, violation_trials, hit_trials, timeoout_trials) %>% 
+          mutate(sum = violation_trials + hit_trials + timeoout_trials)
+      )
+    }
+    
+    
+  })
   output$plot <- renderPlot({
     create_plot()
   })
@@ -320,20 +347,48 @@ server <- function(input, output, session) {
   ###################################
 
   create_plot_SC <- reactive({
-    # isolate({
     plots_SoundCateg(
       plottype_SC = input$plot_type_SC,
       datelim_SC = input$setdate_SC,
       stage_filter_SC = input$stage_SC,
       animal_filter_SC = input$animal_select_SC,
-      all_animals_SC = input$all_animals_SC
+      exp_SC = input$exp_select_SC,
+      f_options_SC = input$f_options_SC
     )
-    # })
   })
 
+
   observe({
-    if (input$all_animals_SC == T) disable("animal_select") else enable("animal_select")
+    if (input$f_options_SC == "All animals") {
+      disable("animal_select_SC")
+      disable("exp_select_SC")
+    }
+
+    if (input$f_options_SC == "Experimenter") {
+      enable("exp_select_SC")
+      disable("animal_select_SC")
+    }
+
+    if (input$f_options_SC == "Individual animals") {
+      enable("animal_select_SC")
+      disable("exp_select_SC")
+      
+      output$perform_SC <- DT::renderDataTable(
+        TRAINING %>%
+          dplyr::filter(
+            animal_id == input$animal_select_SC,
+            choice_direction == "right_trials",
+            protocol == "@SoundCategorization",
+            date >= input$setdate_SC[1], 
+            date <= input$setdate_SC[2]
+          ) %>%
+          select(date, done_trials, violation_trials, hit_trials, timeoout_trials) %>% 
+          mutate(sum = violation_trials + hit_trials + timeoout_trials)
+      )
+   
+    }
   })
+
 
   output$plot_SC <- renderPlot({
     create_plot_SC()

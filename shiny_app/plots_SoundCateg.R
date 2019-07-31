@@ -2,17 +2,16 @@ plots_SoundCateg <- function(plottype_SC,
                              datelim_SC,
                              stage_filter_SC,
                              animal_filter_SC,
-                             all_animals_SC) {
+                             exp_SC,
+                             f_options_SC) {
 
-  #  browser()
 
   #############################
   ### Filtering data table ----
   #############################
 
 
-  ### if all animals are plotted
-  if (all_animals_SC == T) {
+  if (f_options_SC == "All animals") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
@@ -27,16 +26,35 @@ plots_SoundCateg <- function(plottype_SC,
       linetype = "dashed",
       alpha = 0.4
     )
+  }
 
-    ### if only one selected animal is plotted
-  } else {
+  if (f_options_SC == "Experimenter") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
         stage %in% stage_filter_SC,
         date >= datelim_SC[1], date <= datelim_SC[2],
-        animal_id == animal_filter_SC,
-        protocol == "@SoundCategorization"
+        protocol == "@SoundCategorization",
+        experimenter == exp_SC
+      )
+
+    col_by <- "animal_id"
+    col_lab_name <- "Animals"
+    lines <- geom_line(aes(col = eval(parse(text = col_by))),
+      linetype = "dashed",
+      alpha = 0.4
+    )
+  }
+
+
+  if (f_options_SC == "Individual animals") {
+    TRAINING <- TRAINING %>%
+      dplyr::filter(
+        choice_direction == "right_trials",
+        stage %in% stage_filter_SC,
+        date >= datelim_SC[1], date <= datelim_SC[2],
+        protocol == "@SoundCategorization",
+        animal_id == animal_filter_SC
       )
 
     col_by <- "stage"
@@ -45,7 +63,8 @@ plots_SoundCateg <- function(plottype_SC,
   }
 
 
-  # browser()
+
+
 
   ##########################
   ### PLOT: CP duration ----
