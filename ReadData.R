@@ -26,6 +26,12 @@ ReadData <- function(rds_file) {
     )} else {
       file_processed_test <- F
     }
+  
+  
+  section_name <- rds_file %>% substr(
+    start = rds_file %>% gregexpr(pattern = "@") %>% unlist() %>% `+` (1) ,
+    stop = rds_file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2)-1 
+  )
 
 
     ### pulls data from rds file if it has not been processed before and returns a list with the data
@@ -102,6 +108,27 @@ ReadData <- function(rds_file) {
         total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
 
         done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric(),
+        
+       
+        
+        
+        violation_trials = get(paste(section_name, ".violation.history", sep = ""),
+                               rat_data$saved[, , ]) %>% 
+          as.numeric() %>% 
+          sum(na.rm = T),
+        
+        hit_trials = get(paste(section_name, ".hit.history", sep = ""),
+                         rat_data$saved[, , ]) %>% 
+          as.numeric() %>% 
+          sum(na.rm = T),
+          
+        timeoout_trials = get(paste(section_name, ".timeout.history", sep = ""), 
+                              rat_data$saved[, , ]) %>% 
+          as.numeric() %>% 
+          sum(na.rm = T),  
+      
+        
+        
         
         A1_time = rat_data$saved[, , ]$SideSection.A1.time %>% as.numeric(),
         

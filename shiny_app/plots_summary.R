@@ -70,8 +70,10 @@ plots_summary <- function(plottype_sum,
 
 
       labs(col = "Stage")
+    
+    #ggplotly(stage_plot)
 
-    plot(stage_plot)
+     plot(stage_plot)
   }
 
 
