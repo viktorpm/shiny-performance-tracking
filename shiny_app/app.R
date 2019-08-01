@@ -305,16 +305,19 @@ server <- function(input, output, session) {
     if (input$f_options == "All animals") {
       disable("animal_select")
       disable("exp_select")
+      hide("perform")
     }
 
     if (input$f_options == "Experimenter") {
       enable("exp_select")
       disable("animal_select")
+      hide("perform")
     }
 
     if (input$f_options == "Individual animals") {
       enable("animal_select")
       disable("exp_select")
+      show("perform")
 
       output$perform <- DT::renderDataTable(
         TRAINING %>%
@@ -360,16 +363,19 @@ server <- function(input, output, session) {
     if (input$f_options_SC == "All animals") {
       disable("animal_select_SC")
       disable("exp_select_SC")
+      hide("perform_SC")
     }
 
     if (input$f_options_SC == "Experimenter") {
       enable("exp_select_SC")
       disable("animal_select_SC")
+      hide("perform_SC")
     }
 
     if (input$f_options_SC == "Individual animals") {
       enable("animal_select_SC")
       disable("exp_select_SC")
+      show("perform_SC")
       
       output$perform_SC <- DT::renderDataTable(
         TRAINING %>%

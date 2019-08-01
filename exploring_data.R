@@ -98,18 +98,17 @@ walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
 rat_data = readRDS(file.path("D:", "_R_WD", "git_projects", 
                              "r_codes_rat_wm", "data",
                              "rds_files",
-                             "data_@SoundCategorization_viktor_VP08_190729a.mat.rds")) 
+                             "data_@AthenaDelayComp_athena_AA02_190731a.mat.rds")) 
 
 names <- rat_data$saved[,,] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names,pattern = regex("violat", ignore_case = T))]
+names[str_detect(names,pattern = regex("correc", ignore_case = T))]
 
 rat_data$saved[, , ]$AthenaDelayComp.timeout.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.violation.history %>% sum()
-rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% sum()
-
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% is.na() %>% sum()
 rat_data$saved[, , ]$ProtocolsSection.n.done.trials
-
+rat_data$saved[, , ]$ProtocolsSection.n.completed.trials
 
 
 rat_data$saved[, , ]$OverallPerformanceSection.violation.rate
@@ -133,7 +132,7 @@ get(paste(section_name, ".violation.history", sep = ""), rat_data$saved[, , ]) %
 
 gregexpr(file, pattern = "_") %>% unlist() %>% `[`(2)-1 
 
-rat_data$saved[, , ]$SavingSection.SaveTime %>%q
+rat_data$saved[, , ]$SavingSection.SaveTime %>%
   as.character() %>%
   substr(1, 11)
 

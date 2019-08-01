@@ -62,12 +62,12 @@ TRAINING <- TRAINING %>%
   mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1] ) %>% 
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
   ungroup() %>%   
-  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") %>% 
-  gather(done_trials, violation_trials, hit_trials, timeoout_trials,
-         key = "trial_type",
-         value = "No_trials")
+  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") #%>% 
+  # gather(done_trials, violation_trials, hit_trials, timeoout_trials,
+  #        key = "trial_type",
+  #        value = "No_trials")
 
-
+TRAINING$session_length %>%
 
 TRAINING %>% 
   dplyr::filter(animal_id == "AA03", date == max(date)-1, choice_direction == "right_trials") %>% 
@@ -90,7 +90,7 @@ ggplot(data = TRAINING %>%
          dplyr::filter(session_length > 0) %>% 
          select(session_length),
        mapping = aes(x = session_length)) + 
-  geom_histogram(bins = 70) + 
+  geom_histogram(bins = 70) +  
   scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F)
 
 
@@ -103,11 +103,13 @@ ggplot(data = TRAINING %>%
 #######################################
 
 ggplot(
-  data = TRAINING,
+  data = TRAINING %>% 
+    dplyr::filter(session_length > 0,
+                  protocol == "@SoundCategorization"),
   mapping = aes(
     col = animal_id,
     x = date,
-    y = (session_length * 60 * 24) %>% as.numeric()
+    y = session_length
   )
 ) +
   geom_line(linetype = "dashed", alpha = 0.4) +
