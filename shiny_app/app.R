@@ -101,7 +101,8 @@ ui <- fluidPage(
             choices = c(
               "CP duration",
               "No. done trials",
-              "No. hit trials",
+              "No. completed trials",
+              "No. correct trials",
               "Stage tracking",
               "Missing data"
             )
@@ -173,7 +174,8 @@ ui <- fluidPage(
             choices = c(
               "CP duration",
               "No. done trials",
-              "No. hit trials",
+              "No. completed trials",
+              "No. correct trials",
               "Stage tracking",
               "Missing data"
             )
@@ -328,9 +330,19 @@ server <- function(input, output, session) {
             date >= input$setdate[1], 
             date <= input$setdate[2]
           ) %>%
-          select(date, done_trials, violation_trials, hit_trials, timeoout_trials) %>% 
-          mutate(sum = violation_trials + hit_trials + timeoout_trials) %>% 
-          mutate(difference = done_trials-sum)
+          select(date, 
+                 done_trials, 
+                 completed_trials,
+                 correct_trials,
+                 error_trials,
+                 violation_trials,
+                 timeoout_trials)%>% 
+          mutate(sum = correct_trials  + error_trials + violation_trials + timeoout_trials) %>% 
+          mutate(difference = done_trials - sum) %>% 
+          mutate("correct_ratio (correct/completed)" = (correct_trials/completed_trials) %>%
+                   round(2)) %>% 
+          mutate("violation_ratio (violation/done)" = (violation_trials/done_trials) %>%
+                   round(2))
       )
     }
     
@@ -386,9 +398,19 @@ server <- function(input, output, session) {
             date >= input$setdate_SC[1], 
             date <= input$setdate_SC[2]
           ) %>%
-          select(date, done_trials, violation_trials, hit_trials, timeoout_trials) %>% 
-          mutate(sum = violation_trials + hit_trials + timeoout_trials) %>% 
-          mutate(difference = done_trials-sum)
+          select(date, 
+                 done_trials, 
+                 completed_trials,
+                 correct_trials,
+                 error_trials,
+                 violation_trials,
+                 timeoout_trials) %>% 
+          mutate(sum = correct_trials  + error_trials + violation_trials + timeoout_trials) %>% 
+          mutate(difference = done_trials - sum)%>% 
+          mutate("correct_ratio (correct/completed)" = (correct_trials/completed_trials) %>%
+                   round(2)) %>% 
+          mutate("violation_ratio (violation/done)" = (violation_trials/done_trials) %>%
+                   round(2))
       )
    
     }

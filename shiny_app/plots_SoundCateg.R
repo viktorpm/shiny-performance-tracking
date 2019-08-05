@@ -169,16 +169,16 @@ plots_SoundCateg <- function(plottype_SC,
   }
 
 
-  #########################
-  ### PLOT: hit trials ----
-  #########################
+  ###############################
+  ### PLOT: completed trials ----
+  ###############################
   
-  if (plottype_SC == "No. hit trials") {
+  if (plottype_SC == "No. completed trials") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
         x = date,
-        y = hit_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+        y = completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
       )
     ) +
       
@@ -202,7 +202,7 @@ plots_SoundCateg <- function(plottype_SC,
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14, face = "bold")
       ) +
-      ylab(paste0("No. hit trials", stage_filter_SC %>% paste(collapse = ", "))) +
+      ylab(paste0("No. completed trials", stage_filter_SC %>% paste(collapse = ", "))) +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
@@ -221,6 +221,56 @@ plots_SoundCateg <- function(plottype_SC,
   
   
   
+  
+  #############################
+  ### PLOT: correct trials ----
+  #############################
+  
+  if (plottype_SC == "No. correct trials") {
+    trial_plot <- ggplot(
+      data = TRAINING,
+      mapping = aes(
+        x = date,
+        y = correct_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+      )
+    ) +
+      
+      ### lines and points
+      lines +
+      geom_point(
+        mapping = aes(col = eval(parse(text = col_by))),
+        size = 3
+      ) +
+      
+      ### scales, labels, themes
+      scale_x_date(
+        date_breaks = "1 day",
+        date_labels = "%b %d",
+        minor_breaks = "1 day",
+        limits = c(as.Date(datelim_SC[1]), as.Date(datelim_SC[2]))
+      ) +
+      ylim(0,max(TRAINING$done_trials)+10) +
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold")
+      ) +
+      ylab(paste0("No. correct trials", stage_filter_SC %>% paste(collapse = ", "))) +
+      xlab("Date [day]") +
+      geom_label_repel(
+        data = TRAINING %>%
+          dplyr::filter(
+            date == max(date)
+          ),
+        mapping = aes(label = animal_id, col = eval(parse(text = col_by))),
+        
+        hjust = -0.5,
+        direction = "y"
+      ) +
+      labs(col = eval(parse(text = "col_lab_name")))
+    
+    plot(trial_plot)
+  }
   
   
   
