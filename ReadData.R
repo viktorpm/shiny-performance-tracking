@@ -106,10 +106,26 @@ ReadData <- function(rds_file) {
         init_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
 
         total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
-
+        
+        
+        ### all the initiated trials, complete (error, correct) and incomplete (timeout, violation)
         done_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric(),
         
-       
+        ### hit history: not the correct trials but all the initiated trials
+        ### (error: 0, correct: 1, violation + timeout: NaN) 
+        completed_trials = get(paste(section_name, ".hit.history", sep = ""),
+                               rat_data$saved[, , ]) %>% 
+          `[` (!is.na(.)) %>% length(),
+        
+        correct_trials = get(paste(section_name, ".hit.history", sep = ""),
+                             rat_data$saved[, , ]) %>% 
+          `[` (get(paste(section_name, ".hit.history", sep = ""),
+                   rat_data$saved[, , ]) == 1) %>% na.omit() %>% sum(),
+        
+        error_trials = get(paste(section_name, ".hit.history", sep = ""),
+                           rat_data$saved[, , ]) %>% 
+          `[` (get(paste(section_name, ".hit.history", sep = ""),
+                   rat_data$saved[, , ]) == 0) %>% na.omit() %>% length(),
         
         
         violation_trials = get(paste(section_name, ".violation.history", sep = ""),
@@ -117,17 +133,10 @@ ReadData <- function(rds_file) {
           as.numeric() %>% 
           sum(na.rm = T),
         
-        hit_trials = get(paste(section_name, ".hit.history", sep = ""),
-                         rat_data$saved[, , ]) %>% 
-          as.numeric() %>% 
-          sum(na.rm = T),
-          
         timeoout_trials = get(paste(section_name, ".timeout.history", sep = ""), 
                               rat_data$saved[, , ]) %>% 
           as.numeric() %>% 
           sum(na.rm = T),  
-      
-        
         
         
         A1_time = rat_data$saved[, , ]$SideSection.A1.time %>% as.numeric(),
