@@ -327,26 +327,26 @@ server <- function(input, output, session) {
             animal_id == input$animal_select,
             choice_direction == "right_trials",
             protocol == "@AthenaDelayComp",
-            date >= input$setdate[1], 
+            date >= input$setdate[1],
             date <= input$setdate[2]
           ) %>%
-          select(date, 
-                 done_trials, 
-                 completed_trials,
-                 correct_trials,
-                 error_trials,
-                 violation_trials,
-                 timeoout_trials)%>% 
-          mutate(sum = correct_trials  + error_trials + violation_trials + timeoout_trials) %>% 
-          mutate(difference = done_trials - sum) %>% 
-          mutate("correct_ratio (correct/completed)" = (correct_trials/completed_trials) %>%
-                   round(2)) %>% 
-          mutate("violation_ratio (violation/done)" = (violation_trials/done_trials) %>%
-                   round(2))
+          select(
+            date,
+            done_trials,
+            completed_trials,
+            correct_trials,
+            error_trials,
+            violation_trials,
+            timeoout_trials
+          ) %>%
+          mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
+          mutate(difference = done_trials - sum) %>%
+          mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
+            round(2)) %>%
+          mutate("violation_ratio (violation/done)" = (violation_trials / done_trials) %>%
+            round(2))
       )
     }
-    
-    
   })
   output$plot <- renderPlot({
     create_plot()
@@ -388,31 +388,32 @@ server <- function(input, output, session) {
       enable("animal_select_SC")
       disable("exp_select_SC")
       show("perform_SC")
-      
+
       output$perform_SC <- DT::renderDataTable(
         TRAINING %>%
           dplyr::filter(
             animal_id == input$animal_select_SC,
             choice_direction == "right_trials",
             protocol == "@SoundCategorization",
-            date >= input$setdate_SC[1], 
+            date >= input$setdate_SC[1],
             date <= input$setdate_SC[2]
           ) %>%
-          select(date, 
-                 done_trials, 
-                 completed_trials,
-                 correct_trials,
-                 error_trials,
-                 violation_trials,
-                 timeoout_trials) %>% 
-          mutate(sum = correct_trials  + error_trials + violation_trials + timeoout_trials) %>% 
-          mutate(difference = done_trials - sum)%>% 
-          mutate("correct_ratio (correct/completed)" = (correct_trials/completed_trials) %>%
-                   round(2)) %>% 
-          mutate("violation_ratio (violation/done)" = (violation_trials/done_trials) %>%
-                   round(2))
+          select(
+            date,
+            done_trials,
+            completed_trials,
+            correct_trials,
+            error_trials,
+            violation_trials,
+            timeoout_trials
+          ) %>%
+          mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
+          mutate(difference = done_trials - sum) %>%
+          mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
+            round(2)) %>%
+          mutate("violation_ratio (violation/done)" = (violation_trials / done_trials) %>%
+            round(2))
       )
-   
     }
   })
 

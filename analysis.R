@@ -22,11 +22,13 @@ TRAINING %>% names()
 ### Creating session matrix ----
 ################################
 
-rigs_sessions <- matrix(data = c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02","VP01", "VP02", "AA03", "AA04", "DO03", "DO04","SC03", "SC04", "VP03", "VP04", "AA05", "AA06","DO05", "DO06", "SC05", "SC06", "VP05", "VP06","AA07", "AA08", "DO07", "DO08", "VP07", "VP08"),
-                        nrow = 6,
-                        ncol = 5)
-rownames(rigs_sessions) <- c("rig_1","rig_2","rig_3","rig_4","rig_5","rig_6")
-colnames(rigs_sessions) <- c("session_1","session_2","session_3","session_4","session_5")
+rigs_sessions <- matrix(
+  data = c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02", "VP01", "VP02", "AA03", "AA04", "DO03", "DO04", "SC03", "SC04", "VP03", "VP04", "AA05", "AA06", "DO05", "DO06", "SC05", "SC06", "VP05", "VP06", "AA07", "AA08", "DO07", "DO08", "VP07", "VP08"),
+  nrow = 6,
+  ncol = 5
+)
+rownames(rigs_sessions) <- c("rig_1", "rig_2", "rig_3", "rig_4", "rig_5", "rig_6")
+colnames(rigs_sessions) <- c("session_1", "session_2", "session_3", "session_4", "session_5")
 
 
 
@@ -38,59 +40,62 @@ colnames(rigs_sessions) <- c("session_1","session_2","session_3","session_4","se
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
-  mutate(session_length = difftime(save_time, start_time, units = "mins")) %>% 
-  mutate(settings_file = ifelse(settings_file == "empty_field_in_mat_file", 
-                                yes = "empty_field_in_mat_file",
-                                no = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)
-                                )
-         ) %>% 
+  mutate(session_length = difftime(save_time, start_time, units = "mins")) %>%
+  mutate(settings_file = ifelse(settings_file == "empty_field_in_mat_file",
+    yes = "empty_field_in_mat_file",
+    no = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)
+  )) %>%
   mutate(protocol = file %>% substr(
-                           start = file %>% gregexpr(pattern = "@") %>% unlist(),
-                           stop =  file %>% 
-                             gregexpr(pattern = "_") %>% 
-                             map(~ .x[[2]]) %>% 
-  #https://community.rstudio.com/t/extract-single-list-element-as-part-of-a-pipeline/1095/5
-                             unlist() %>%  `-` (1))
-         ) %>% 
+    start = file %>% gregexpr(pattern = "@") %>% unlist(),
+    stop = file %>%
+      gregexpr(pattern = "_") %>%
+      map(~ .x[[2]]) %>%
+      # https://community.rstudio.com/t/extract-single-list-element-as-part-of-a-pipeline/1095/5
+      unlist() %>% `-`(1)
+  )) %>%
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
   mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
-  mutate(stage = replace(stage, 
-                         A2_time > 0 & A2_time < 0.5 & reward_type == "Always", 
-                         "2_intord_stim")) %>%
-  mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>% 
-  rowwise() %>% 
-  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1] ) %>% 
-  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
-  ungroup() %>%   
-  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") #%>% 
-  # gather(done_trials, violation_trials, hit_trials, timeoout_trials,
-  #        key = "trial_type",
-  #        value = "No_trials")
+  mutate(stage = replace(
+    stage,
+    A2_time > 0 & A2_time < 0.5 & reward_type == "Always",
+    "2_intord_stim"
+  )) %>%
+  mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>%
+  rowwise() %>%
+  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
+  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
+  ungroup() %>%
+  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") # %>%
+# gather(done_trials, violation_trials, hit_trials, timeoout_trials,
+#        key = "trial_type",
+#        value = "No_trials")
 
 TRAINING$session_length %>%
+  TRAINING() %>%
+  dplyr::filter(animal_id == "AA03", date == max(date) - 1, choice_direction == "right_trials") %>%
+  select(done_trials, violation_trials, hit_trials, timeoout_trials)
 
-TRAINING %>% 
-  dplyr::filter(animal_id == "AA03", date == max(date)-1, choice_direction == "right_trials") %>% 
-  select(done_trials, violation_trials, hit_trials, timeoout_trials) 
 
+TRAINING %>% names()
 
-TRAINING %>% names
-
-TRAINING %>% 
-  dplyr::filter(stage != "0_side_poke_on") %>% 
-  mutate(donetrials2 = right_trials + left_trials) %>% 
-  mutate(difftrials = done_trials-donetrials2) %>% 
-  dplyr::filter(difftrials != 0) %>% View()
+TRAINING %>%
+  dplyr::filter(stage != "0_side_poke_on") %>%
+  mutate(donetrials2 = right_trials + left_trials) %>%
+  mutate(difftrials = done_trials - donetrials2) %>%
+  dplyr::filter(difftrials != 0) %>%
+  View()
 
 
 
 
 ### Session length distribution
-ggplot(data = TRAINING %>% 
-         dplyr::filter(session_length > 0) %>% 
-         select(session_length),
-       mapping = aes(x = session_length)) + 
-  geom_histogram(bins = 70) +  
+ggplot(
+  data = TRAINING %>%
+    dplyr::filter(session_length > 0) %>%
+    select(session_length),
+  mapping = aes(x = session_length)
+) +
+  geom_histogram(bins = 70) +
   scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F)
 
 
@@ -103,9 +108,11 @@ ggplot(data = TRAINING %>%
 #######################################
 
 ggplot(
-  data = TRAINING %>% 
-    dplyr::filter(session_length > 0,
-                  protocol == "@SoundCategorization"),
+  data = TRAINING %>%
+    dplyr::filter(
+      session_length > 0,
+      protocol == "@SoundCategorization"
+    ),
   mapping = aes(
     col = animal_id,
     x = date,
@@ -222,7 +229,7 @@ ggplot(
   data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
   mapping = aes(
     x = date,
-    y = done_trials #/ ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+    y = done_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
   )
 ) +
 
@@ -279,7 +286,7 @@ ggplot(
 #####################################
 
 ggplot(
-  data = TRAINING %>% dplyr::filter(experimenter == "athena") ,
+  data = TRAINING %>% dplyr::filter(experimenter == "athena"),
   mapping = aes(x = date, y = animal_id)
 ) +
   geom_point(aes(col = as.character(stage)), size = 6) +
@@ -319,14 +326,14 @@ recording_dates <- TRAINING %>%
   select(date, day_name, trained, rig) %>%
   mutate(trained = replace(trained, is.na(trained), F)) %>%
   ungroup() %>%
-  rowwise() %>% 
-  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>% 
-  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>% 
+  rowwise() %>%
+  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
+  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
   ungroup()
 
 ggplot(
   data = recording_dates,
-    #mutate(animal_id = fct_reorder(animal_id, rig)),
+  # mutate(animal_id = fct_reorder(animal_id, rig)),
   mapping = aes(x = date, y = fct_reorder(animal_id, rig))
 ) +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
@@ -334,11 +341,10 @@ ggplot(
   # geom_raster(aes(fill = trained))
   geom_point(aes(size = trained, col = trained)) +
   geom_label_repel(
-    data = recording_dates %>% 
+    data = recording_dates %>%
       dplyr::filter(date == max(date)),
     mapping = aes(label = rig, fill = as.character(rig)),
     direction = "y",
     hjust = -1
   ) +
   labs(fill = "Rig")
-

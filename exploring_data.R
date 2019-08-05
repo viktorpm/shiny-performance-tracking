@@ -9,7 +9,7 @@ library(stringr)
 library(purrr)
 
 ### exploring data -------------
-rat_data <- readMat(file.path("data","v1.mat"))
+rat_data <- readMat(file.path("data", "v1.mat"))
 
 
 
@@ -41,7 +41,7 @@ section_names <- names %>%
   strtrim(to_first_stop) %>%
   unique()
 
-#creating empty tibble
+# creating empty tibble
 TRAINING <- tibble(
   date = character(),
   time = character(),
@@ -51,16 +51,16 @@ TRAINING <- tibble(
   left_trials = numeric()
 )
 
-#adding rows of data to tibble
+# adding rows of data to tibble
 TRAINING <- add_row(TRAINING,
   # data id
   experimenter = rat_data$saved[, , ]$SavingSection.experimenter,
   animal_id = rat_data$saved[, , ]$SavingSection.ratname,
   date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
     as.character() %>%
-    substr(1, 11), #%>%
-    #strptime(format = "%d-%b-%Y") %>%
-    #as.POSIXct(),
+    substr(1, 11), # %>%
+  # strptime(format = "%d-%b-%Y") %>%
+  # as.POSIXct(),
   time = rat_data$saved[, , ]$SavingSection.SaveTime %>%
     as.character() %>%
     substr(13, 20),
@@ -79,43 +79,55 @@ TRAINING <- add_row(TRAINING,
 
 ### read and extract data automatically
 # CHECK ALL SUBDIRECTORIES
-file_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data"),recursive = T) %>% as.list()
-walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
+file_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data"), recursive = T) %>% as.list()
+walk(file_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
 
-list.dirs(file.path("D:","_Rig_data","SoloData","Data"), full.names = TRUE, recursive = TRUE)
-
-
-
-
-
-data_path <- file.path("D:", "_Rig_data","SoloData","Data")
-file_list <- list.files(data_path,recursive = T) %>% as.list()
-walk(file_list, ~ReadData(file = .x) %>% TRAININGtoCSV())
+list.dirs(file.path("D:", "_Rig_data", "SoloData", "Data"), full.names = TRUE, recursive = TRUE)
 
 
 
 
-rat_data = readRDS(file.path("D:", "_R_WD", "git_projects", 
-                             "r_codes_rat_wm", "data",
-                             "rds_files",
-                             "data_@AthenaDelayComp_athena_AA02_190731a.mat.rds")) 
 
-names <- rat_data$saved[,,] %>% names()
+data_path <- file.path("D:", "_Rig_data", "SoloData", "Data")
+file_list <- list.files(data_path, recursive = T) %>% as.list()
+walk(file_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
+
+
+
+
+rat_data <- readRDS(file.path(
+  "D:", "_R_WD", "git_projects",
+  "r_codes_rat_wm", "data",
+  "rds_files",
+  "data_@AthenaDelayComp_athena_AA02_190731a.mat.rds"
+))
+
+names <- rat_data$saved[, , ] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names,pattern = regex("correc", ignore_case = T))]
+names[str_detect(names, pattern = regex("correc", ignore_case = T))]
 
 rat_data$saved[, , ]$AthenaDelayComp.timeout.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.violation.history %>% sum()
-rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% is.na() %>% sum()
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
+  is.na() %>%
+  sum()
 
 ### completed trials
-rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% `[` (!is.na(.)) %>% length()
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
+  `[`(!is.na(.)) %>%
+  length()
 
 ### error trials
-rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% `[` (rat_data$saved[, , ]$AthenaDelayComp.hit.history == 0) %>% na.omit() %>% length()
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
+  `[`(rat_data$saved[, , ]$AthenaDelayComp.hit.history == 0) %>%
+  na.omit() %>%
+  length()
 
-### correct trials 
-rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% `[` (rat_data$saved[, , ]$AthenaDelayComp.hit.history == 1) %>% na.omit() %>% sum()
+### correct trials
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
+  `[`(rat_data$saved[, , ]$AthenaDelayComp.hit.history == 1) %>%
+  na.omit() %>%
+  sum()
 
 
 
@@ -127,13 +139,13 @@ rat_data$saved[, , ]$ProtocolsSection.n.completed.trials
 rat_data$saved[, , ]$OverallPerformanceSection.violation.rate
 
 
-#file <- "data_@SoundCategorization_sharbat_SC04_190724a.mat.rds"
+# file <- "data_@SoundCategorization_sharbat_SC04_190724a.mat.rds"
 file <- "data_@SoundCategorization_viktor_VP08_190729a.mat.rds"
 
 
 section_name <- file %>% substr(
-       start = file %>% gregexpr(pattern = "@") %>% unlist() %>% `+` (1) ,
-       stop = file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2)-1 
+  start = file %>% gregexpr(pattern = "@") %>% unlist() %>% `+`(1),
+  stop = file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2) - 1
 )
 
 
@@ -143,7 +155,9 @@ get(paste(section_name, ".violation.history", sep = ""), rat_data$saved[, , ]) %
 
 
 
-gregexpr(file, pattern = "_") %>% unlist() %>% `[`(2)-1 
+gregexpr(file, pattern = "_") %>%
+  unlist() %>%
+  `[`(2) - 1
 
 rat_data$saved[, , ]$SavingSection.SaveTime %>%
   as.character() %>%
@@ -177,89 +191,89 @@ rat_data$saved[, , ]$SavingSection.settings.file
 
 # TRAINING <- ReadData(filename = "data_@AthenaDelayComp_viktor_VP01_190425a.mat") %>% as_tibble()
 # TRAINING
-# 
-# 
+#
+#
 # ReadData(filename = "v2.mat") %>% TRAININGtoCSV()
-# 
-# 
-# 
+#
+#
+#
 # tmp <- ReadData(filename = "v1.mat") %>% as_tibble()
-# 
+#
 # bind_rows(tmp, ReadData(filename = "v2.mat") %>% as_tibble())
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
 # write_TRAINING <- as.tibble(ReadMatFile_output$file_info)
-# 
-# 
-# 
+#
+#
+#
 # # rat_data$saved[,,]$SavingSection.title
-# 
-# 
+#
+#
 # # right trials
 # rat_data$saved[, , ]$StimulusSection.nTrialsClass1 +
 #   rat_data$saved[, , ]$StimulusSection.nTrialsClass2 +
 #   rat_data$saved[, , ]$StimulusSection.nTrialsClass3 +
 #   rat_data$saved[, , ]$StimulusSection.nTrialsClass4
-# 
-# 
-# 
+#
+#
+#
 # # left trials
 # rat_data$saved[, , ]$StimulusSection.nTrialsClass5 +
 #   rat_data$saved[, , ]$StimulusSection.nTrialsClass6 +
 #   rat_data$saved[, , ]$StimulusSection.nTrialsClass7 +
 #   rat_data$saved[, , ]$StimulusSection.nTrialsClass8
-# 
-# 
+#
+#
 # rat_data$saved %>% length()
-# 
+#
 # rat_data %>% length()
 # rat_data$saved[[4]][, , ]
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # rat_data$saved[, , ]$SavingSection.data.file %>% as.character() %>%
 #   substr(start = (nchar(.)-18), stop = nchar(.))
-# 
+#
 # rat_data$saved[, , ]$ProtocolsSection.latest.parsed.events[, , ]$pokes[, , ]$ending.state
-# 
-# 
+#
+#
 # rat_data$saved[, , ]$
-# 
+#
 #   # ProtocolsSection
 #   # AthenaDelayComp
 #   # SavinSection
 #   # AthenaDelayComp
-# 
+#
 #   # SavinSection
 #   rat_data$saved[, , ]$SavingSection.data.file
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # rowwise()
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
+#
+#
+#
 # #---------------------
-# 
+#
 # dtree <- FromListSimple(rat_data$saved)
-# 
-# 
+#
+#
 # install.packages("devtools")
 # devtools::install_github("ropenscilabs/roomba")
 # library(roomba)
-# 
+#
 # rat_data %>%
 #   roomba(cols = c("saved", "saved.history", "saved.autoset", "fig.position"), keep = any)
-# 
+#
 # devtools::install_github("timelyportfolio/reactR")
 # listviewer::reactjson(rat_data)
