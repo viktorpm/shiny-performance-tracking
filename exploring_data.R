@@ -107,6 +107,19 @@ names[str_detect(names,pattern = regex("correc", ignore_case = T))]
 rat_data$saved[, , ]$AthenaDelayComp.timeout.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.violation.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% is.na() %>% sum()
+
+### completed trials
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% `[` (!is.na(.)) %>% length()
+
+### error trials
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% `[` (rat_data$saved[, , ]$AthenaDelayComp.hit.history == 0) %>% na.omit() %>% length()
+
+### correct trials 
+rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% `[` (rat_data$saved[, , ]$AthenaDelayComp.hit.history == 1) %>% na.omit() %>% sum()
+
+
+
+
 rat_data$saved[, , ]$ProtocolsSection.n.done.trials
 rat_data$saved[, , ]$ProtocolsSection.n.completed.trials
 
