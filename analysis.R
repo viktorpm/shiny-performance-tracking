@@ -10,6 +10,7 @@ library(magrittr)
 library(purrr)
 
 
+
 ##############################
 ### Reading csv to tibble ----
 ##############################
@@ -119,6 +120,7 @@ ggplot(
     y = session_length
   )
 ) +
+  theme_dark() +
   geom_line(linetype = "dashed", alpha = 0.4) +
   geom_point() +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +

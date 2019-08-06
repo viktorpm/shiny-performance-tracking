@@ -5,9 +5,9 @@ account: viktorplattner
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1034558
-bundleId: 2291378
+bundleId: 2295436
 url: https://viktorplattner.shinyapps.io/rat_performance/
-when: 1565009495.02891
+when: 1565107251.01711
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: .TRAINING.csv
