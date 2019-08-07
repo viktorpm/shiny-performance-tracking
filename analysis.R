@@ -71,23 +71,22 @@ TRAINING <- TRAINING %>%
 #        key = "trial_type",
 #        value = "No_trials")
 
-TRAINING$session_length %>%
-  TRAINING() %>%
-  dplyr::filter(animal_id == "AA03", date == max(date) - 1, choice_direction == "right_trials") %>%
-  select(done_trials, violation_trials, hit_trials, timeoout_trials)
-
 
 TRAINING %>% names()
 
-TRAINING %>%
-  dplyr::filter(stage != "0_side_poke_on") %>%
-  mutate(donetrials2 = right_trials + left_trials) %>%
-  mutate(difftrials = done_trials - donetrials2) %>%
-  dplyr::filter(difftrials != 0) %>%
-  View()
+
+TRAINING %>% 
+  dplyr::filter(date == "2019-08-05", 
+                choice_direction == "right_trials", 
+                animal_id %in% c("VP02","VP08","VP09")) %>% 
+  select(date, animal_id, protocol ,correct_trials) 
 
 
 
+TRAINING %>% 
+  dplyr::filter(protocol == "@SoundCategorization") %>% 
+  select(animal_id) %>% 
+  unique()
 
 ### Session length distribution
 ggplot(

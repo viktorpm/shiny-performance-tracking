@@ -21,3 +21,4 @@ walk(full_path, ~ ConvertToRDS(file = .x))
 ### reading rds files to a tibble and saving them to a csv file ----
 rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
 walk(rds_list, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
+
