@@ -103,6 +103,7 @@ ui <- fluidPage(
               "No. done trials",
               "No. completed trials",
               "No. correct trials",
+              "Correct ratio",
               "Stage tracking",
               "Missing data"
             )
@@ -176,6 +177,7 @@ ui <- fluidPage(
               "No. done trials",
               "No. completed trials",
               "No. correct trials",
+              "Correct ratio",
               "Stage tracking",
               "Missing data"
             )
@@ -201,7 +203,13 @@ ui <- fluidPage(
           selectInput(
             inputId = "animal_select_SC",
             label = "Select animals to show",
-            choices = TRAINING$animal_id %>% unique() %>% as.vector()
+            #choices = TRAINING$animal_id %>% unique() %>% as.vector()
+            choices = TRAINING %>% 
+              dplyr::filter(protocol == "@SoundCategorization") %>% 
+              select(animal_id) %>% 
+              unique() %>% 
+              pull() %>% 
+              as.vector()
           ),
 
 
