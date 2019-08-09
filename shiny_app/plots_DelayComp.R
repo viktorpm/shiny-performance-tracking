@@ -293,7 +293,7 @@ plots_DelayComp <- function(plottype,
         mapping = aes(col = eval(parse(text = col_by))),
         size = 3
       ) +
-      
+      geom_hline(yintercept = 0.50, col = "gray") + 
       ### scales, labels, themes
       scale_x_date(
         date_breaks = "1 day",
@@ -319,6 +319,7 @@ plots_DelayComp <- function(plottype,
         hjust = -0.5,
         direction = "y"
       ) +
+      annotate("text",x = datelim[1], y = 0.51, label = "Chance level", col = "gray") +
       labs(col = eval(parse(text = "col_lab_name")))
     
     plot(trial_plot)
