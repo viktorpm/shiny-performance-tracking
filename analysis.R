@@ -143,15 +143,16 @@ ggplot(
 ### "2_intord_stim"
 
 ggplot(
-  data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
+  data = TRAINING %>% dplyr::filter(stage == "2_intord_stim"),
   mapping = aes(
     x = animal_id,
     y = No_pokes
   )
 ) +
-  geom_boxplot(aes(fill = choice_direction), alpha = 0.4) +
-  geom_point(aes(group = choice_direction),
-    position = position_dodge(width = 0.75)
+  geom_boxplot(aes(fill = choice_direction), alpha = 0.3) +
+  geom_point(aes(group = choice_direction, col = choice_direction),
+    position = position_dodge(width = 0.75),
+    size = 2
   )
 
 
