@@ -10,6 +10,7 @@ plots_SoundCateg <- function(plottype_SC,
   ### Filtering data table ----
   #############################
 
+  TRAINING_original <- TRAINING
 
   if (f_options_SC == "All animals") {
     TRAINING <- TRAINING %>%
@@ -271,12 +272,12 @@ plots_SoundCateg <- function(plottype_SC,
 
     plot(trial_plot)
   }
-  
-  
+
+
   ############################
   ### PLOT: correct ratio ----
   ############################
-  
+
   if (plottype_SC == "Correct ratio") {
     trial_plot <- ggplot(
       data = TRAINING,
@@ -285,14 +286,14 @@ plots_SoundCateg <- function(plottype_SC,
         y = correct_trials / completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
       )
     ) +
-      
+
       ### lines and points
       lines +
       geom_point(
         mapping = aes(col = eval(parse(text = col_by))),
         size = 3
       ) +
-      geom_hline(yintercept = 0.50, col = "gray") + 
+      geom_hline(yintercept = 0.50, col = "gray") +
       ### scales, labels, themes
       scale_x_date(
         date_breaks = "1 day",
@@ -300,7 +301,7 @@ plots_SoundCateg <- function(plottype_SC,
         minor_breaks = "1 day",
         limits = c(as.Date(datelim_SC[1]), as.Date(datelim_SC[2]))
       ) +
-      ylim(0,1) +
+      ylim(0, 1) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
         axis.text.y = element_text(size = 12),
@@ -314,13 +315,13 @@ plots_SoundCateg <- function(plottype_SC,
             date == max(date)
           ),
         mapping = aes(label = animal_id, col = eval(parse(text = col_by))),
-        
+
         hjust = -0.5,
         direction = "y"
       ) +
-      annotate("text",x = datelim_SC[1], y = 0.51, label = "Chance level", col = "gray") + 
+      annotate("text", x = datelim_SC[1], y = 0.51, label = "Chance level", col = "gray") +
       labs(col = eval(parse(text = "col_lab_name")))
-    
+
     plot(trial_plot)
   }
 

@@ -12,6 +12,8 @@ plots_DelayComp <- function(plottype,
   ### Filtering data table ----
   #############################
 
+  TRAINING_original <- TRAINING
+
   if (f_options == "All animals") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
@@ -114,6 +116,51 @@ plots_DelayComp <- function(plottype,
       labs(col = eval(parse(text = "col_lab_name")))
 
     plot(cp_plot)
+  }
+
+
+
+
+  ################################
+  ### PLOT: left/right trials ----
+  ################################
+
+  if (plottype == "Choice direction") {
+    direction_plot <- ggplot(
+      data = TRAINING_original %>%
+        dplyr::filter(
+          stage %in% stage_filter,
+          date >= datelim[1], date <= datelim[2],
+          protocol == "@AthenaDelayComp"
+        ),
+      mapping = aes(
+        x = animal_id,
+        y = No_pokes # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+      )
+    ) +
+      
+      ### boxplots, points
+      geom_boxplot(aes(fill = choice_direction), alpha = 0.3) +
+      geom_point(aes(group = choice_direction, col = choice_direction),
+        position = position_dodge(width = 0.75),
+        size = 2
+      ) +
+      
+      ### scales, labels, themes
+      ylab("No. pokes") +
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12, hjust = 0.05 ),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold")
+      ) +
+      
+      ### statistics
+      stat_compare_means(aes(group = choice_direction ),
+                         label = "p.signif",
+                         hide.ns = T)
+      
+
+    plot(direction_plot)
   }
 
 
@@ -271,13 +318,13 @@ plots_DelayComp <- function(plottype,
 
     plot(trial_plot)
   }
-  
-  
-  
+
+
+
   ############################
   ### PLOT: correct ratio ----
   ############################
-  
+
   if (plottype == "Correct ratio") {
     trial_plot <- ggplot(
       data = TRAINING,
@@ -286,14 +333,14 @@ plots_DelayComp <- function(plottype,
         y = correct_trials / completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
       )
     ) +
-      
+
       ### lines and points
       lines +
       geom_point(
         mapping = aes(col = eval(parse(text = col_by))),
         size = 3
       ) +
-      geom_hline(yintercept = 0.50, col = "gray") + 
+      geom_hline(yintercept = 0.50, col = "gray") +
       ### scales, labels, themes
       scale_x_date(
         date_breaks = "1 day",
@@ -315,13 +362,13 @@ plots_DelayComp <- function(plottype,
             date == max(date)
           ),
         mapping = aes(label = animal_id, col = eval(parse(text = col_by))),
-        
+
         hjust = -0.5,
         direction = "y"
       ) +
-      annotate("text",x = datelim[1], y = 0.51, label = "Chance level", col = "gray") +
+      annotate("text", x = datelim[1], y = 0.51, label = "Chance level", col = "gray") +
       labs(col = eval(parse(text = "col_lab_name")))
-    
+
     plot(trial_plot)
   }
 

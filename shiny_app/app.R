@@ -1,5 +1,6 @@
 library(shiny)
 library(ggplot2)
+library(ggpubr)
 library(ggrepel)
 library(chron)
 library(padr)
@@ -100,6 +101,7 @@ ui <- fluidPage(
             label = "Select plot type",
             choices = c(
               "CP duration",
+              "Choice direction",
               "No. done trials",
               "No. completed trials",
               "No. correct trials",
@@ -312,6 +314,13 @@ server <- function(input, output, session) {
   })
 
   observe({
+    if(input$plot_type == "Choice direction") {
+      disable("animal_select")
+      disable("exp_select")
+      disable("f_options")
+      hide("perform")
+    }
+    
     if (input$f_options == "All animals") {
       disable("animal_select")
       disable("exp_select")
