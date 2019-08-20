@@ -96,7 +96,12 @@ ggplot(
   mapping = aes(x = session_length)
 ) +
   geom_histogram(bins = 70) +
-  scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F)
+  scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F) + 
+  geom_vline(xintercept = TRAINING %>% 
+               dplyr::filter(date == max(date), choice_direction == "right_trials") %>% 
+               select(session_length) %>% pull() %>% 
+               mean()
+             )
 
 
 
