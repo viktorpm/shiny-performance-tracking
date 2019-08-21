@@ -176,6 +176,7 @@ ui <- fluidPage(
             label = "Select plot type",
             choices = c(
               "CP duration",
+              "Choice direction",
               "No. done trials",
               "No. completed trials",
               "No. correct trials",
@@ -205,12 +206,12 @@ ui <- fluidPage(
           selectInput(
             inputId = "animal_select_SC",
             label = "Select animals to show",
-            #choices = TRAINING$animal_id %>% unique() %>% as.vector()
-            choices = TRAINING %>% 
-              dplyr::filter(protocol == "@SoundCategorization") %>% 
-              select(animal_id) %>% 
-              unique() %>% 
-              pull() %>% 
+            # choices = TRAINING$animal_id %>% unique() %>% as.vector()
+            choices = TRAINING %>%
+              dplyr::filter(protocol == "@SoundCategorization") %>%
+              select(animal_id) %>%
+              unique() %>%
+              pull() %>%
               as.vector()
           ),
 
@@ -314,55 +315,59 @@ server <- function(input, output, session) {
   })
 
   observe({
-    if(input$plot_type == "Choice direction") {
+    if (input$plot_type == "Choice direction") {
       disable("animal_select")
       disable("exp_select")
       disable("f_options")
       hide("perform")
-    }
-    
-    if (input$f_options == "All animals") {
-      disable("animal_select")
-      disable("exp_select")
-      hide("perform")
-    }
-
-    if (input$f_options == "Experimenter") {
-      enable("exp_select")
-      disable("animal_select")
-      hide("perform")
-    }
-
-    if (input$f_options == "Individual animals") {
+    } else {
       enable("animal_select")
-      disable("exp_select")
-      show("perform")
+      enable("exp_select")
+      enable("f_options")
 
-      output$perform <- DT::renderDataTable(
-        TRAINING %>%
-          dplyr::filter(
-            animal_id == input$animal_select,
-            choice_direction == "right_trials",
-            protocol == "@AthenaDelayComp",
-            date >= input$setdate[1],
-            date <= input$setdate[2]
-          ) %>%
-          select(
-            date,
-            done_trials,
-            completed_trials,
-            correct_trials,
-            error_trials,
-            violation_trials,
-            timeoout_trials
-          ) %>%
-          mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
-          mutate(difference = done_trials - sum) %>%
-          mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
-            round(2)) %>%
-          mutate("violation_ratio (violation/done)" = (violation_trials / done_trials) %>%
-            round(2))
-      )
+      if (input$f_options == "All animals") {
+        disable("animal_select")
+        disable("exp_select")
+        hide("perform")
+      }
+
+      if (input$f_options == "Experimenter") {
+        enable("exp_select")
+        disable("animal_select")
+        hide("perform")
+      }
+
+      if (input$f_options == "Individual animals") {
+        enable("animal_select")
+        disable("exp_select")
+        show("perform")
+
+        output$perform <- DT::renderDataTable(
+          TRAINING %>%
+            dplyr::filter(
+              animal_id == input$animal_select,
+              choice_direction == "right_trials",
+              protocol == "@AthenaDelayComp",
+              date >= input$setdate[1],
+              date <= input$setdate[2]
+            ) %>%
+            select(
+              date,
+              all_trials,
+              completed_trials,
+              correct_trials,
+              error_trials,
+              violation_trials,
+              timeoout_trials
+            ) %>%
+            mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
+            mutate(difference = all_trials - sum) %>%
+            mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
+              round(2)) %>%
+            mutate("violation_ratio (violation/done)" = (violation_trials / all_trials) %>%
+              round(2))
+        )
+      }
     }
   })
   output$plot <- renderPlot({
@@ -389,48 +394,59 @@ server <- function(input, output, session) {
 
 
   observe({
-    if (input$f_options_SC == "All animals") {
+    if (input$plot_type_SC == "Choice direction") {
       disable("animal_select_SC")
       disable("exp_select_SC")
+      disable("f_options_SC")
       hide("perform_SC")
-    }
-
-    if (input$f_options_SC == "Experimenter") {
-      enable("exp_select_SC")
-      disable("animal_select_SC")
-      hide("perform_SC")
-    }
-
-    if (input$f_options_SC == "Individual animals") {
+    } else {
       enable("animal_select_SC")
-      disable("exp_select_SC")
-      show("perform_SC")
+      enable("exp_select_SC")
+      enable("f_options_SC")
 
-      output$perform_SC <- DT::renderDataTable(
-        TRAINING %>%
-          dplyr::filter(
-            animal_id == input$animal_select_SC,
-            choice_direction == "right_trials",
-            protocol == "@SoundCategorization",
-            date >= input$setdate_SC[1],
-            date <= input$setdate_SC[2]
-          ) %>%
-          select(
-            date,
-            done_trials,
-            completed_trials,
-            correct_trials,
-            error_trials,
-            violation_trials,
-            timeoout_trials
-          ) %>%
-          mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
-          mutate(difference = done_trials - sum) %>%
-          mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
-            round(2)) %>%
-          mutate("violation_ratio (violation/done)" = (violation_trials / done_trials) %>%
-            round(2))
-      )
+      if (input$f_options_SC == "All animals") {
+        disable("animal_select_SC")
+        disable("exp_select_SC")
+        hide("perform_SC")
+      }
+
+      if (input$f_options_SC == "Experimenter") {
+        enable("exp_select_SC")
+        disable("animal_select_SC")
+        hide("perform_SC")
+      }
+
+      if (input$f_options_SC == "Individual animals") {
+        enable("animal_select_SC")
+        disable("exp_select_SC")
+        show("perform_SC")
+
+        output$perform_SC <- DT::renderDataTable(
+          TRAINING %>%
+            dplyr::filter(
+              animal_id == input$animal_select_SC,
+              choice_direction == "right_trials",
+              protocol == "@SoundCategorization",
+              date >= input$setdate_SC[1],
+              date <= input$setdate_SC[2]
+            ) %>%
+            select(
+              date,
+              all_trials,
+              completed_trials,
+              correct_trials,
+              error_trials,
+              violation_trials,
+              timeoout_trials
+            ) %>%
+            mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
+            mutate(difference = all_trials - sum) %>%
+            mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
+              round(2)) %>%
+            mutate("violation_ratio (violation/done)" = (violation_trials / all_trials) %>%
+              round(2))
+        )
+      }
     }
   })
 
