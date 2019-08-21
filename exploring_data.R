@@ -99,18 +99,64 @@ rat_data <- readRDS(file.path(
   "D:", "_R_WD", "git_projects",
   "r_codes_rat_wm", "data",
   "rds_files",
-  "data_@AthenaDelayComp_athena_AA02_190731a.mat.rds"
+  "data_@AthenaDelayComp_athena_AA01_190516a.mat.rds"
 ))
 
-names <- rat_data$saved[, , ] %>% names()
+mat_data <- tibble(names = rat_data$saved[, , ] %>% names(),
+                   value = rat_data$saved[, , ],
+                   class = lapply(rat_data$saved[, , ], class),
+                   type = lapply(rat_data$saved[, , ], typeof)
+)
+
+
+names = rat_data$saved[, , ] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names, pattern = regex("correc", ignore_case = T))]
+names[str_detect(names, pattern = regex("Right", ignore_case = T))]
 
 rat_data$saved[, , ]$AthenaDelayComp.timeout.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.violation.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
   is.na() %>%
   sum()
+
+rat_data$saved[, , ]$OverallPerformanceSection.Right.hit.frac
+rat_data$saved[, , ]$OverallPerformanceSection.Left.hit.frac
+
+rat_data$saved[, , ]$SideSection.previous.sides %>% 
+  intToUtf8(multiple = T) %>% 
+  `[` (.=="r") %>% 
+  length()
+
+rat_data$saved[, , ]$SideSection.previous.sides %>% 
+  intToUtf8(multiple = T) %>% 
+  `[` (.=="l") %>% 
+  length()
+
+
+rat_data$saved[, , ]$ProtocolsSection.n.done.trials
+
+
+rat_data$saved[, , ]$StimulusSection.nTrialsClass1 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass2 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass3 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass4 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass5 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass6 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass7 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass8
+  
+
+
+
+# left trials
+rat_data$saved[, , ]$StimulusSection.nTrialsClass5 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass6 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass7 +
+  rat_data$saved[, , ]$StimulusSection.nTrialsClass8
+
+
+
+SideSection.previous.sides %>% intToUtf8()
 
 ### completed trials
 rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%

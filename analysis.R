@@ -67,13 +67,17 @@ TRAINING <- TRAINING %>%
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
   ungroup() %>%
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") # %>%
-# gather(done_trials, violation_trials, hit_trials, timeoout_trials,
+# gather(all_trials, violation_trials, hit_trials, timeoout_trials,
 #        key = "trial_type",
 #        value = "No_trials")
 
 
 TRAINING %>% names()
 
+identical(
+TRAINING$right_trials + TRAINING$left_trials,
+TRAINING$all_trials
+)
 
 TRAINING %>% 
   dplyr::filter(date == "2019-08-05", 
@@ -124,7 +128,6 @@ ggplot(
     y = session_length
   )
 ) +
-  theme_dark() +
   geom_line(linetype = "dashed", alpha = 0.4) +
   geom_point() +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
@@ -143,7 +146,7 @@ ggplot(
 ### "2_intord_stim"
 
 ggplot(
-  data = TRAINING %>% dplyr::filter(stage == "2_intord_stim"),
+  data = TRAINING %>% dplyr::filter(protocol == "@SoundCategorization"),
   mapping = aes(
     x = animal_id,
     y = No_pokes
@@ -167,7 +170,7 @@ ggplot(
 
   mapping = aes(
     x = animal_id,
-    y = done_trials # / ((session_length * 60 * 24) %>% as.numeric())
+    y = all_trials # / ((session_length * 60 * 24) %>% as.numeric())
   )
 ) +
   geom_boxplot()
@@ -236,7 +239,7 @@ ggplot(
   data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
   mapping = aes(
     x = date,
-    y = done_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+    y = all_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
   )
 ) +
 
@@ -280,7 +283,7 @@ ggplot(
 
 ggplot(
   data = TRAINING %>% dplyr::filter(stage == "1_center_poke_on"),
-  mapping = aes(y = done_trials, x = total_CP)
+  mapping = aes(y = all_trials, x = total_CP)
 ) +
   geom_point(mapping = aes(col = animal_id))
 
