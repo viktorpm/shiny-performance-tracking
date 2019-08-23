@@ -1,4 +1,5 @@
 library(ggplot2)
+library(plotly)
 library(ggrepel)
 library(chron)
 library(padr)
@@ -145,7 +146,7 @@ ggplot(
 ### "1_center_poke_on"
 ### "2_intord_stim"
 
-ggplot(
+p <- ggplot(
   data = TRAINING %>% dplyr::filter(protocol == "@SoundCategorization"),
   mapping = aes(
     x = animal_id,
@@ -158,7 +159,7 @@ ggplot(
     size = 2
   )
 
-
+ggplotly(p)
 
 
 ##################################
@@ -295,8 +296,8 @@ ggplot(
 ### PLOT: stage transition track ----
 #####################################
 
-ggplot(
-  data = TRAINING %>% dplyr::filter(experimenter == "athena"),
+p <- ggplot(
+  data = TRAINING %>% dplyr::filter(date > "2019-07-20"),
   mapping = aes(x = date, y = animal_id)
 ) +
   geom_point(aes(col = as.character(stage)), size = 6) +
@@ -320,7 +321,7 @@ ggplot(
 
 
 
-
+ggplotly(p)
 
 ########################################
 ### PLOT: missing data points track ----
@@ -333,7 +334,7 @@ recording_dates <- TRAINING %>%
   pad(start_val = TRAINING$date %>% min(), end_val = TRAINING$date %>% max()) %>%
   mutate(day_name = weekdays(date)) %>%
   mutate(weekend = is.weekend(date)) %>%
-  select(date, day_name, trained, rig) %>%
+  select(date, day_name, trained, rig_id) %>%
   mutate(trained = replace(trained, is.na(trained), F)) %>%
   ungroup() %>%
   rowwise() %>%
@@ -344,7 +345,7 @@ recording_dates <- TRAINING %>%
 ggplot(
   data = recording_dates,
   # mutate(animal_id = fct_reorder(animal_id, rig)),
-  mapping = aes(x = date, y = fct_reorder(animal_id, rig))
+  mapping = aes(x = date, y = fct_reorder(animal_id, rig_id, na.rm = T))
 ) +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) +
@@ -353,7 +354,7 @@ ggplot(
   geom_label_repel(
     data = recording_dates %>%
       dplyr::filter(date == max(date)),
-    mapping = aes(label = rig, fill = as.character(rig)),
+    mapping = aes(label = rig_id, fill = as.character(rig_id)),
     direction = "y",
     hjust = -1
   ) +

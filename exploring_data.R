@@ -105,7 +105,9 @@ rat_data <- readRDS(file.path(
 mat_data <- tibble(names = rat_data$saved[, , ] %>% names(),
                    value = rat_data$saved[, , ],
                    class = lapply(rat_data$saved[, , ], class),
+                   dimension = lapply(rat_data$saved[, , ], dim),
                    type = lapply(rat_data$saved[, , ], typeof)
+                   
 )
 
 

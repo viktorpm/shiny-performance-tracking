@@ -6,13 +6,13 @@ TRAINING <- read_csv(file.path("TRAINING.csv"))
 ### Creating session matrix ----
 ################################
 
-rigs_sessions <- matrix(
-  data = c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02", "VP01", "VP02", "AA03", "AA04", "DO03", "DO04", "SC03", "SC04", "VP03", "VP04", "AA05", "AA06", "DO05", "DO06", "SC05", "SC06", "VP05", "VP06", "AA07", "AA08", "DO07", "DO08", "VP07", "VP08"),
-  nrow = 6,
-  ncol = 5
-)
-rownames(rigs_sessions) <- c("rig_1", "rig_2", "rig_3", "rig_4", "rig_5", "rig_6")
-colnames(rigs_sessions) <- c("session_1", "session_2", "session_3", "session_4", "session_5")
+# rigs_sessions <- matrix(
+#   data = c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02", "VP01", "VP02", "AA03", "AA04", "DO03", "DO04", "SC03", "SC04", "VP03", "VP04", "AA05", "AA06", "DO05", "DO06", "SC05", "SC06", "VP05", "VP06", "AA07", "AA08", "DO07", "DO08", "VP07", "VP08"),
+#   nrow = 6,
+#   ncol = 5
+# )
+# rownames(rigs_sessions) <- c("rig_1", "rig_2", "rig_3", "rig_4", "rig_5", "rig_6")
+# colnames(rigs_sessions) <- c("session_1", "session_2", "session_3", "session_4", "session_5")
 
 
 
