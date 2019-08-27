@@ -46,8 +46,8 @@ TRAINING <- TRAINING %>%
   )) %>%
   mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>%
   rowwise() %>%
-  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
-  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
+  # mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
+  # mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
   ungroup() %>%
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
 
