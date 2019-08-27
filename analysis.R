@@ -336,10 +336,12 @@ recording_dates <- TRAINING %>%
   mutate(weekend = is.weekend(date)) %>%
   select(date, day_name, trained, rig_id) %>%
   mutate(trained = replace(trained, is.na(trained), F)) %>%
+  mutate(rig_id = replace(rig_id, is.na(rig_id), "Unknown")) %>% 
   ungroup() %>%
   rowwise() %>%
-  mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
-  mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
+  mutate(rig_id = replace(rig_id, (nchar(rig_id) == 1), paste0("0",rig_id)) ) %>% 
+  # mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
+  # mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
   ungroup()
 
 ggplot(

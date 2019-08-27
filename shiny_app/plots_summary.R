@@ -91,15 +91,19 @@ plots_summary <- function(plottype_sum,
       mutate(weekend = is.weekend(date)) %>%
       select(date, day_name, trained, rig_id) %>%
       mutate(trained = replace(trained, is.na(trained), F)) %>%
-      ungroup() 
-      #rowwise() %>%
+      #mutate(rig_id = replace(rig_id, is.na(rig_id), "Unknown")) %>% 
+      ungroup() %>% 
+      rowwise() %>%
+      mutate(rig_id = replace(rig_id, (nchar(rig_id) == 1), paste0("0",rig_id))) %>% 
       #mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
       #mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
-      #ungroup()
+      ungroup()
+
+
 
     missing_plot <- ggplot(
       data = recording_dates,
-      mapping = aes(x = date, y = fct_reorder(animal_id, rig_id, na.rm = T))
+      mapping = aes(x = date, y = fct_reorder(animal_id, as.numeric(rig_id), na.rm = T))
     ) +
       scale_x_date(
         date_breaks = "1 day",
@@ -118,7 +122,7 @@ plots_summary <- function(plottype_sum,
       geom_label_repel(
         data = recording_dates %>%
           dplyr::filter(date == pick_date),
-        mapping = aes(label = rig_id, fill = as.character(rig_id)),
+        mapping = aes(label = as.character(rig_id), fill = as.character(rig_id)),
         direction = "y",
         hjust = -1
       ) +
