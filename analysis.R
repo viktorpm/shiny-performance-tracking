@@ -336,7 +336,7 @@ recording_dates <- TRAINING %>%
   mutate(weekend = is.weekend(date)) %>%
   select(date, day_name, trained, rig_id) %>%
   mutate(trained = replace(trained, is.na(trained), F)) %>%
-  mutate(rig_id = replace(rig_id, is.na(rig_id), "Unknown")) %>% 
+  mutate(rig_id = replace(rig_id, is.na(rig_id), "??")) %>% 
   ungroup() %>%
   rowwise() %>%
   mutate(rig_id = replace(rig_id, (nchar(rig_id) == 1), paste0("0",rig_id)) ) %>% 
@@ -347,8 +347,7 @@ recording_dates <- TRAINING %>%
 ggplot(
   data = recording_dates,
   # mutate(animal_id = fct_reorder(animal_id, rig)),
-  mapping = aes(x = date, y = fct_reorder(animal_id, rig_id, na.rm = T))
-) +
+  mapping = aes(x = date, y = fct_reorder(animal_id, as.numeric(rig_id), na.rm = T))) +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 90, vjust = -0.001)) +
   # geom_raster(aes(fill = trained))
