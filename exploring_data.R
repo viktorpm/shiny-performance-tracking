@@ -102,6 +102,8 @@ rat_data <- readRDS(file.path(
   "data_@AthenaDelayComp_athena_AA01_190516a.mat.rds"
 ))
 
+rat_data %>% names()
+
 mat_data <- tibble(names = rat_data$saved[, , ] %>% names(),
                    value = rat_data$saved[, , ],
                    class = lapply(rat_data$saved[, , ], class),
