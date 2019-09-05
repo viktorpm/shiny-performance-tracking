@@ -47,14 +47,14 @@ TRAINING <- TRAINING %>%
     yes = "empty_field_in_mat_file",
     no = settings_file %>% substr(start = nchar(.) - 10, stop = nchar(.) - 4)
   )) %>%
-  mutate(protocol = file %>% substr(
-    start = file %>% gregexpr(pattern = "@") %>% unlist(),
-    stop = file %>%
-      gregexpr(pattern = "_") %>%
-      map(~ .x[[2]]) %>%
-      # https://community.rstudio.com/t/extract-single-list-element-as-part-of-a-pipeline/1095/5
-      unlist() %>% `-`(1)
-  )) %>%
+  # mutate(protocol = file %>% substr(
+  #   start = file %>% gregexpr(pattern = "@") %>% unlist(),
+  #   stop = file %>%
+  #     gregexpr(pattern = "_") %>%
+  #     map(~ .x[[2]]) %>%
+  #     # https://community.rstudio.com/t/extract-single-list-element-as-part-of-a-pipeline/1095/5
+  #     unlist() %>% `-`(1)
+  # )) %>%
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
   mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
   mutate(stage = replace(
