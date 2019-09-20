@@ -104,6 +104,12 @@ rat_data <- readRDS(file.path(
 
 rat_data %>% names()
 
+rat_data$saved[, , ] %>% 
+  names() %>% `[`(1) %>% 
+  as.character() %>% 
+  substr(start = 1, stop = gregexpr(., pattern = "\\."))
+  
+
 mat_data <- tibble(names = rat_data$saved[, , ] %>% names(),
                    value = rat_data$saved[, , ],
                    class = lapply(rat_data$saved[, , ], class),

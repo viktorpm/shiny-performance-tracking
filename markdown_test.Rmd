@@ -10,13 +10,13 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 
 
 
-Reading training data from CSV
+### Reading training data from CSV
 
 ```{r}
 TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 ```
 
-Creating session matrix
+### Creating session matrix
 
 ```{r}
 rigs_sessions <- matrix(data = c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02","VP01", "VP02", "AA03", "AA04", "DO03", "DO04","SC03", "SC04", "VP03", "VP04", "AA05", "AA06","DO05", "DO06", "SC05", "SC06", "VP05", "VP06","AA07", "AA08", "DO07", "DO08", "VP07", "VP08"),
@@ -27,7 +27,7 @@ colnames(rigs_sessions) <- c("session_1","session_2","session_3","session_4","se
 ```
 
 
-Filtering and tidying up the raw CSV document. Creating new variables
+### Filtering and tidying up the raw CSV document. Creating new variables
 
 ```{r}
 TRAINING <- TRAINING %>%
@@ -63,7 +63,7 @@ TRAINING <- TRAINING %>%
 
 
 
-Plotting session lengths
+### Plotting session lengths
 
 ```{r}
 ggplot(data = TRAINING %>% 
@@ -76,10 +76,10 @@ ggplot(data = TRAINING %>%
 ```
 
 
-PLOT: session length over time
+### Session length over time
 
 
-```{r}
+```{r, fig.width=15}
 
 ggplot(
   data = TRAINING,
@@ -93,6 +93,22 @@ ggplot(
   geom_point() +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
+```
+
+
+```{r}
+ggplot(
+  data = TRAINING %>% dplyr::filter(protocol == "@SoundCategorization"),
+  mapping = aes(
+    x = animal_id,
+    y = No_pokes
+  )
+) +
+  geom_boxplot(aes(fill = choice_direction), alpha = 0.3) +
+  geom_point(aes(group = choice_direction, col = choice_direction),
+    position = position_dodge(width = 0.75),
+    size = 2
+  )
 ```
 
 
