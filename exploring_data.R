@@ -241,95 +241,107 @@ ReadData("data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds")
 rat_data$saved[, , ]$SavingSection.settings.file
 
 
-# termId <- rstudioapi::terminalExecute("ubuntu")
-# rstudioapi::terminalExecute("ssh vplattner@172.24.155.100")
 
 
-# TRAINING <- ReadData(filename = "data_@AthenaDelayComp_viktor_VP01_190425a.mat") %>% as_tibble()
-# TRAINING
-#
-#
-# ReadData(filename = "v2.mat") %>% TRAININGtoCSV()
-#
-#
-#
-# tmp <- ReadData(filename = "v1.mat") %>% as_tibble()
-#
-# bind_rows(tmp, ReadData(filename = "v2.mat") %>% as_tibble())
-#
-#
-#
-#
-#
-# write_TRAINING <- as.tibble(ReadMatFile_output$file_info)
-#
-#
-#
-# # rat_data$saved[,,]$SavingSection.title
-#
-#
-# # right trials
-# rat_data$saved[, , ]$StimulusSection.nTrialsClass1 +
-#   rat_data$saved[, , ]$StimulusSection.nTrialsClass2 +
-#   rat_data$saved[, , ]$StimulusSection.nTrialsClass3 +
-#   rat_data$saved[, , ]$StimulusSection.nTrialsClass4
-#
-#
-#
-# # left trials
-# rat_data$saved[, , ]$StimulusSection.nTrialsClass5 +
-#   rat_data$saved[, , ]$StimulusSection.nTrialsClass6 +
-#   rat_data$saved[, , ]$StimulusSection.nTrialsClass7 +
-#   rat_data$saved[, , ]$StimulusSection.nTrialsClass8
-#
-#
-# rat_data$saved %>% length()
-#
-# rat_data %>% length()
-# rat_data$saved[[4]][, , ]
-#
-#
-#
-#
-# rat_data$saved[, , ]$SavingSection.data.file %>% as.character() %>%
-#   substr(start = (nchar(.)-18), stop = nchar(.))
-#
-# rat_data$saved[, , ]$ProtocolsSection.latest.parsed.events[, , ]$pokes[, , ]$ending.state
-#
-#
-# rat_data$saved[, , ]$
-#
-#   # ProtocolsSection
-#   # AthenaDelayComp
-#   # SavinSection
-#   # AthenaDelayComp
-#
-#   # SavinSection
-#   rat_data$saved[, , ]$SavingSection.data.file
-#
-#
-#
-#
-# rowwise()
-#
-#
-#
-#
-#
-#
-#
-#
-# #---------------------
-#
-# dtree <- FromListSimple(rat_data$saved)
-#
-#
-# install.packages("devtools")
-# devtools::install_github("ropenscilabs/roomba")
-# library(roomba)
-#
-# rat_data %>%
-#   roomba(cols = c("saved", "saved.history", "saved.autoset", "fig.position"), keep = any)
-#
-# devtools::install_github("timelyportfolio/reactR")
-# listviewer::reactjson(rat_data)
+
+
+#### Bpod data -----------------
+
+
+rat_data <- readRDS(file.path(
+  "D:", "_R_WD", "git_projects",
+  "r_codes_rat_wm", "data",
+  "rds_files",
+  "DefaultSettings.mat.rds"
+  #"VP04_Gap_Detection_20190822_095255.mat.rds"
+))
+
+rat_data <- readRDS(file.path(
+  "D:", "_R_WD", "git_projects",
+  "r_codes_rat_wm", "data",
+  "rds_files",
+  "data_@AthenaDelayComp_athena_AA01_190516a.mat.rds"
+))
+
+
+
+rat_data %>% names() %in% "saved" %>% any()
+
+
+rat_data$SessionData[,,]$RawData[,,]$OriginalStateData
+rat_data$SessionData[,,]$OnlinePlotParams[,,]$PlotColour
+rat_data$SessionData[,,]$RawEvents[,,]$Trial[[1]]
+
+rat_data$SessionData[,,]$Info[,,]$SessionStartTime.MATLAB%>%
+  as.numeric() %>% `-`(719529) %>% `*`(86400) %>% 
+  as.POSIXct(origin = "1970-01-01", tz = "UTC") %>%
+  as.character()  %>%
+  substr(12, 21)
+
+rat_data$SessionData[,,]$Info[,,]$SessionStartTime.MATLAB
+
+rat_data$SessionData[,,]$Info[,,]$SessionDate %>% as.character() 
+
+
+
+
+rat_data$saved[, , ]$SavingSection.SaveTime %>%
+  as.character() %>%
+  substr(1, 11)
+
+
+
+substr("VP05_Gap_Detection_20190828_113737.mat",
+       start = 1,
+       stop = gregexpr(pattern = "_",
+                       "VP05_Gap_Detection_20190828_113737.mat") %>% unlist %>% `[` (1) - 1)
+
+
+
+
+
+
+if (rat_data %>% names() %in% "SessionData" %>% any()) {
+  data_source = "bpod"
+}
+
+
+if(rat_data %>% names() %in% "saved" %>% any()) {
+  data_source = "bcontrol"
+}
+
+
+
+
+
+
+in_path <- file.path("D:",
+                     "_Rig_data",
+                     "SoloData",
+                     "Data",
+                     "emmett")
+file_list <- list.files(file.path("D:",
+                                  "_Rig_data",
+                                  "SoloData",
+                                  "Data",
+                                  "emmett"),
+                        pattern = "\\.mat$", ### only mat files 
+                        recursive = T) %>%
+  as.list() 
+full_path <- paste0(in_path, "/", file_list)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

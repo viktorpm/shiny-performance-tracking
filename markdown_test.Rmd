@@ -4,21 +4,13 @@ author: Viktor Plattner
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
-
-
-### Reading training data from CSV
-
-```{r}
+```{r, include=FALSE}
 TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 ```
 
-### Creating session matrix
 
-```{r}
+```{r, include=FALSE}
 rigs_sessions <- matrix(data = c("AA01", "AA02", "DO01", "DO02", "SC01", "SC02","VP01", "VP02", "AA03", "AA04", "DO03", "DO04","SC03", "SC04", "VP03", "VP04", "AA05", "AA06","DO05", "DO06", "SC05", "SC06", "VP05", "VP06","AA07", "AA08", "DO07", "DO08", "VP07", "VP08"),
                         nrow = 6,
                         ncol = 5)
@@ -27,9 +19,8 @@ colnames(rigs_sessions) <- c("session_1","session_2","session_3","session_4","se
 ```
 
 
-### Filtering and tidying up the raw CSV document. Creating new variables
 
-```{r}
+```{r, include=FALSE}
 TRAINING <- TRAINING %>%
   mutate(date = date %>% as.Date(format = c("%d-%b-%Y"))) %>%
   mutate(animal_id = animal_id %>% toupper()) %>%
