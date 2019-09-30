@@ -1,17 +1,17 @@
 ---
 title: |
   | Weekly report of animal performance
-  | (sound categorization, `r params$exp`)
+  | (sound categorization, `r params$exp_SC`)
  
 output: pdf_document
 
 
 params:
-  exp: NA
-  stg: NA
-  fil: NA
-  ani: NA
-  dt: NA
+  exp_SC: NA
+  stg_SC: NA
+  fil_SC: NA
+  ani_SC: NA
+  dt_SC: NA
   
 header-includes:
   - \usepackage{booktabs}
@@ -44,7 +44,7 @@ library(kableExtra)
 ```{r}
 TRAINING %>%
             dplyr::filter(
-              experimenter == params$exp,
+              experimenter == params$exp_SC,
               choice_direction == "right_trials",
               protocol == "@SoundCategorization",
               date == max(date)
@@ -76,10 +76,10 @@ TRAINING %>%
  plots_SoundCateg(
       plottype_SC = "No. completed trials",
       #datelim_SC = params$dt,
-      stage_filter_SC = params$stg,
-      f_options_SC = params$fil,
-      animal_filter_SC = params$ani,
-      exp_SC = params$exp
+      stage_filter_SC = params$stg_SC,
+      f_options_SC = params$fil_SC,
+      animal_filter_SC = params$ani_SC,
+      exp_SC = params$exp_SC
     )
 ```
 
@@ -91,9 +91,9 @@ TRAINING %>%
  plots_SoundCateg(
       plottype_SC = "Correct ratio",
       #datelim_SC = params$dt,
-      stage_filter_SC = params$stg,
-      f_options_SC = params$fil,
-      animal_filter_SC = params$ani,
-      exp_SC = params$exp
+      stage_filter_SC = params$stg_SC,
+      f_options_SC = params$fil_SC,
+      animal_filter_SC = params$ani_SC,
+      exp_SC = params$exp_SC
     )
 ```

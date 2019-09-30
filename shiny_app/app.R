@@ -502,20 +502,20 @@ server <- function(input, output, session) {
   ### @SoundCategorization generate report ----
   
   output$report_SC <- downloadHandler(
-    filename = "weekly_report.pdf",
+    filename = "weekly_report_SC.pdf",
     content = function(file){
       tempReport <- file.path(tempdir(), "weekly_report_SC.Rmd") %>% 
         normalizePath()
       file.copy(from = "weekly_report_SC.Rmd", to = tempReport, overwrite = T)
       library(rmarkdown)
-      params <- list(exp = input$exp_select,
-                     stg = input$stage,
-                     fil = input$f_options,
-                     ani = input$animal_select,
-                     dt = input$setdate)
+      params_SC <- list(exp_SC = input$exp_select_SC,
+                     stg_SC = input$stage_SC,
+                     fil_SC = input$f_options_SC,
+                     ani_SC = input$animal_select_SC,
+                     dt_SC = input$setdate_SC)
       rmarkdown::render(input = tempReport,
                         output_file = file,
-                        params = params,
+                        params = params_SC,
                         envir = new.env(parent = globalenv())
       )
     }
