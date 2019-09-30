@@ -18,6 +18,7 @@ library(DT)
 library(plotly)
 library(knitr)
 library(kableExtra)
+library(rmarkdown)
 
 
 
