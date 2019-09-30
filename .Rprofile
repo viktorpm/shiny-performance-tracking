@@ -23,3 +23,6 @@ library(shiny)
 library(DT)
 library(shinyjs)
 
+library(knitr)
+library(kableExtra)
+library(rmarkdown)
