@@ -1,0 +1,101 @@
+---
+title: | 
+  | Weekly report of animal performance 
+  | (delay comparison, `r params$exp`)
+ 
+ 
+output: pdf_document
+
+
+params:
+  exp: NA
+  stg: NA
+  fil: NA
+  ani: NA
+  dt: NA
+  
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage[normalem]{ulem}
+  - \usepackage[utf8]{inputenc}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(knitr)
+library(kableExtra)
+
+```
+
+# Summary of last day's performance
+
+```{r}
+TRAINING %>%
+            dplyr::filter(
+              experimenter == params$exp,
+              choice_direction == "right_trials",
+              protocol == "@AthenaDelayComp",
+              date == max(date)
+            ) %>%
+  mutate(correct_ratio = (correct_trials / completed_trials) %>%
+           round(2)) %>%
+  mutate(violation_ratio = (violation_trials / all_trials) %>%
+              round(2)) %>% 
+  select(
+    animal_id,
+    date,
+    stage,
+    correct_trials,
+    error_trials,
+    violation_trials,
+    timeoout_trials,
+    correct_ratio,
+    violation_ratio
+    ) %>% 
+  knitr::kable(format = "latex", booktabs = T) %>% 
+  kable_styling(latex_options = c("scale_down", "striped"))
+```
+
+
+
+
+# Number of completed trials
+
+```{r, fig.width=12, fig.height=10}
+ plots_DelayComp(
+      plottype = "No. completed trials",
+      #datelim = params$dt,
+      stage_filter = params$stg,
+      f_options = params$fil,
+      animal_filter = params$ani,
+      exp = params$exp
+    )
+```
+
+
+
+# Ratio of correct trials
+
+```{r, fig.width=12, fig.height=10}
+ plots_DelayComp(
+      plottype = "Correct ratio",
+      #datelim = params$dt,
+      stage_filter = params$stg,
+      f_options = params$fil,
+      animal_filter = params$ani,
+      exp = params$exp
+    )
+```

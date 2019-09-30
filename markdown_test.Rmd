@@ -5,7 +5,7 @@ output: html_notebook
 ---
 
 
-```{r, include=FALSE}
+```{r,  include=FALSE}
 TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 ```
 

@@ -16,6 +16,8 @@ library(purrr)
 library(shinyjs)
 library(DT)
 library(plotly)
+library(knitr)
+library(kableExtra)
 
 
 
@@ -29,9 +31,9 @@ source(file.path("plots_summary.R"))
 
 
 
-###################
+
 ########## UI -----
-###################
+
 
 
 
@@ -41,7 +43,6 @@ ui <- fluidPage(
     "Protocols",
 
     ### Summary panel ----
-    ######################
 
     tabPanel(
       "Summary",
@@ -88,7 +89,7 @@ ui <- fluidPage(
 
 
     ### @AthenaDelayComp panel ----
-    ###############################
+
 
     tabPanel(
       "@AthenaDelayComp",
@@ -107,8 +108,8 @@ ui <- fluidPage(
               "No. completed trials",
               "No. correct trials",
               "Correct ratio",
-              "Stage tracking",
-              "Missing data"
+              "Stage tracking"
+              #"Missing data"
             )
           ),
 
@@ -126,6 +127,8 @@ ui <- fluidPage(
             label = "Select experimenter",
             choices = TRAINING$experimenter %>% unique() %>% as.vector()
           ),
+          
+          downloadButton("report", "Generate report"),
 
 
           selectInput(
@@ -165,7 +168,6 @@ ui <- fluidPage(
 
 
     ### @SoundCategorization panel ----
-    ###################################
 
     tabPanel(
       "@SoundCategorization",
@@ -182,8 +184,8 @@ ui <- fluidPage(
               "No. completed trials",
               "No. correct trials",
               "Correct ratio",
-              "Stage tracking",
-              "Missing data"
+              "Stage tracking"
+              #"Missing data"
             )
           ),
 
@@ -201,7 +203,9 @@ ui <- fluidPage(
             label = "Select experimenter",
             choices = TRAINING$experimenter %>% unique() %>% as.vector()
           ),
-
+          
+          
+          downloadButton("report_SC", "Generate report"),
 
 
           selectInput(
@@ -248,15 +252,15 @@ ui <- fluidPage(
 )
 
 
-###################
+
 ###### Server -----
-###################
+
 
 server <- function(input, output, session) {
 
 
-  ### Summary panel ----
-  ######################
+  ### @AthenaDelayComp Summary panel ----
+
 
   create_plot_sum <- reactive({
     plots_summary(
@@ -299,8 +303,8 @@ server <- function(input, output, session) {
 
 
 
-  ### @AthenaDelayComp plots ----
-  ###############################
+  ### @AthenaDelayComp plots and tables ----
+
 
   create_plot <- reactive({
     # isolate({
@@ -314,26 +318,37 @@ server <- function(input, output, session) {
     )
     # })
   })
+  
+  
+  output$plot <- renderPlot({
+    create_plot()
+  })
 
+  
+  
   observe({
     if (input$plot_type == "Choice direction") {
       disable("animal_select")
       disable("exp_select")
       disable("f_options")
+      disable("report")
       hide("perform")
     } else {
       enable("animal_select")
       enable("exp_select")
       enable("f_options")
+      enable("report")
 
       if (input$f_options == "All animals") {
         disable("animal_select")
         disable("exp_select")
+        disable("report")
         hide("perform")
       }
 
       if (input$f_options == "Experimenter") {
         enable("exp_select")
+        enable("report")
         disable("animal_select")
         hide("perform")
       }
@@ -341,6 +356,7 @@ server <- function(input, output, session) {
       if (input$f_options == "Individual animals") {
         enable("animal_select")
         disable("exp_select")
+        disable("report")
         show("perform")
 
         output$perform <- DT::renderDataTable(
@@ -371,16 +387,36 @@ server <- function(input, output, session) {
       }
     }
   })
-  output$plot <- renderPlot({
-    create_plot()
-  })
+  
+
+  ### @AthenaDelayComp generate report ----
+  
+  output$report <- downloadHandler(
+    filename = "weekly_report.pdf",
+    content = function(file){
+      tempReport <- file.path(tempdir(), "weekly_report.Rmd") %>% 
+        normalizePath(winslash = "/")
+      file.copy(from = "weekly_report.Rmd", to = tempReport, overwrite = T)
+      library(rmarkdown)
+      params <- list(exp = input$exp_select,
+                     stg = input$stage,
+                     fil = input$f_options,
+                     ani = input$animal_select,
+                     dt = input$setdate)
+      rmarkdown::render(input = tempReport,
+                        output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+  )
 
 
 
 
 
   ### @SoundCategorization plots ----
-  ###################################
+
 
   create_plot_SC <- reactive({
     plots_SoundCateg(
@@ -392,6 +428,11 @@ server <- function(input, output, session) {
       f_options_SC = input$f_options_SC
     )
   })
+  
+  
+  output$plot_SC <- renderPlot({
+    create_plot_SC()
+  })
 
 
   observe({
@@ -399,21 +440,25 @@ server <- function(input, output, session) {
       disable("animal_select_SC")
       disable("exp_select_SC")
       disable("f_options_SC")
+      disable("report_SC")
       hide("perform_SC")
     } else {
       enable("animal_select_SC")
       enable("exp_select_SC")
       enable("f_options_SC")
+      enable("report_SC")
 
       if (input$f_options_SC == "All animals") {
         disable("animal_select_SC")
         disable("exp_select_SC")
+        disable("report_SC")
         hide("perform_SC")
       }
 
       if (input$f_options_SC == "Experimenter") {
         enable("exp_select_SC")
         disable("animal_select_SC")
+        enable("report_SC")
         hide("perform_SC")
       }
 
@@ -421,6 +466,7 @@ server <- function(input, output, session) {
         enable("animal_select_SC")
         disable("exp_select_SC")
         show("perform_SC")
+        disable("report_SC")
 
         output$perform_SC <- DT::renderDataTable(
           TRAINING %>%
@@ -450,11 +496,35 @@ server <- function(input, output, session) {
       }
     }
   })
+  
+  
+  
+  ### @SoundCategorization generate report ----
+  
+  output$report_SC <- downloadHandler(
+    filename = "weekly_report.pdf",
+    content = function(file){
+      tempReport <- file.path(tempdir(), "weekly_report_SC.Rmd") %>% 
+        normalizePath(winslash = "/")
+      file.copy(from = "weekly_report_SC.Rmd", to = tempReport, overwrite = T)
+      library(rmarkdown)
+      params <- list(exp = input$exp_select,
+                     stg = input$stage,
+                     fil = input$f_options,
+                     ani = input$animal_select,
+                     dt = input$setdate)
+      rmarkdown::render(input = tempReport,
+                        output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+  )
+  
+  
+  
 
 
-  output$plot_SC <- renderPlot({
-    create_plot_SC()
-  })
 }
 
 shinyApp(ui, server)

@@ -12,6 +12,11 @@ plots_SoundCateg <- function(plottype_SC,
 
   TRAINING_original <- TRAINING
   
+  if(missing(datelim_SC)){
+    datelim_SC = c(max(TRAINING$date)-5,max(TRAINING$date))
+  }
+  
+  
   if (f_options_SC == "All animals") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
@@ -98,7 +103,7 @@ plots_SoundCateg <- function(plottype_SC,
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14, face = "bold")
       ) +
-      ylab(paste0("CP duration [s] ", stage_filter_SC %>% paste(collapse = ", "))) +
+      ylab("CP duration [s]") +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
@@ -191,7 +196,7 @@ plots_SoundCateg <- function(plottype_SC,
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14, face = "bold")
       ) +
-      ylab(paste0("No. done trials ", stage_filter_SC %>% paste(collapse = ", "))) +
+      ylab("No. done trials") +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
@@ -242,7 +247,7 @@ plots_SoundCateg <- function(plottype_SC,
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14, face = "bold")
       ) +
-      ylab(paste0("No. completed trials", stage_filter_SC %>% paste(collapse = ", "))) +
+      ylab("No. completed trials") +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
@@ -295,7 +300,7 @@ plots_SoundCateg <- function(plottype_SC,
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14, face = "bold")
       ) +
-      ylab(paste0("No. correct trials", stage_filter_SC %>% paste(collapse = ", "))) +
+      ylab("No. correct trials") +
       xlab("Date [day]") +
       geom_label_repel(
         data = TRAINING %>%
