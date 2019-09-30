@@ -395,7 +395,7 @@ server <- function(input, output, session) {
     filename = "weekly_report.pdf",
     content = function(file){
       tempReport <- file.path(tempdir(), "weekly_report.Rmd") %>% 
-        normalizePath(winslash = "/")
+        normalizePath()
       file.copy(from = "weekly_report.Rmd", to = tempReport, overwrite = T)
       library(rmarkdown)
       params <- list(exp = input$exp_select,
@@ -505,7 +505,7 @@ server <- function(input, output, session) {
     filename = "weekly_report.pdf",
     content = function(file){
       tempReport <- file.path(tempdir(), "weekly_report_SC.Rmd") %>% 
-        normalizePath(winslash = "/")
+        normalizePath()
       file.copy(from = "weekly_report_SC.Rmd", to = tempReport, overwrite = T)
       library(rmarkdown)
       params <- list(exp = input$exp_select,
