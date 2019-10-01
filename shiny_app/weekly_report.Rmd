@@ -22,14 +22,14 @@ header-includes:
   - \usepackage{float}
   - \usepackage{colortbl}
   - \usepackage{pdflscape}
-  
+  # - \usepackage{tabu}
   # - \usepackage{threeparttable}
   # - \usepackage{threeparttablex}
   # - \usepackage[normalem]{ulem}
   # - \usepackage[normalem]{ulem}
   - \usepackage[utf8]{inputenc}
   - \usepackage{makecell}
-  - \usepackage{xcolor}  
+  - \usepackage{xcolor}
 ---
 
 ```{r setup, include=FALSE}
@@ -92,7 +92,7 @@ TRAINING %>%
       sd(violation_ratio) %>% round(2)
       )
     ) %>% 
-  knitr::kable(format = "latex", booktabs = T) %>% 
+  knitr::kable(format = "pandoc", booktabs = T) %>% 
   kable_styling(latex_options = c("scale_down", "striped"))
 
 
