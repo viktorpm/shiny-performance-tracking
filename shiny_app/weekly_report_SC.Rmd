@@ -1,8 +1,8 @@
 ---
-title: |
-  | Weekly report of animal performance
-  | (sound categorization, `r params$exp_SC`)
- 
+title: "Weekly report of animal performance"
+
+subtitle: "(**protocol**: sound categorization, **experimenter**: `r params$exp_SC`)"
+
 output: pdf_document
 
 
@@ -39,7 +39,7 @@ library(kableExtra)
 
 ```
 
-# Summary of last day's performance
+# Summary of last 5 day's performance
 
 ```{r}
 TRAINING %>%
@@ -47,7 +47,7 @@ TRAINING %>%
               experimenter == params$exp_SC,
               choice_direction == "right_trials",
               protocol == "@SoundCategorization",
-              date == max(date)
+              date <= max(date), date > max(date)-4
             ) %>%
   mutate(correct_ratio = (correct_trials / completed_trials) %>%
            round(2)) %>%
@@ -63,6 +63,34 @@ TRAINING %>%
     timeoout_trials,
     correct_ratio,
     violation_ratio
+    ) %>% 
+  dplyr::group_by("Animal" = animal_id) %>% 
+  dplyr::summarise(
+    "Mean correct" = paste0(
+      mean(correct_trials) %>% round(2),
+      " ", intToUtf8(177), " ",    
+      sd(correct_trials) %>% round(2)),
+    "Mean error" = paste0(
+      mean(error_trials) %>% round(2),
+      " ", intToUtf8(177), " ",
+      sd(error_trials)%>% round(2)),
+    "Mean violation" = paste0(
+      mean(violation_trials) %>% round(2),
+      " ", intToUtf8(177), " ",
+      sd(violation_trials) %>% round(2)),
+    "Mean timeoout" = paste0(
+      mean(timeoout_trials) %>% round(2),
+      " ", intToUtf8(177), " ",
+      sd(timeoout_trials) %>% round(2)),
+    "Mean correct ratio" = paste0(
+      mean(correct_ratio) %>% round(2),
+      " ", intToUtf8(177), " ",
+      sd(correct_ratio) %>% round(2)),
+    "Mean violation ratio" = paste0(
+      mean(violation_ratio) %>% round(2),
+      " ", intToUtf8(177), " ",
+      sd(violation_ratio) %>% round(2)
+      )
     ) %>% 
   knitr::kable(format = "latex", booktabs = T) %>% 
   kable_styling(latex_options = c("scale_down", "striped"))
@@ -82,6 +110,20 @@ TRAINING %>%
       exp_SC = params$exp_SC
     )
 ```
+
+# Number of correct trials
+
+```{r, fig.width=12, fig.height=10}
+ plots_SoundCateg(
+      plottype_SC = "No. correct trials",
+      #datelim_SC = params$dt,
+      stage_filter_SC = params$stg_SC,
+      f_options_SC = params$fil_SC,
+      animal_filter_SC = params$ani_SC,
+      exp_SC = params$exp_SC
+    )
+```
+
 
 
 

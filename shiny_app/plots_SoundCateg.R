@@ -13,7 +13,7 @@ plots_SoundCateg <- function(plottype_SC,
   TRAINING_original <- TRAINING
   
   if(missing(datelim_SC)){
-    datelim_SC = c(max(TRAINING$date)-5,max(TRAINING$date))
+    datelim_SC = c(max(TRAINING$date)-4,max(TRAINING$date))
   }
   
   
