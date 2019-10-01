@@ -24,10 +24,10 @@ header-includes:
   - \usepackage{colortbl}
   - \usepackage{pdflscape}
   
-  - \usepackage{threeparttable}
-  - \usepackage{threeparttablex}
-  - \usepackage[normalem]{ulem}
-  - \usepackage[normalem]{ulem}
+  # - \usepackage{threeparttable}
+  # - \usepackage{threeparttablex}
+  # - \usepackage[normalem]{ulem}
+  # - \usepackage[normalem]{ulem}
   - \usepackage[utf8]{inputenc}
   - \usepackage{makecell}
   - \usepackage{xcolor}  
