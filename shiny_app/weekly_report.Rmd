@@ -23,7 +23,7 @@ header-includes:
   - \usepackage{float}
   - \usepackage{colortbl}
   - \usepackage{pdflscape}
-  - \usepackage{tabu}
+  
   - \usepackage{threeparttable}
   - \usepackage{threeparttablex}
   - \usepackage[normalem]{ulem}
@@ -55,8 +55,8 @@ TRAINING %>%
   mutate(violation_ratio = (violation_trials / all_trials) %>%
               round(2)) %>% 
   select(
-    animal_id,
     date,
+    animal_id,
     stage,
     correct_trials,
     error_trials,
@@ -67,6 +67,9 @@ TRAINING %>%
     ) %>% 
   knitr::kable(format = "latex", booktabs = T) %>% 
   kable_styling(latex_options = c("scale_down", "striped"))
+
+
+
 ```
 
 
