@@ -92,7 +92,7 @@ TRAINING %>%
       sd(violation_ratio) %>% round(2)
       )
     ) %>% 
-  knitr::kable(format = "markdown", booktabs = T) %>% 
+  knitr::kable(format = "latex", booktabs = T) %>% 
   kable_styling(latex_options = c("scale_down", "striped"))
 ```
 
