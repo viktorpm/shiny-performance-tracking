@@ -393,7 +393,7 @@ server <- function(input, output, session) {
   ### @AthenaDelayComp generate report ----
   
   output$report <- downloadHandler(
-    filename = "weekly_report.pdf",
+    filename = "weekly_report.html",
     content = function(file){
       tempReport <- file.path(tempdir(), "weekly_report.Rmd") %>% 
         normalizePath()
@@ -504,7 +504,7 @@ server <- function(input, output, session) {
   ### @SoundCategorization generate report ----
   
   output$report_SC <- downloadHandler(
-    filename = "weekly_report_SC.pdf",
+    filename = "weekly_report_SC.html",
     content = function(file){
       tempReport <- file.path(tempdir(), "weekly_report_SC.Rmd") %>% 
         normalizePath()

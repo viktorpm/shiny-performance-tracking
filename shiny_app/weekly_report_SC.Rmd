@@ -3,7 +3,7 @@ title: "Weekly report of animal performance"
 
 subtitle: "(**protocol**: sound categorization, **experimenter**: `r params$exp_SC`)"
 
-output: pdf_document
+output: html_document
 
 
 params:
@@ -34,6 +34,47 @@ header-includes:
 
 ---
 
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 14px;
+      font-family: "Arial", Helvetica, sans-serif;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 38px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #4d4e4f;
+}
+h1 { /* Header 1 */
+  font-size: 28px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #2c3a3e;
+}
+h2 { /* Header 2 */
+  font-size: 22px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #2c3a3e;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #2c3a3e;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+
+
+
+
  
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
@@ -41,6 +82,8 @@ library(knitr)
 library(kableExtra)
 
 ```
+
+<br><br>
 
 # Summary of last 5 day's performance
 
@@ -95,11 +138,12 @@ TRAINING %>%
       sd(violation_ratio) %>% round(2)
       )
     ) %>% 
-  knitr::kable(format = "latex", booktabs = T) %>% 
-  kable_styling(latex_options = c("scale_down", "striped"))
+  datatable(options = list(dom = "t"))
+  # knitr::kable(format = "latex", booktabs = T) %>% 
+  # kable_styling(latex_options = c("scale_down", "striped"))
 ```
 
-
+<br><br>
 
 # Number of completed trials
 
@@ -113,6 +157,9 @@ TRAINING %>%
       exp_SC = params$exp_SC
     )
 ```
+
+
+<br><br>
 
 # Number of correct trials
 
@@ -128,7 +175,7 @@ TRAINING %>%
 ```
 
 
-
+<br><br>
 
 # Ratio of correct trials
 
