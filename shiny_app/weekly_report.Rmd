@@ -37,6 +37,17 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(knitr)
 library(kableExtra)
 
+MeanWithSD <- function(x){
+  paste0(
+      mean(x) %>% round(2),
+      " ", 
+      intToUtf8(177),
+      " ",    
+      sd(x) %>% round(2)
+      )
+}
+
+
 ```
 
 # Summary of last 5 day's performance
@@ -66,33 +77,14 @@ TRAINING %>%
     ) %>% 
   dplyr::group_by("Animal" = animal_id) %>% 
   dplyr::summarise(
-    "Mean correct" = paste0(
-      mean(correct_trials) %>% round(2),
-      " ", intToUtf8(177), " ",    
-      sd(correct_trials) %>% round(2)),
-    "Mean error" = paste0(
-      mean(error_trials) %>% round(2),
-      " ", intToUtf8(177), " ",
-      sd(error_trials)%>% round(2)),
-    "Mean violation" = paste0(
-      mean(violation_trials) %>% round(2),
-      " ", intToUtf8(177), " ",
-      sd(violation_trials) %>% round(2)),
-    "Mean timeoout" = paste0(
-      mean(timeoout_trials) %>% round(2),
-      " ", intToUtf8(177), " ",
-      sd(timeoout_trials) %>% round(2)),
-    "Mean correct ratio" = paste0(
-      mean(correct_ratio) %>% round(2),
-      " ", intToUtf8(177), " ",
-      sd(correct_ratio) %>% round(2)),
-    "Mean violation ratio" = paste0(
-      mean(violation_ratio) %>% round(2),
-      " ", intToUtf8(177), " ",
-      sd(violation_ratio) %>% round(2)
-      )
+    "Mean correct" = MeanWithSD(correct_trials),
+    "Mean error" = MeanWithSD(error_trials),
+    "Mean violation" = MeanWithSD(violation_trials),
+    "Mean timeout" = MeanWithSD(timeoout_trials),
+    "Mean correct ratio" = MeanWithSD(correct_ratio),
+    "Mean violation ratio" = MeanWithSD(violation_ratio)
     ) %>% 
-  knitr::kable(format = "latex", booktabs = T) %>% 
+  knitr::kable(format = "pandoc", booktabs = T) %>% 
   kable_styling(latex_options = c("scale_down", "striped"))
 
 
