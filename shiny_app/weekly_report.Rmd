@@ -121,8 +121,9 @@ TRAINING %>%
     correct_ratio,
     violation_ratio
     ) %>% 
-  dplyr::group_by("Animal" = animal_id) %>% 
+  dplyr::group_by("Animal" = animal_id, "Training phase" = stage) %>% 
   dplyr::summarise(
+    #"Training phase" = unique(stage),
     "Mean correct" = MeanWithSD(correct_trials),
     "Mean error" = MeanWithSD(error_trials),
     "Mean violation" = MeanWithSD(violation_trials),
