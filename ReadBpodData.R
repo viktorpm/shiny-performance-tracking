@@ -34,7 +34,9 @@ ReadBpodData <- function(rds_file, data_source, rat_data) {
 
   TRAINING <- list(
     file = rds_file,
+    
     settings_file,
+    
     protocol = substr(rds_file,
       start = gregexpr(
         pattern = "_",
@@ -47,8 +49,11 @@ ReadBpodData <- function(rds_file, data_source, rat_data) {
       ) %>%
         unlist() %>% `[`(3) - 1
     ),
+    
     data_source = data_source,
+    
     experimenter,
+    
     animal_id = substr(rds_file,
       start = 1,
       stop = gregexpr(
@@ -57,9 +62,14 @@ ReadBpodData <- function(rds_file, data_source, rat_data) {
       ) %>%
         unlist() %>% `[`(1) - 1
     ),
+    
     rig_id,
-    date = rat_data$SessionData[,,]$Info[,,]$SessionDate %>% as.character(),
-    start_time = rat_data$SessionData[, , ]$Info[, , ]$SessionStartTime.UTC %>% as.character(),
+    
+    date = rat_data$SessionData[,,]$Info[,,]$SessionDate %>% 
+      as.character(),
+    start_time = rat_data$SessionData[, , ]$Info[, , ]$SessionStartTime.UTC %>%
+      as.character(),
+    
     save_time,
     stage,
     right_trials,
