@@ -43,7 +43,7 @@ ui <- fluidPage(
   navbarPage(
     "Protocols",
 
-    ### Summary panel ----
+    ### PANEL 1 Summary ----
 
     tabPanel(
       "Summary",
@@ -89,7 +89,7 @@ ui <- fluidPage(
 
 
 
-    ### @AthenaDelayComp panel ----
+    ###  PANEL 2 @AthenaDelayComp panel ----
 
 
     tabPanel(
@@ -168,7 +168,7 @@ ui <- fluidPage(
 
 
 
-    ### @SoundCategorization panel ----
+    ###  PANEL 3 @SoundCategorization panel ----
 
     tabPanel(
       "@SoundCategorization",
