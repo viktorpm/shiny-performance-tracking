@@ -30,7 +30,7 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
   TRAINING <- list(
 
     #####################################
-    ### files, animals, experimenters ---
+    ### files, animals, experimenters ----
     #####################################
     file = rds_file,
 
@@ -56,7 +56,7 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
 
 
     #########################
-    ### date, time, stage ---
+    ### date, time, stage ----
     #########################
 
     date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
@@ -82,7 +82,7 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
 
 
     ##############
-    ### Trials ---
+    ### Trials ----
     ##############
 
     right_trials = rat_data$saved[, , ]$SideSection.previous.sides %>%

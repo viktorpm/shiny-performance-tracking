@@ -96,7 +96,7 @@ MeanWithSD <- function(x){
 ```
 <br><br>
 
-# Summary of last 5 day's performance
+# Summary of last 10 day's performance
 
 ```{r}
 TRAINING %>%
@@ -104,7 +104,7 @@ TRAINING %>%
               experimenter == params$exp,
               choice_direction == "right_trials",
               protocol == "@AthenaDelayComp",
-              date <= max(date), date > max(date)-4
+              date <= max(date), date > max(date)-9
             ) %>%
   mutate(correct_ratio = (correct_trials / completed_trials) %>%
            round(2)) %>%

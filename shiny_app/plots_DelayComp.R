@@ -16,7 +16,7 @@ plots_DelayComp <- function(plottype,
   
   
   if(missing(datelim)){
-    datelim = c(max(TRAINING$date)-4,max(TRAINING$date))
+    datelim = c(max(TRAINING$date)-9,max(TRAINING$date))
   }
   
   
