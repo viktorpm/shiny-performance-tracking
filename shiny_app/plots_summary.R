@@ -57,7 +57,11 @@ plots_summary <- function(plottype_sum,
           dplyr::filter(date == pick_date),
         mapping = aes(label = animal_id),
         direction = "y",
-        hjust = -0.5
+        hjust = -0.5,
+        alpha = 0.5,
+        fontface = "bold",
+        color = "black",
+        label.size = NA
       ) +
       geom_label_repel(
         data = TRAINING %>%
@@ -65,7 +69,11 @@ plots_summary <- function(plottype_sum,
         mapping = aes(label = protocol),
         direction = "y",
         hjust = 1.3,
-        vjust = 1
+        vjust = 1,
+        alpha = 0.5 ,
+        fontface = "bold",
+        color = "black",
+        label.size = NA
       ) +
 
 
