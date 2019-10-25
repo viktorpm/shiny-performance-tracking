@@ -121,7 +121,7 @@ mat_data <- tibble(names = rat_data$saved[, , ] %>% names(),
 
 names = rat_data$saved[, , ] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names, pattern = regex("Right", ignore_case = T))]
+names[str_detect(names, pattern = regex("rew", ignore_case = T))]
 
 rat_data$saved[, , ]$AthenaDelayComp.timeout.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.violation.history %>% sum()
@@ -131,6 +131,7 @@ rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
 
 rat_data$saved[, , ]$OverallPerformanceSection.Right.hit.frac
 rat_data$saved[, , ]$OverallPerformanceSection.Left.hit.frac
+
 
 rat_data$saved[, , ]$SideSection.previous.sides %>% 
   intToUtf8(multiple = T) %>% 
@@ -143,7 +144,10 @@ rat_data$saved[, , ]$SideSection.previous.sides %>%
   length()
 
 
-rat_data$saved[, , ]$ProtocolsSection.n.done.trials
+rat_data$saved[, , ]$SideSection.RewardCollection.duration
+
+
+rat_data$saved[, , ]$SideSection.previous.parameters
 
 
 rat_data$saved[, , ]$StimulusSection.nTrialsClass1 +
