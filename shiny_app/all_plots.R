@@ -1,8 +1,8 @@
 summary_plots <- function(plottype_sum,
-                      datelim_sum,
-                      stage_filter_sum,
-                      animal_filter_sum,
-                      all_animals_sum) {
+                          datelim_sum,
+                          stage_filter_sum,
+                          animal_filter_sum,
+                          all_animals_sum) {
 
   #  browser()
 
@@ -10,7 +10,7 @@ summary_plots <- function(plottype_sum,
   ### Filtering data table ----
   #############################
 
-  
+
   ### if all animals are plotted
   if (all_animals_sum == T) {
     TRAINING <- TRAINING %>%
@@ -26,8 +26,8 @@ summary_plots <- function(plottype_sum,
       linetype = "dashed",
       alpha = 0.4
     )
-    
-  ### if only one selected animal is plotted  
+
+    ### if only one selected animal is plotted
   } else {
     TRAINING <- TRAINING %>%
       dplyr::filter(
@@ -41,9 +41,9 @@ summary_plots <- function(plottype_sum,
     col_lab_name <- "Stages"
     lines <- geom_line(linetype = "dashed", alpha = 0.4)
   }
-  
 
- 
+
+
   #############################
   ### PLOT: stage tracking ----
   #############################
@@ -96,8 +96,8 @@ summary_plots <- function(plottype_sum,
         hjust = 1.3,
         vjust = 1
       ) +
-    
-      #scale_fill_viktor() +
+
+      # scale_fill_viktor() +
       labs(col = "Stage")
 
     plot(stage_plot)
@@ -149,7 +149,7 @@ summary_plots <- function(plottype_sum,
         direction = "y",
         hjust = -1
       ) +
-      labs(fill = "Rig" ) +
+      labs(fill = "Rig") +
       labs(col = "Training status") +
       labs(size = "Training status")
 

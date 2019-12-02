@@ -5,9 +5,8 @@ account: viktorplattner
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1221967
-bundleId: 2536113
+bundleId: 2591427
 url: https://viktorplattner.shinyapps.io/shiny_app/
-when: 1572020173.58297
+when: 1573816853.90005
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .TRAINING.csv

@@ -30,13 +30,21 @@ plots_summary <- function(plottype_sum,
   ### PLOT: stage tracking ----
   #############################
 
-
+  library(RColorBrewer)
+  myColors <- c( "#000075", "#42d4f4", "#bfef45", "#ffe119", "#f58231")
+  names(myColors) <- levels(TRAINING$stage)
+  colScale <- scale_colour_manual(name = "Stage",values = myColors)
+  
+  
+  
   if (plottype_sum == "Stage tracking") {
     stage_plot <- ggplot(
       data = TRAINING,
       mapping = aes(x = date, y = animal_id)
     ) +
       geom_point(aes(col = stage), size = 6) +
+      
+      colScale + 
 
       ### scales, labels, themes
       scale_x_date(

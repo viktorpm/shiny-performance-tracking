@@ -44,6 +44,7 @@ TRAINING <- TRAINING %>%
     A2_time > 0 & A2_time < 0.5 & reward_type == "Always",
     "2_intord_stim"
   )) %>%
+  mutate(stage = replace(stage, reward_type == "DelayedReward", "3_DelayedReward")) %>%
   mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>%
   rowwise() %>%
   # mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
