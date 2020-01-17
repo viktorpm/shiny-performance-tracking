@@ -192,6 +192,9 @@ plots_DelayComp <- function(plottype,
         mapping = aes(col = eval(parse(text = col_by))),
         size = 3
       ) +
+      
+      geom_hline(yintercept = 20, col = "gray") + 
+      annotate("text", x = datelim[1], y = 23, label = "Threshold - 20 trials", col = "gray") + 
 
       ### scales, labels, themes
       scale_x_date(
@@ -243,6 +246,9 @@ plots_DelayComp <- function(plottype,
         mapping = aes(col = eval(parse(text = col_by))),
         size = 3
       ) +
+      
+      geom_hline(yintercept = 20, col = "gray") + 
+      annotate("text", x = datelim[1], y = 23, label = "Threshold - 20 trials", col = "gray") +
 
       ### scales, labels, themes
       scale_x_date(

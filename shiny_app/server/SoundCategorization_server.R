@@ -30,27 +30,27 @@ observe({
     enable("exp_select_SC")
     enable("f_options_SC")
     enable("report_SC")
-    
+
     if (input$f_options_SC == "All animals") {
       disable("animal_select_SC")
       disable("exp_select_SC")
       disable("report_SC")
       hide("perform_SC")
     }
-    
+
     if (input$f_options_SC == "Experimenter") {
       enable("exp_select_SC")
       disable("animal_select_SC")
       enable("report_SC")
       hide("perform_SC")
     }
-    
+
     if (input$f_options_SC == "Individual animals") {
       enable("animal_select_SC")
       disable("exp_select_SC")
       show("perform_SC")
       disable("report_SC")
-      
+
       output$perform_SC <- DT::renderDataTable(
         TRAINING %>%
           dplyr::filter(
@@ -72,9 +72,9 @@ observe({
           mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
           mutate(difference = all_trials - sum) %>%
           mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
-                   round(2)) %>%
+            round(2)) %>%
           mutate("violation_ratio (violation/done)" = (violation_trials / all_trials) %>%
-                   round(2))
+            round(2))
       )
     }
   }
@@ -82,25 +82,30 @@ observe({
 
 
 
+
+
+
 ### @SoundCategorization generate report ----
 
 output$report_SC <- downloadHandler(
   filename = "weekly_report_SC.html",
-  content = function(file){
-    tempReport <- file.path(tempdir(), "weekly_report_SC.Rmd") %>% 
+  content = function(file) {
+    tempReport <- file.path(tempdir(), "weekly_report_SC.Rmd") %>%
       normalizePath()
     file.copy(from = "weekly_report_SC.Rmd", to = tempReport, overwrite = T)
     library(rmarkdown)
-    params_SC <- list(exp_SC = input$exp_select_SC,
-                      stg_SC = input$stage_SC,
-                      fil_SC = input$f_options_SC,
-                      ani_SC = input$animal_select_SC,
-                      dt_SC = input$setdate_SC)
-    rmarkdown::render(input = tempReport,
-                      output_file = file,
-                      params = params_SC,
-                      envir = new.env(parent = globalenv())
+    params_SC <- list(
+      exp_SC = input$exp_select_SC,
+      stg_SC = input$stage_SC,
+      fil_SC = input$f_options_SC,
+      ani_SC = input$animal_select_SC,
+      dt_SC = input$setdate_SC
+    )
+    rmarkdown::render(
+      input = tempReport,
+      output_file = file,
+      params = params_SC,
+      envir = new.env(parent = globalenv())
     )
   }
 )
-

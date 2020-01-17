@@ -1,7 +1,7 @@
 ### @AthenaDelayComp plots and tables ----
 
 
-create_plot <- reactive({
+create_plot_AS <- reactive({
   # isolate({
   plots_AltStat(
     plottype_AS = input$plot_type_AS,
@@ -16,13 +16,13 @@ create_plot <- reactive({
 
 
 output$plot_AS <- renderPlot({
-  create_plot()
+  create_plot_AS()
 })
 
 
 
 observe({
-  if (input$plot_type == "Choice direction") {
+  if (input$plot_type_AS == "Choice direction") {
     disable("animal_select_AS")
     disable("exp_select_AS")
     disable("f_options_AS")
@@ -33,35 +33,35 @@ observe({
     enable("exp_select_AS")
     enable("f_options_AS")
     enable("report_AS")
-    
-    if (input$f_options == "All animals") {
+
+    if (input$f_options_AS == "All animals") {
       disable("animal_select_AS")
       disable("exp_select_AS")
       disable("report_AS")
       hide("perform_AS")
     }
-    
-    if (input$f_options == "Experimenter") {
+
+    if (input$f_options_AS == "Experimenter") {
       enable("exp_select_AS")
       enable("report_AS")
       disable("animal_select_AS")
       hide("perform_AS")
     }
-    
-    if (input$f_options == "Individual animals") {
+
+    if (input$f_options_AS == "Individual animals") {
       enable("animal_select_AS")
       disable("exp_select_AS")
       disable("report_AS")
       show("perform_AS")
-      
-      output$perform <- DT::renderDataTable(
+
+      output$perform_AS <- DT::renderDataTable(
         TRAINING %>%
           dplyr::filter(
-            animal_id == input$animal_select,
+            animal_id == input$animal_select_AS,
             choice_direction == "right_trials",
-            protocol == "@AthenaDelayComp",
-            date >= input$setdate[1],
-            date <= input$setdate[2]
+            protocol == "@AltStatDelayComp",
+            date >= input$setdate_AS[1],
+            date <= input$setdate_AS[2]
           ) %>%
           select(
             date,
@@ -75,35 +75,37 @@ observe({
           mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
           mutate(difference = all_trials - sum) %>%
           mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
-                   round(2)) %>%
+            round(2)) %>%
           mutate("violation_ratio (violation/done)" = (violation_trials / all_trials) %>%
-                   round(2))
+            round(2))
       )
     }
   }
 })
 
 
+
 ### @AthenaDelayComp generate report ----
 
-output$report <- downloadHandler(
-  filename = "weekly_report.html",
-  content = function(file){
-    tempReport <- file.path(tempdir(), "weekly_report.Rmd") %>% 
+output$report_AS <- downloadHandler(
+  filename = "weekly_report_AS.html",
+  content = function(file) {
+    tempReport <- file.path(tempdir(), "weekly_report_AS.Rmd") %>%
       normalizePath()
-    file.copy(from = "weekly_report.Rmd", to = tempReport, overwrite = T)
+    file.copy(from = "weekly_report_AS.Rmd", to = tempReport, overwrite = T)
     library(rmarkdown)
-    params <- list(exp = input$exp_select,
-                   stg = input$stage,
-                   fil = input$f_options,
-                   ani = input$animal_select,
-                   dt = input$setdate)
-    rmarkdown::render(input = tempReport,
-                      output_file = file,
-                      params = params,
-                      envir = new.env(parent = globalenv())
+    params_AS <- list(
+      exp_AS = input$exp_select_AS,
+      stg_AS = input$stage_AS,
+      fil_AS = input$f_options_AS,
+      ani_AS = input$animal_select_AS,
+      dt_AS = input$setdate_AS
     )
-    
+    rmarkdown::render(
+      input = tempReport,
+      output_file = file,
+      params = params_AS,
+      envir = new.env(parent = globalenv())
+    )
   }
 )
-
