@@ -1,24 +1,21 @@
 ### @ElenaSequenceComp plots and tables ----
 
 
-create_plot <- reactive({
-  # isolate({
+create_plot_ESC <- reactive({
   plots_SequenceComp(
-    plottype = input$plot_type_ESC,
-    datelim = input$setdate_ESC,
-    stage_filter = input$stage_ESC,
-    f_options = input$f_options_ESC,
-    animal_filter = input$animal_select_ESC,
-    exp = input$exp_select_ESC
+    plottype_ESC = input$plot_type_ESC,
+    datelim_ESC = input$setdate_ESC,
+    stage_filter_ESC = input$stage_ESC,
+    f_options_ESC = input$f_options_ESC,
+    animal_filter_ESC = input$animal_select_ESC,
+    exp_ESC = input$exp_select_ESC
   )
-  # })
 })
 
 
 output$plot_ESC <- renderPlot({
   create_plot_ESC()
 })
-
 
 
 observe({
@@ -38,7 +35,7 @@ observe({
       disable("animal_select_ESC")
       disable("exp_select_ESC")
       disable("report_ESC")
-      hide("performv")
+      hide("perform_ESC")
     }
 
     if (input$f_options_ESC == "Experimenter") {

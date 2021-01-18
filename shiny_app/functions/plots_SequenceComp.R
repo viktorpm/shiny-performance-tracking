@@ -1,9 +1,9 @@
-plots_SequenceComp <- function(plottype,
-                            datelim,
-                            stage_filter,
-                            animal_filter,
-                            exp,
-                            f_options) {
+plots_SequenceComp <- function(plottype_ESC,
+                            datelim_ESC,
+                            stage_filter_ESC,
+                            animal_filter_ESC,
+                            exp_ESC,
+                            f_options_ESC) {
 
 
 
@@ -15,18 +15,18 @@ plots_SequenceComp <- function(plottype,
   TRAINING_original <- TRAINING
   
   
-  if(missing(datelim)){
-    datelim = c(max(TRAINING$date)-9,max(TRAINING$date))
+  if(missing(datelim_ESC)){
+    datelim_ESC = c(max(TRAINING$date)-9,max(TRAINING$date))
   }
   
   
 
-  if (f_options == "All animals") {
+  if (f_options_ESC == "All animals") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
-        stage %in% stage_filter,
-        date >= datelim[1], date <= datelim[2],
+        stage %in% stage_filter_ESC,
+        date >= datelim_ESC[1], date <= datelim_ESC[2],
         protocol == "@ElenaSequenceComp"
       )
 
@@ -38,14 +38,14 @@ plots_SequenceComp <- function(plottype,
     )
   }
 
-  if (f_options == "Experimenter") {
+  if (f_options_ESC == "Experimenter") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
-        stage %in% stage_filter,
-        date >= datelim[1], date <= datelim[2],
+        stage %in% stage_filter_ESC,
+        date >= datelim_ESC[1], date <= datelim_ESC[2],
         protocol == "@ElenaSequenceComp",
-        experimenter == exp
+        experimenter == exp_ESC
       )
 
     col_by <- "animal_id"
@@ -57,14 +57,14 @@ plots_SequenceComp <- function(plottype,
   }
 
 
-  if (f_options == "Individual animals") {
+  if (f_options_ESC == "Individual animals") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
-        stage %in% stage_filter,
-        date >= datelim[1], date <= datelim[2],
+        stage %in% stage_filter_ESC,
+        date >= datelim_ESC[1], date <= datelim_ESC[2],
         protocol == "@ElenaSequenceComp",
-        animal_id == animal_filter
+        animal_id == animal_filter_ESC
       )
 
     col_by <- "stage"
@@ -80,7 +80,7 @@ plots_SequenceComp <- function(plottype,
   ### PLOT: CP duration ----
   ##########################
 
-  if (plottype == "CP duration") {
+  if (plottype_ESC == "CP duration") {
     cp_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -100,7 +100,7 @@ plots_SequenceComp <- function(plottype,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_ESC[1]), as.Date(datelim_ESC[2]))
       ) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
@@ -132,12 +132,12 @@ plots_SequenceComp <- function(plottype,
   ### PLOT: left/right trials ----
   ################################
 
-  if (plottype == "Choice direction") {
+  if (plottype_ESC == "Choice direction") {
     direction_plot <- ggplot(
       data = TRAINING_original %>%
         dplyr::filter(
-          stage %in% stage_filter,
-          date >= datelim[1], date <= datelim[2],
+          stage %in% stage_filter_ESC,
+          date >= datelim_ESC[1], date <= datelim_ESC[2],
           protocol == "@ElenaSequenceComp"
         ),
       mapping = aes(
@@ -177,7 +177,7 @@ plots_SequenceComp <- function(plottype,
   ### PLOT: done trials ----
   ##########################
 
-  if (plottype == "No. done trials") {
+  if (plottype_ESC == "No. done trials") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -194,14 +194,14 @@ plots_SequenceComp <- function(plottype,
       ) +
       
       geom_hline(yintercept = 20, col = "gray") + 
-      annotate("text", x = datelim[1], y = 23, label = "Threshold - 20 trials", col = "gray") + 
+      annotate("text", x = datelim_ESC[1], y = 23, label = "Threshold - 20 trials", col = "gray") + 
 
       ### scales, labels, themes
       scale_x_date(
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_ESC[1]), as.Date(datelim_ESC[2]))
       ) +
       ylim(0, max(TRAINING$all_trials) + 10) +
       theme(
@@ -231,7 +231,7 @@ plots_SequenceComp <- function(plottype,
   ### PLOT: completed trials ----
   ###############################
 
-  if (plottype == "No. completed trials") {
+  if (plottype_ESC == "No. completed trials") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -248,14 +248,14 @@ plots_SequenceComp <- function(plottype,
       ) +
       
       geom_hline(yintercept = 20, col = "gray") + 
-      annotate("text", x = datelim[1], y = 23, label = "Threshold - 20 trials", col = "gray") +
+      annotate("text", x = datelim_ESC[1], y = 23, label = "Threshold - 20 trials", col = "gray") +
 
       ### scales, labels, themes
       scale_x_date(
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_ESC[1]), as.Date(datelim_ESC[2]))
       ) +
       ylim(0, max(TRAINING$all_trials) + 10) + # max(all_trials): comparable to the done trial plot
       theme(
@@ -286,7 +286,7 @@ plots_SequenceComp <- function(plottype,
   ### PLOT: correct trials ----
   ###############################
 
-  if (plottype == "No. correct trials") {
+  if (plottype_ESC == "No. correct trials") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -307,7 +307,7 @@ plots_SequenceComp <- function(plottype,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_ESC[1]), as.Date(datelim_ESC[2]))
       ) +
       ylim(0, max(TRAINING$all_trials) + 10) + # max(all_trials): comparable to the done trial plot
       theme(
@@ -338,7 +338,7 @@ plots_SequenceComp <- function(plottype,
   ### PLOT: correct ratio ----
   ############################
 
-  if (plottype == "Correct ratio") {
+  if (plottype_ESC == "Correct ratio") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -359,7 +359,7 @@ plots_SequenceComp <- function(plottype,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_ESC[1]), as.Date(datelim_ESC[2]))
       ) +
       ylim(0, 1) + # max(all_trials): comparable to the done trial plot
       theme(
@@ -379,7 +379,7 @@ plots_SequenceComp <- function(plottype,
         hjust = -0.5,
         direction = "y"
       ) +
-      annotate("text", x = datelim[1], y = 0.51, label = "Chance level", col = "gray") +
+      annotate("text", x = datelim_ESC[1], y = 0.51, label = "Chance level", col = "gray") +
       labs(col = eval(parse(text = "col_lab_name")))
 
     plot(trial_plot)
@@ -405,7 +405,7 @@ plots_SequenceComp <- function(plottype,
   # }
 
 
-  if (plottype == "Stage tracking") {
+  if (plottype_ESC == "Stage tracking") {
     stage_plot <- ggplot(
       data = TRAINING,
       mapping = aes(x = date, y = animal_id)
@@ -417,7 +417,7 @@ plots_SequenceComp <- function(plottype,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_ESC[1]), as.Date(datelim_ESC[2]))
       ) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
@@ -454,7 +454,7 @@ plots_SequenceComp <- function(plottype,
   ### PLOT: Missing data ----
   ############################
 
-  if (plottype == "Missing data") {
+  if (plottype_ESC == "Missing data") {
     recording_dates <- TRAINING %>%
       group_by(animal_id) %>%
       mutate(trained = T) %>%
@@ -477,7 +477,7 @@ plots_SequenceComp <- function(plottype,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+        limits = c(as.Date(datelim_ESC[1]), as.Date(datelim_ESC[2]))
       ) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),

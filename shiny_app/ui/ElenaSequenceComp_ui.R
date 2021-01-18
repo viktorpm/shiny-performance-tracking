@@ -3,8 +3,6 @@ tabPanel(
   sidebarLayout(
     sidebarPanel(
       width = 3,
-
-
       selectInput(
         inputId = "plot_type_ESC",
         label = "Select plot type",
@@ -35,7 +33,8 @@ tabPanel(
         choices = TRAINING$experimenter %>% unique() %>% as.vector()
       ),
 
-      downloadButton("report", "Generate report"),
+      
+      downloadButton("report_ESC", "Generate report"),
 
 
       selectInput(

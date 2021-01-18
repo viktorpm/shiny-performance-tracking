@@ -32,6 +32,7 @@ source(file.path("functions", "plots_AltSoundCateg.R"))
 source(file.path("functions", "plots_summary.R"))
 
 source(file.path("functions", "plots_AltSoundCategCatch.R"))
+source(file.path("functions", "plots_SequenceComp.R"))
 
 
 
