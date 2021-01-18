@@ -4,64 +4,64 @@
 create_plot <- reactive({
   # isolate({
   plots_SequenceComp(
-    plottype = input$plot_type,
-    datelim = input$setdate,
-    stage_filter = input$stage,
-    f_options = input$f_options,
-    animal_filter = input$animal_select,
-    exp = input$exp_select
+    plottype = input$plot_type_ESC,
+    datelim = input$setdate_ESC,
+    stage_filter = input$stage_ESC,
+    f_options = input$f_options_ESC,
+    animal_filter = input$animal_select_ESC,
+    exp = input$exp_select_ESC
   )
   # })
 })
 
 
-output$plot <- renderPlot({
-  create_plot()
+output$plot_ESC <- renderPlot({
+  create_plot_ESC()
 })
 
 
 
 observe({
-  if (input$plot_type == "Choice direction") {
-    disable("animal_select")
-    disable("exp_select")
-    disable("f_options")
-    disable("report")
-    hide("perform")
+  if (input$plot_type_ESC == "Choice direction") {
+    disable("animal_select_ESC")
+    disable("exp_select_ESC")
+    disable("f_options_ESC")
+    disable("report_ESC")
+    hide("perform_ESC")
   } else {
-    enable("animal_select")
-    enable("exp_select")
-    enable("f_options")
-    enable("report")
-    
-    if (input$f_options == "All animals") {
-      disable("animal_select")
-      disable("exp_select")
-      disable("report")
-      hide("perform")
+    enable("animal_select_ESC")
+    enable("exp_select_ESC")
+    enable("f_options_ESC")
+    enable("report_ESC")
+
+    if (input$f_options_ESC == "All animals") {
+      disable("animal_select_ESC")
+      disable("exp_select_ESC")
+      disable("report_ESC")
+      hide("performv")
     }
-    
-    if (input$f_options == "Experimenter") {
-      enable("exp_select")
-      enable("report")
-      disable("animal_select")
-      hide("perform")
+
+    if (input$f_options_ESC == "Experimenter") {
+      enable("exp_select_ESC")
+      enable("report_ESC")
+      disable("animal_select_ESC")
+      hide("perform_ESC")
     }
-    
-    if (input$f_options == "Individual animals") {
-      enable("animal_select")
-      disable("exp_select")
-      disable("report")
-      show("perform")
-      
-      output$perform <- DT::renderDataTable(
+
+    if (input$f_options_ESC == "Individual animals") {
+      enable("animal_select_ESC")
+      disable("exp_select_ESC")
+      disable("report_ESC")
+      show("perform_ESC")
+
+      output$perform_ESC <- DT::renderDataTable(
         TRAINING %>%
           dplyr::filter(
-            animal_id == input$animal_select,
+            animal_id == input$animal_select_ESC,
             choice_direction == "right_trials",
             protocol == "@ElenaSequenceComp",
-            date >= input$setdate[1],
-            date <= input$setdate[2]
+            date >= input$setdate_ESC[1],
+            date <= input$setdate_ESC[2]
           ) %>%
           select(
             date,
@@ -89,21 +89,20 @@ observe({
 output$report <- downloadHandler(
   filename = "weekly_report.html",
   content = function(file){
-    tempReport <- file.path(tempdir(), "weekly_report.Rmd") %>% 
+    tempReport <- file.path(tempdir(), "weekly_report.Rmd") %>%
       normalizePath()
     file.copy(from = "weekly_report.Rmd", to = tempReport, overwrite = T)
     library(rmarkdown)
-    params <- list(exp = input$exp_select,
-                   stg = input$stage,
-                   fil = input$f_options,
-                   ani = input$animal_select,
-                   dt = input$setdate)
+    params <- list(exp = input$exp_select_ESC,
+                   stg = input$stage_ESC,
+                   fil = input$f_options_ESC,
+                   ani = input$animal_select_ESC,
+                   dt = input$setdate_ESC)
     rmarkdown::render(input = tempReport,
                       output_file = file,
-                      params = params,
+                      params = params_ESC,
                       envir = new.env(parent = globalenv())
     )
-    
+
   }
 )
-
