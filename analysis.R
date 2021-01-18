@@ -20,6 +20,7 @@ TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 
 TRAINING %>% names()
 
+TRIALS <- read_csv(file.path("shiny_app", "TrialByTrial.csv"))
 ################################
 ### Creating session matrix ----
 ################################
@@ -67,7 +68,11 @@ TRAINING <- TRAINING %>%
   mutate(rig = which(rigs_sessions == animal_id, arr.ind = T)[1]) %>%
   mutate(session = which(rigs_sessions == animal_id, arr.ind = T)[2]) %>%
   ungroup() %>%
-  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") # %>%
+  gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes") %>% 
+  mutate(genetic_bg = ifelse(animal_id %in% c("VP09","VP10","VP11","VP12","VP13"), 
+                             yes = "tg",
+                             no = "WT"))
+  # %>%
 # gather(all_trials, violation_trials, hit_trials, timeoout_trials,
 #        key = "trial_type",
 #        value = "No_trials")
@@ -112,6 +117,8 @@ ggplot(
 
 
 ### PLOTTING ----
+
+
 
 #######################################
 ### PLOT: session length over time ----
@@ -271,6 +278,54 @@ ggplot(
     # nudge_y = 2.5,
     # check_overlap = F # geom_text parameter
   )
+
+
+##############################################
+### PLOT: No. completed trials (tg vs WT) ----
+##############################################
+
+ggplot(
+  data = TRAINING %>% 
+    dplyr::filter(date < max(date), 
+                  date > max(date) - 500,
+                  stage %in% c("3_NoReward"),
+                  completed_trials > 20,
+                  protocol == "@AthenaDelayComp") %>% 
+    group_by(genetic_bg, date) %>% 
+    summarize(completed_trials = mean(completed_trials, na.rm = T)),
+  mapping = aes(
+    x = date,
+    y = completed_trials,
+    col = genetic_bg
+    # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+  )
+) +
+  
+  ### lines and points
+  geom_line(
+  ) +
+  geom_point() + 
+  
+  ### scales, labels, themes
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %d", minor_breaks = "1 day") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
+  ylab("Norm. No. done trials (stage 1)") +
+  xlab("Date") +
+  geom_label_repel(
+    data = TRAINING %>%
+      dplyr::filter(
+        stage == "1_center_poke_on",
+        date == max(date),
+        choice_direction == "right_trials"
+      ),
+    mapping = aes(label = animal_id, col = animal_id),
+    # nudge_x = 0.5,
+    hjust = -0.5,
+    direction = "y"
+    # nudge_y = 2.5,
+    # check_overlap = F # geom_text parameter
+  )
+
 
 
 
