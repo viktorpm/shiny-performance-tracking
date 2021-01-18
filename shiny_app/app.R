@@ -60,7 +60,7 @@ server <- function(input, output, session) {
   source(file.path("server", "AltSoundCategorization_server.R"), local = TRUE)$value
   source(file.path("server", "AltStat_server.R"), local = TRUE)$value
   
-  source(file.path("server", "AltSoundCategorizationCatch_server.R"), local = TRUE)$value,
+  source(file.path("server", "AltSoundCategorizationCatch_server.R"), local = TRUE)$value
   source(file.path("server", "ElenaSequenceComp_server.R"), local = TRUE)$value
 }
 
