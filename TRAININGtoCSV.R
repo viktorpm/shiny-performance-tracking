@@ -1,5 +1,10 @@
-TRAININGtoCSV <- function(data) {
+TRAININGtoCSV <- function(data, filename) {
   library(tidyverse)
+  
+  if (missing(filename)) {
+    filename = "TRAINING.csv"
+  }
+  
   path <- file.path(
     "shiny_app"
   )
@@ -10,14 +15,14 @@ TRAININGtoCSV <- function(data) {
       "File has already been processed"
     )
   } else {
-    csv_exists <- file.exists(file.path(path, "TRAINING.csv"))
+    csv_exists <- file.exists(file.path(path, filename))
 
     write_TRAINING <- as_tibble(data, .name_repair = "minimal")
     write_csv(
       write_TRAINING,
       file.path(
         path,
-        "TRAINING.csv"
+        filename
       ),
       append = T,
       col_names = !csv_exists

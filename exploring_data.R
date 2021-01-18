@@ -89,7 +89,7 @@ list.dirs(file.path("D:", "_Rig_data", "SoloData", "Data"), full.names = TRUE, r
 
 
 data_path <- file.path("D:", "_Rig_data", "SoloData", "Data")
-file_list <- list.files(data_path, recursive = T) %>% as.list()
+file_list <-l ist.files(data_path, recursive = T) %>% as.list()
 walk(file_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
 
 
@@ -99,10 +99,17 @@ rat_data <- readRDS(file.path(
   "D:", "_R_WD", "git_projects",
   "r_codes_rat_wm", "data",
   "rds_files",
-  "data_@AthenaDelayComp_athena_AA01_190516a.mat.rds"
+  "data_@AthenaDelayComp_sharbat_SC03_200116a.mat.rds"
 ))
 
 rat_data %>% names()
+
+rat_data$saved[, , ]$SavingSection.settings.file.load.time %>%
+  as.numeric() %>% `-`(719529) %>% `*`(86400) %>%
+  as.POSIXct(origin = "1970-01-01", tz = "UTC") %>%
+  as.character() %>%
+  substr(12, 20)
+
 
 rat_data$saved[, , ] %>% 
   names() %>% `[`(1) %>% 
@@ -121,7 +128,7 @@ mat_data <- tibble(names = rat_data$saved[, , ] %>% names(),
 
 names = rat_data$saved[, , ] %>% names()
 names %>% str_detect(pattern = "rew")
-names[str_detect(names, pattern = regex("trial", ignore_case = T))]
+names[str_detect(names, pattern = regex("history", ignore_case = T))]
 
 rat_data$saved[, , ]$AthenaDelayComp.timeout.history %>% sum()
 rat_data$saved[, , ]$AthenaDelayComp.violation.history %>% sum()
@@ -129,10 +136,40 @@ rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
   is.na() %>%
   sum()
 
+
+### trial by trial choice 
+
+tibble(
+  animal_id = rat_data$saved[, , ]$SavingSection.ratname %>%
+    as.character(),
+  date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
+    as.character() %>%
+    substr(1, 11),
+  stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
+  A2_time = rat_data$saved[, , ]$SideSection.A2.time %>% as.numeric(),
+  
+  reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character(),
+  hit = rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% as.vector(),
+  choice = rat_data$saved[, , ]$SideSection.previous.sides %>%
+    intToUtf8(multiple = T),
+  trial_per_session = seq(from = 1, 
+                          to = rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% 
+                            length()
+                          )
+ )
+
+
+
+
+
+
+
+
+
 rat_data$saved[, , ]$OverallPerformanceSection.Right.hit.frac
 rat_data$saved[, , ]$OverallPerformanceSection.Left.hit.frac
 
-rat_data$saved[, , ]$ProtocolsSection.n.started.trials
+rat_data$saved[, , ]$AthenaDelayComp.violation.history
 
 rat_data$saved[, , ]$SideSection.previous.sides %>% 
   intToUtf8(multiple = T) %>% 
@@ -257,17 +294,17 @@ rat_data <- readRDS(file.path(
   "D:", "_R_WD", "git_projects",
   "r_codes_rat_wm", "data",
   "rds_files",
-  "DefaultSettings.mat.rds"
-  #"VP04_Gap_Detection_20190822_095255.mat.rds"
+  #"DefaultSettings.mat.rds",
+  "VP04_Gap_Detection_20190822_095255.mat.rds"
 ))
 
-rat_data <- readRDS(file.path(
-  "D:", "_R_WD", "git_projects",
-  "r_codes_rat_wm", "data",
-  "rds_files",
-  "data_@AthenaDelayComp_athena_AA01_190516a.mat.rds"
-))
-
+# rat_data <- readRDS(file.path(
+#   "D:", "_R_WD", "git_projects",
+#   "r_codes_rat_wm", "data",
+#   "rds_files",
+#   "data_@AthenaDelayComp_athena_AA01_190516a.mat.rds"
+# ))
+# 
 
 
 rat_data %>% names() %in% "saved" %>% any()
@@ -288,6 +325,69 @@ rat_data$SessionData[,,]$Info[,,]$SessionStartTime.MATLAB
 rat_data$SessionData[,,]$Info[,,]$SessionDate %>% as.character() 
 
 
+
+rat_data$SessionData[,,]$RawEvents[,,]$Trial[[1]][[1]][,,]$States[,,] %>% 
+  names() %>% paste(collapse = ", ")
+
+
+
+rat_data$SessionData[,,]$RawEvents[,,]$Trial[[6]][[1]][,,]$States[,,] %>% data.frame(id = names(.)) %>% View()
+
+
+
+rat_data$SessionData %>% length()
+
+
+lev_counter <- rat_data %>% length()
+
+ListLevels <- function(obj) {
+  obj %>% is.array()
+  obj %>% length()
+  level_0 <- obj %>% as.character()
+  
+  #lev_counter
+  #sublev_counter
+  
+  for (i in length(obj)){
+    assign(paste0("level_", as.character(i)), 
+           obj[i] %>% names()
+           )
+  }
+  
+  
+}
+
+
+
+
+if (lev_counter == 1){
+  assign(paste0("level_", as.character(i),".",as.character()), rat_data[i] %>% names())
+}
+
+  
+for (i in 1:lev_counter) {
+  assign(paste0("level_", as.character(i),".",as.character()), rat_data[i] %>% names())
+}
+
+
+for (i in 1:lev_counter) {
+  assign(paste0("level_1.", as.character(i)), rat_data$SessionData[,,][i] %>% names())
+}
+
+
+for (i in 1:length(rat_data)) {
+  rat_data[i] %>% names() %>% paste(collapse = ", ")
+  for (j in 1:length(rat_data[[i]])) {
+    rat_data[[i]][[j]] %>% names() %>% paste(collapse = ", ")
+  }
+}
+
+
+for (i in 1:length(rat_data[[1]])){
+  rat_data[i] %>% names() %>% paste(collapse = ", ")
+}
+
+rat_data[[1]] %>% length()
 
 
 rat_data$saved[, , ]$SavingSection.SaveTime %>%
@@ -338,12 +438,53 @@ full_path <- paste0(in_path, "/", file_list)
 
 
 
+tmp <- readBin(
+  file.path("W:","swc","akrami","neuropixels_recordings","do02","09_09_2020","2020-09-09_14-13-09","recording_slot2_1.npx2"),
+  what = "integer",
+  endian = "little",
+  # size = 2,
+  n = 384 * 30000)
+
+tmp <- tmp * 0.195 
+
+
+tmp <- tmp %>% matrix(nrow = 384, byrow = F)
+tmp %>% dim()
+
+tmp_df <-  tmp %>% t() %>% as.tibble()
+
+tmp_df <- tmp_df %>% mutate(time = row_number())
+library(reshape2)
+ggplot(data = tmp_df %>% melt(id.vars="time"), 
+       mapping = aes(x= time, y = value)) +
+  geom_line() +
+  facet_wrap(~variable)
 
 
 
+tmp[65,] %>% plot(type = "l")
+
+# %>% 
+#   plot(type = "l")
+  
 
 
+sBinFileName <-  file.path("W:","swc","akrami","neuropixels_recordings","do02","08_09_2020","2020-09-08_14-49-30","recording_slot2_1.npx2")
 
+sBinFileName <-   file.path("W:","swc","akrami","neuropixels_recordings","do02","09_09_2020","2020-09-09_14-13-09","recording_slot2_1.npx2")
+
+conBinFile <- file(description = sBinFileName, open = "rb")
+### # loop reading the chunks
+nLoopIdx <- 384*30000
+while ( length(vecDataChunk <- readBin(con = conBinFile, what = "integer", n = nLoopIdx)) > 0 ) {
+  cat("Line: ", nLoopIdx, " : ")
+  print(vecDataChunk)
+  ### # here we can do more computations on vecDataChunk
+  vecDataChunk <- vecDataChunk %>% matrix(nrow = 384, byrow = F)
+  vecDataChunk[65,] %>% plot(type = "l")
+  ### # increment loop index
+  nLoopIdx <- nLoopIdx + 1
+}
 
 
 
