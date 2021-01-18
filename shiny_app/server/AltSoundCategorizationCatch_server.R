@@ -1,64 +1,64 @@
 ### @AltSoundCategorizationCatch plots ----
 
 
-create_plot_ASC <- reactive({
+create_plot_ASCC <- reactive({
   plots_AltSoundCategCatch(
-    plottype_ASC = input$plot_type_ASC,
-    datelim_ASC = input$setdate_ASC,
-    stage_filter_ASC = input$stage_ASC,
-    animal_filter_ASC = input$animal_select_ASC,
-    exp_ASC = input$exp_select_ASC,
-    f_options_ASC = input$f_options_ASC
+    plottype_ASCC = input$plot_type_ASCC,
+    datelim_ASCC = input$setdate_ASCC,
+    stage_filter_ASCC = input$stage_ASCC,
+    animal_filter_ASCC = input$animal_select_ASCC,
+    exp_ASCC = input$exp_select_ASCC,
+    f_options_ASCC = input$f_options_ASCC
   )
 })
 
 
-output$plot_ASC <- renderPlot({
-  create_plot_ASC()
+output$plot_ASCC <- renderPlot({
+  create_plot_ASCC()
 })
 
 
 observe({
-  if (input$plot_type_ASC == "Choice direction") {
-    disable("animal_select_ASC")
-    disable("exp_select_ASC")
-    disable("f_options_ASC")
-    disable("report_ASC")
-    hide("perform_ASC")
+  if (input$plot_type_ASCC == "Choice direction") {
+    disable("animal_select_ASCC")
+    disable("exp_select_ASCC")
+    disable("f_options_ASCC")
+    disable("report_ASCC")
+    hide("perform_ASCC")
   } else {
-    enable("animal_select_ASC")
-    enable("exp_select_ASC")
-    enable("f_options_ASC")
-    enable("report_ASC")
+    enable("animal_select_ASCC")
+    enable("exp_select_ASCC")
+    enable("f_options_ASCC")
+    enable("report_ASCC")
 
-    if (input$f_options_ASC == "All animals") {
-      disable("animal_select_ASC")
-      disable("exp_select_ASC")
-      disable("report_ASC")
-      hide("perform_ASC")
+    if (input$f_options_ASCC == "All animals") {
+      disable("animal_select_ASCC")
+      disable("exp_select_ASCC")
+      disable("report_ASCC")
+      hide("perform_ASCC")
     }
 
-    if (input$f_options_ASC == "Experimenter") {
-      enable("exp_select_ASC")
-      disable("animal_select_ASC")
-      enable("report_ASC")
-      hide("perform_ASC")
+    if (input$f_options_ASCC == "Experimenter") {
+      enable("exp_select_ASCC")
+      disable("animal_select_ASCC")
+      enable("report_ASCC")
+      hide("perform_ASCC")
     }
 
-    if (input$f_options_ASC == "Individual animals") {
-      enable("animal_select_ASC")
-      disable("exp_select_ASC")
-      show("perform_ASC")
-      disable("report_ASC")
+    if (input$f_options_ASCC == "Individual animals") {
+      enable("animal_select_ASCC")
+      disable("exp_select_ASCC")
+      show("perform_ASCC")
+      disable("report_ASCC")
 
-      output$perform_ASC <- DT::renderDataTable(
+      output$perform_ASCC <- DT::renderDataTable(
         TRAINING %>%
           dplyr::filter(
-            animal_id == input$animal_select_ASC,
+            animal_id == input$animal_select_ASCC,
             choice_direction == "right_trials",
             protocol == "@AltSoundCategorizationCatch",
-            date >= input$setdate_ASC[1],
-            date <= input$setdate_ASC[2]
+            date >= input$setdate_ASCC[1],
+            date <= input$setdate_ASCC[2]
           ) %>%
           select(
             date,
@@ -87,24 +87,24 @@ observe({
 
 ### @AltSoundCategorizationCatch generate report ----
 
-output$report_ASC <- downloadHandler(
-  filename = "weekly_report_ASC.html",
+output$report_ASCC <- downloadHandler(
+  filename = "weekly_report_ASCC.html",
   content = function(file) {
     tempReport <- file.path(tempdir(), "weekly_report_ASCCatch.Rmd") %>%
       normalizePath()
     file.copy(from = "weekly_report_ASCCatch.Rmd", to = tempReport, overwrite = T)
     library(rmarkdown)
-    params_ASC <- list(
-      exp_ASC = input$exp_select_ASC,
-      stg_ASC = input$stage_ASC,
-      fil_ASC = input$f_options_ASC,
-      ani_ASC = input$animal_select_ASC,
-      dt_ASC = input$setdate_ASC
+    params_ASCC <- list(
+      exp_ASCC = input$exp_select_ASCC,
+      stg_ASCC = input$stage_ASCC,
+      fil_ASCC = input$f_options_ASCC,
+      ani_ASCC = input$animal_select_ASCC,
+      dt_ASCC = input$setdate_ASCC
     )
     rmarkdown::render(
       input = tempReport,
       output_file = file,
-      params = params_ASC,
+      params = params_ASCC,
       envir = new.env(parent = globalenv())
     )
   }

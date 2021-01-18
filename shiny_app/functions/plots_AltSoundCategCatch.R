@@ -1,9 +1,9 @@
-plots_AltSoundCateg <- function(plottype_ASC,
-                             datelim_ASC,
-                             stage_filter_ASC,
-                             animal_filter_ASC,
-                             exp_ASC,
-                             f_options_ASC) {
+plots_AltSoundCategCatch <- function(plottype_ASCC,
+                             datelim_ASCC,
+                             stage_filter_ASCC,
+                             animal_filter_ASCC,
+                             exp_ASCC,
+                             f_options_ASCC) {
 
 
   #############################
@@ -12,17 +12,17 @@ plots_AltSoundCateg <- function(plottype_ASC,
 
   TRAINING_original <- TRAINING
 
-  if(missing(datelim_ASC)){
-    datelim_ASC = c(max(TRAINING$date)-9,max(TRAINING$date))
+  if(missing(datelim_ASCC)){
+    datelim_ASCC = c(max(TRAINING$date)-9,max(TRAINING$date))
   }
 
 
-  if (f_options_ASC == "All animals") {
+  if (f_options_ASCC == "All animals") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
-        stage %in% stage_filter_ASC,
-        date >= datelim_ASC[1], date <= datelim_ASC[2],
+        stage %in% stage_filter_ASCC,
+        date >= datelim_ASCC[1], date <= datelim_ASCC[2],
         protocol == "@AltSoundCategorizationCatch"
       )
 
@@ -34,14 +34,14 @@ plots_AltSoundCateg <- function(plottype_ASC,
     )
   }
 
-  if (f_options_ASC == "Experimenter") {
+  if (f_options_ASCC == "Experimenter") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
-        stage %in% stage_filter_ASC,
-        date >= datelim_ASC[1], date <= datelim_ASC[2],
+        stage %in% stage_filter_ASCC,
+        date >= datelim_ASCC[1], date <= datelim_ASCC[2],
         protocol == "@AltSoundCategorizationCatch",
-        experimenter == exp_ASC
+        experimenter == exp_ASCC
       )
 
     col_by <- "animal_id"
@@ -53,14 +53,14 @@ plots_AltSoundCateg <- function(plottype_ASC,
   }
 
 
-  if (f_options_ASC == "Individual animals") {
+  if (f_options_ASCC == "Individual animals") {
     TRAINING <- TRAINING %>%
       dplyr::filter(
         choice_direction == "right_trials",
-        stage %in% stage_filter_ASC,
-        date >= datelim_ASC[1], date <= datelim_ASC[2],
+        stage %in% stage_filter_ASCC,
+        date >= datelim_ASCC[1], date <= datelim_ASCC[2],
         protocol == "@AltSoundCategorizationCatch",
-        animal_id == animal_filter_ASC
+        animal_id == animal_filter_ASCC
       )
 
     col_by <- "stage"
@@ -76,7 +76,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
   ### PLOT: CP duration ----
   ##########################
 
-  if (plottype_ASC == "CP duration") {
+  if (plottype_ASCC == "CP duration") {
     cp_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -96,7 +96,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim_ASC[1]), as.Date(datelim_ASC[2]))
+        limits = c(as.Date(datelim_ASCC[1]), as.Date(datelim_ASCC[2]))
       ) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
@@ -125,12 +125,12 @@ plots_AltSoundCateg <- function(plottype_ASC,
   ### PLOT: left/right trials ----
   ################################
 
-  if (plottype_ASC == "Choice direction") {
+  if (plottype_ASCC == "Choice direction") {
     direction_plot <- ggplot(
       data = TRAINING_original %>%
         dplyr::filter(
-          stage %in% stage_filter_ASC,
-          date >= datelim_ASC[1], date <= datelim_ASC[2],
+          stage %in% stage_filter_ASCC,
+          date >= datelim_ASCC[1], date <= datelim_ASCC[2],
           protocol == "@AltSoundCategorizationCatch"),
       mapping = aes(
         x = animal_id,
@@ -167,7 +167,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
   ### PLOT: done trials ----
   ##########################
 
-  if (plottype_ASC == "No. done trials") {
+  if (plottype_ASCC == "No. done trials") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -188,7 +188,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim_ASC[1]), as.Date(datelim_ASC[2]))
+        limits = c(as.Date(datelim_ASCC[1]), as.Date(datelim_ASCC[2]))
       ) +
       ylim(0, max(TRAINING$all_trials) + 10) +
       theme(
@@ -218,7 +218,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
   ### PLOT: completed trials ----
   ###############################
 
-  if (plottype_ASC == "No. completed trials") {
+  if (plottype_ASCC == "No. completed trials") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -239,7 +239,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim_ASC[1]), as.Date(datelim_ASC[2]))
+        limits = c(as.Date(datelim_ASCC[1]), as.Date(datelim_ASCC[2]))
       ) +
       ylim(0, max(TRAINING$all_trials) + 10) +
       theme(
@@ -271,7 +271,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
   ### PLOT: correct trials ----
   #############################
 
-  if (plottype_ASC == "No. correct trials") {
+  if (plottype_ASCC == "No. correct trials") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -292,7 +292,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim_ASC[1]), as.Date(datelim_ASC[2]))
+        limits = c(as.Date(datelim_ASCC[1]), as.Date(datelim_ASCC[2]))
       ) +
       ylim(0, max(TRAINING$all_trials) + 10) +
       theme(
@@ -322,7 +322,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
   ### PLOT: correct ratio ----
   ############################
 
-  if (plottype_ASC == "Correct ratio") {
+  if (plottype_ASCC == "Correct ratio") {
     trial_plot <- ggplot(
       data = TRAINING,
       mapping = aes(
@@ -343,7 +343,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim_ASC[1]), as.Date(datelim_ASC[2]))
+        limits = c(as.Date(datelim_ASCC[1]), as.Date(datelim_ASCC[2]))
       ) +
       ylim(0,1) +
       theme(
@@ -363,7 +363,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         hjust = -0.5,
         direction = "y"
       ) +
-      annotate("text",x = datelim_ASC[1], y = 0.51, label = "Chance level", col = "gray") +
+      annotate("text",x = datelim_ASCC[1], y = 0.51, label = "Chance level", col = "gray") +
       labs(col = eval(parse(text = "col_lab_name")))
 
     plot(trial_plot)
@@ -389,7 +389,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
   # }
 
 
-  if (plottype_ASC == "Stage tracking") {
+  if (plottype_ASCC == "Stage tracking") {
     stage_plot <- ggplot(
       data = TRAINING,
       mapping = aes(x = date, y = animal_id)
@@ -401,7 +401,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim_ASC[1]), as.Date(datelim_ASC[2]))
+        limits = c(as.Date(datelim_ASCC[1]), as.Date(datelim_ASCC[2]))
       ) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
@@ -438,7 +438,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
   ### PLOT: Missing data ----
   ############################
 
-  if (plottype_ASC == "Missing data") {
+  if (plottype_ASCC == "Missing data") {
     recording_dates <- TRAINING %>%
       group_by(animal_id) %>%
       mutate(trained = T) %>%
@@ -461,7 +461,7 @@ plots_AltSoundCateg <- function(plottype_ASC,
         date_breaks = "1 day",
         date_labels = "%b %d",
         minor_breaks = "1 day",
-        limits = c(as.Date(datelim_ASC[1]), as.Date(datelim_ASC[2]))
+        limits = c(as.Date(datelim_ASCC[1]), as.Date(datelim_ASCC[2]))
       ) +
       theme(
         axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),

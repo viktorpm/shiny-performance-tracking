@@ -4,7 +4,7 @@ tabPanel(
     sidebarPanel(
       width = 3,
       selectInput(
-        inputId = "plot_type_ASC",
+        inputId = "plot_type_ASCC",
         label = "Select plot type",
         choices = c(
           "CP duration",
@@ -20,7 +20,7 @@ tabPanel(
 
 
       radioButtons(
-        inputId = "f_options_ASC",
+        inputId = "f_options_ASCC",
         label = "Filters",
         choices = c("All animals", "Experimenter", "Individual animals"),
         selected = "All animals"
@@ -28,17 +28,17 @@ tabPanel(
 
 
       selectInput(
-        inputId = "exp_select_ASC",
+        inputId = "exp_select_ASCC",
         label = "Select experimenter",
         choices = TRAINING$experimenter %>% unique() %>% as.vector()
       ),
 
 
-      downloadButton("report_ASC", "Generate report"),
+      downloadButton("report_ASCC", "Generate report"),
 
 
       selectInput(
-        inputId = "animal_select_ASC",
+        inputId = "animal_select_ASCC",
         label = "Select animals to show",
         # choices = TRAINING$animal_id %>% unique() %>% as.vector()
         choices = TRAINING %>%
@@ -52,7 +52,7 @@ tabPanel(
 
 
       dateRangeInput(
-        inputId = "setdate_ASC",
+        inputId = "setdate_ASCC",
         label = "Dates to show (default: last 3 weeks)",
         start = max(TRAINING$date) - 21,
         end = max(TRAINING$date),
@@ -63,7 +63,7 @@ tabPanel(
 
 
       checkboxGroupInput(
-        inputId = "stage_ASC",
+        inputId = "stage_ASCC",
         label = "Select stages to show",
         choices = TRAINING$stage %>% unique() %>% as.vector(),
         selected = TRAINING$stage %>% unique() %>% as.vector()
@@ -72,8 +72,8 @@ tabPanel(
 
     mainPanel(
       width = 9,
-      plotOutput(outputId = "plot_ASC", height = 1000),
-      dataTableOutput(outputId = "perform_ASC")
+      plotOutput(outputId = "plot_ASCC", height = 1000),
+      dataTableOutput(outputId = "perform_ASCC")
     )
   )
 )

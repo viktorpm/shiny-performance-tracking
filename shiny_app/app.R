@@ -31,6 +31,7 @@ source(file.path("functions", "plots_AltStat.R"))
 source(file.path("functions", "plots_AltSoundCateg.R"))
 source(file.path("functions", "plots_summary.R"))
 
+source(file.path("functions", "plots_AltSoundCategCatch.R"))
 
 
 
@@ -44,7 +45,9 @@ ui <- fluidPage(
     source(file.path("ui", "AthenaDelayComp_ui.R"), local = TRUE)$value,
     source(file.path("ui", "SoundCategorization_ui.R"), local = TRUE)$value,
     source(file.path("ui", "AltSoundCategorization_ui.R"), local = TRUE)$value,
-    source(file.path("ui", "AltStat_ui.R"), local = TRUE)$value
+    source(file.path("ui", "AltStat_ui.R"), local = TRUE)$value,
+    
+    source(file.path("ui", "AltSoundCategorizationCatch_ui.R"), local = TRUE)$value
   )
 )
 
@@ -55,6 +58,8 @@ server <- function(input, output, session) {
   source(file.path("server", "SoundCategorization_server.R"), local = TRUE)$value
   source(file.path("server", "AltSoundCategorization_server.R"), local = TRUE)$value
   source(file.path("server", "AltStat_server.R"), local = TRUE)$value
+  
+  source(file.path("server", "AltSoundCategorizationCatch_server.R"), local = TRUE)$value
 }
 
 shinyApp(ui, server)
