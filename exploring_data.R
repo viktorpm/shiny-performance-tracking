@@ -487,6 +487,57 @@ while ( length(vecDataChunk <- readBin(con = conBinFile, what = "integer", n = n
 }
 
 
+# database
+
+install.packages("DBI")
+install.packages("odbc")
+install.packages("ssh")
+install.packages("RMariaDB")
+install.packages("RMySQL")
+
+library(odbc)
+library(DBI)
+library(ssh)
+library(RMariaDB)
+library(RMySQL)
+sort(unique(odbcListDrivers()[[1]]))
+
+
+
+
+gateway <- ssh_connect("vplattner@192.168.238.210")
+print(gateway)
+
+ssh_tunnel(session = ssh_connect("vplattner@192.168.238.210"),
+           port = 8080,
+           target = "172.24.155.100:80" )
+
+ssh_tunnel()
+ssh_disconnect(gateway)
+
+
+
+#### first open an ssh tunnel: ssh -f vplattner@192.168.238.210 -L 8080:172.24.155.100:3306 -N
+con <- dbConnect(MySQL(), 
+                 user = "akrami", 
+                 password = "Akrami2019!",
+                 dbname = 'akrami_db',
+                 host = "localhost",
+                 port = 8080)
+
+
+
+dbListTables(con)
+dplyr::tbl(con, sql("SELECT * FROM mass_log"))
+
+mass <- dplyr::tbl(con, "mass_log") %>%
+  as_tibble()
+
+sessions <- dplyr::tbl(con, "sessions") %>% 
+  as_tibble()
+
+water <- dplyr::tbl(con, "water_log") %>%
+  as_tibble()
 
 
 
