@@ -539,6 +539,16 @@ sessions <- dplyr::tbl(con, "sessions") %>%
 water <- dplyr::tbl(con, "water_log") %>%
   as_tibble()
 
+water %>% head()
+sessions %>% head()
 
 
+sessions %>% 
+  dplyr::mutate(sessiondate = as.Date(sessiondate),
+                endtime = as.POSIXct(endtime, format = "%H:%M:%S"),
+                starttime = as.POSIXct(starttime, format = "%H:%M:%S")) %>%
+  dplyr::filter(sessiondate == "2019-10-14") %>% 
+  ggplot(mapping = aes(x = starttime, y = ratname)) +
+  geom_linerange(aes(xmin = starttime,  xmax = endtime), color = "red", size = 1) 
+  #scale_y_date(breaks = "1 day")
 
