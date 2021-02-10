@@ -67,7 +67,7 @@ library(RMySQL)
 library(googlesheets)
 library(googledrive)
 library(rio)
-library(openxlsx)
+library(readxl)
 
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -159,19 +159,19 @@ drive_find(n_max = 30)
 ```{r}
 drive_download(
   file = "Water Log",
-  path = file.path("training_and_watering_visual", "Water Log.xlsx"),
+  path = file.path("Water Log.xlsx"),
   overwrite = T
 )
 
-rio::convert(
-  in_file = file.path("training_and_watering_visual", "Water Log.xlsx"),
-  out_file = file.path("training_and_watering_visual", "Water Log.csv"))
+# rio::convert(
+#   in_file = file.path("Water Log.xlsx"),
+#   out_file = file.path("Water Log.csv"))
 
 ```
 
 
 
 ```{r}
-water <- openxlsx::read.xlsx(file.path("training_and_watering_visual", "Water Log.xlsx"))
+water <- readxl::read_xlsx(file.path("Water Log.xlsx"))
 ```
 
