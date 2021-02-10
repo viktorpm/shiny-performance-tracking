@@ -1,0 +1,177 @@
+---
+title: "database_drive_access"
+author: "Viktor Plattner"
+output:
+  html_document:
+    number_sections: yes
+    df_print: paged
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    keep_tex: true
+  html_notebook:
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+spacing: single
+fontsize: 12pt
+always_allow_html: yes
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 14px;
+      font-family: "Arial", Helvetica, sans-serif;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 38px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #4d4e4f;
+}
+h1 { /* Header 1 */
+  font-size: 28px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #2c3a3e;
+}
+h2 { /* Header 2 */
+  font-size: 22px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #2c3a3e;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+  font-family: "Arial", Helvetica, sans-serif;
+  color: #2c3a3e;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+
+```{r setup, include=FALSE}
+library(odbc)
+library(DBI)
+library(ssh)
+library(RMariaDB)
+library(RMySQL)
+library(googlesheets)
+library(googledrive)
+library(rio)
+library(openxlsx)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# connecting to db and drive
+
+## connecting to db
+first open an ssh tunnel: ssh -f vplattner@192.168.238.210 -L 8080:172.24.155.100:3306 -N
+
+
+```{r}
+
+akrami_db <- dbConnect(MySQL(), 
+                 user = "akrami", 
+                 password = "Akrami2019!",
+                 dbname = 'akrami_db',
+                 host = "localhost",
+                 port = 8080)
+
+DBI::dbListTables(akrami_db)
+DBI::dbListFields(akrami_db, "sessions")
+
+```
+
+## authenticate drive  
+
+```{r}
+drive_auth(
+  email = "limlabswc@gmail.com",
+  path = NULL,
+  scopes = "https://www.googleapis.com/auth/drive.readonly",
+  cache = gargle::gargle_oauth_cache(),
+  use_oob = TRUE,
+  token = NULL
+)
+```
+
+
+# Loading and cleaning data
+
+
+
+```{r}
+mass <- dplyr::tbl(akrami_db, "mass_log") %>%
+  as_tibble() %>% 
+  dplyr::rename(
+    animal_id = animal_ID
+  ) %>% 
+  dplyr::select(-col_id)
+mass
+```
+
+
+
+
+```{r}
+sessions <- dplyr::tbl(
+  src = akrami_db,
+  sql("SELECT ratname, experimenter, sessiondate, endtime, starttime FROM sessions")) %>% 
+  as_tibble() %>% 
+  dplyr::rename(
+    animal_id = ratname,
+    date = sessiondate,
+    exp_id = experimenter
+  ) 
+sessions
+```
+
+
+
+
+```{r}
+water <- dplyr::tbl(akrami_db, "water_log") %>%
+  as_tibble() %>% 
+  dplyr::mutate(
+    water_start = as.POSIXct(water_start, format = "%H:%M:%S") %>% format(format = "%H:%M:%S"),
+    water_end = as.POSIXct(water_end, format = "%H:%M:%S") %>% format(format = "%H:%M:%S")) %>% 
+  dplyr::select(-ad_lib_start,-ad_lib_end, -col_id)
+water
+```
+
+
+Files on drive
+
+```{r}
+drive_find(n_max = 30)
+```
+
+```{r}
+drive_download(
+  file = "Water Log",
+  path = file.path("training_and_watering_visual", "Water Log.xlsx"),
+  overwrite = T
+)
+
+rio::convert(
+  in_file = file.path("training_and_watering_visual", "Water Log.xlsx"),
+  out_file = file.path("training_and_watering_visual", "Water Log.csv"))
+
+```
+
+
+
+```{r}
+water <- openxlsx::read.xlsx(file.path("training_and_watering_visual", "Water Log.xlsx"))
+```
+

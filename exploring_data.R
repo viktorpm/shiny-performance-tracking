@@ -494,12 +494,18 @@ install.packages("odbc")
 install.packages("ssh")
 install.packages("RMariaDB")
 install.packages("RMySQL")
+install.packages("googlesheets")
+install.packages("googledrive")
+
 
 library(odbc)
 library(DBI)
 library(ssh)
 library(RMariaDB)
 library(RMySQL)
+library(googlesheets)
+library(googledrive)
+
 sort(unique(odbcListDrivers()[[1]]))
 
 
@@ -526,21 +532,43 @@ con <- dbConnect(MySQL(),
                  port = 8080)
 
 
+drive_auth(
+  email = "limlabswc@gmail.com",
+  path = NULL,
+  scopes = "https://www.googleapis.com/auth/drive.readonly",
+  cache = gargle::gargle_oauth_cache(),
+  use_oob = TRUE,
+  token = NULL
+)
 
-dbListTables(con)
+drive_find()
+
+
+#https://www.googleapis.com/auth/drive.readonly
+
+DBI::dbListTables(con)
+DBI::dbListFields(con, "sessions")
+
 dplyr::tbl(con, sql("SELECT * FROM mass_log"))
+
 
 mass <- dplyr::tbl(con, "mass_log") %>%
   as_tibble()
 
-sessions <- dplyr::tbl(con, "sessions") %>% 
+sessions <- dplyr::tbl(con, sql("SELECT ratname, sessiondate, endtime, starttime FROM sessions")) %>% 
   as_tibble()
 
 water <- dplyr::tbl(con, "water_log") %>%
-  as_tibble()
+  as_tibble() %>% 
+  dplyr::mutate(
+    water_start = as.POSIXct(water_start, format = "%H:%M:%S") %>% format(format = "%H:%M:%S"),
+    water_end = as.POSIXct(water_end, format = "%H:%M:%S") %>% format(format = "%H:%M:%S"))
+
+
 
 water %>% head()
 sessions %>% head()
+
 
 
 sessions %>% 
@@ -549,6 +577,29 @@ sessions %>%
                 starttime = as.POSIXct(starttime, format = "%H:%M:%S")) %>%
   dplyr::filter(sessiondate == "2019-10-14") %>% 
   ggplot(mapping = aes(x = starttime, y = ratname)) +
-  geom_linerange(aes(xmin = starttime,  xmax = endtime), color = "red", size = 1) 
+  geom_linerange(aes(xmin = starttime,  xmax = endtime), color = "red", size = 1) +
+  scale_x_datetime(breaks = "30 min",labels = scales::date_format("%H:%M"))
   #scale_y_date(breaks = "1 day")
+
+
+session_water <- full_join(
+  sessions %>% dplyr::rename(
+    animal_id = ratname,
+    date = sessiondate
+  ) %>% 
+    dplyr::select(date, animal_id, starttime, endtime),
+  water %>%
+    select(animal_id, date, water_start, water_end)
+)
+
+session_water %>% 
+  dplyr::mutate(date = as.Date(date),
+                endtime = as.POSIXct(endtime, format = "%H:%M:%S"),
+                starttime = as.POSIXct(starttime, format = "%H:%M:%S"),
+                water_start = as.POSIXct(water_start, format = "%H:%M:%S"),
+                water_end = as.POSIXct(water_end, format = "%H:%M:%S")) %>%
+  dplyr::filter(date == "2019-10-14") %>% 
+  ggplot(mapping = aes(x = starttime, y = animal_id)) +
+  geom_linerange(aes(xmin = starttime,  xmax = endtime), color = "red", size = 1) +
+  scale_x_datetime(breaks = "30 min",labels = scales::date_format("%H:%M"))
 
