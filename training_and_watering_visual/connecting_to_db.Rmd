@@ -172,27 +172,25 @@ drive_download(
 ```
 
 
+Convert to csv first. xlsx files are not read correctly (problem with mixed date and time format and conversion)
 
-```{r, message=FALSE, warning=FALSE, tidy=TRUE}
-water <- readxl::read_excel(file.path("Water Log.xlsx"))
-```
 ```{r}
 #water <- openxlsx::read.xlsx(file.path("Water Log.xlsx")) %>% as_tibble()
-water <- read.csv(file.path("Water Log.csv")) %>% as_tibble()
-```
+water <- read.csv(file.path("Water Log.csv")) %>% 
+  as_tibble()
 
-
-```{r}
 water <- water %>% 
   dplyr::mutate(
     date = lubridate::dmy(date),
     water.start = as.POSIXct(water.start, format = "%H:%M") %>% format(format = "%H:%M"),
     water.end = as.POSIXct(water.end, format = "%H:%M") %>% format(format = "%H:%M")
-  )
+  ) %>% 
+  dplyr::select(1:5) %>% 
+  dplyr::rename("animal_id" = 1, "exp_id" = 2)
+water
 ```
 
 
 ```{r}
-typeof(water$date)
 ```
 
