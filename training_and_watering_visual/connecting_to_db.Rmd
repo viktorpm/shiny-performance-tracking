@@ -134,7 +134,11 @@ sessions <- dplyr::tbl(
     animal_id = ratname,
     date = sessiondate,
     exp_id = experimenter
-  ) 
+  ) %>% 
+  dplyr::mutate(
+    date = as.Date(date),
+    endtime = as.POSIXct(endtime, format = "%H:%M:%S") %>% format(format = "%H:%M"),
+    starttime = as.POSIXct(starttime, format = "%H:%M:%S") %>% format(format = "%H:%M"))
 sessions
 ```
 
@@ -142,13 +146,14 @@ sessions
 
 
 ```{r}
-water <- dplyr::tbl(akrami_db, "water_log") %>%
-  as_tibble() %>% 
-  dplyr::mutate(
-    water_start = as.POSIXct(water_start, format = "%H:%M:%S") %>% format(format = "%H:%M:%S"),
-    water_end = as.POSIXct(water_end, format = "%H:%M:%S") %>% format(format = "%H:%M:%S")) %>% 
-  dplyr::select(-ad_lib_start,-ad_lib_end, -col_id)
-water
+# water <- dplyr::tbl(akrami_db, "water_log") %>%
+#   as_tibble() %>% 
+#   dplyr::mutate(
+#     date = as.Date(date),
+#     water_start = as.POSIXct(water_start, format = "%H:%M:%S") %>% format(format = "%H:%M:%S"),
+#     water_end = as.POSIXct(water_end, format = "%H:%M:%S") %>% format(format = "%H:%M:%S")) %>% 
+#   dplyr::select(-ad_lib_start,-ad_lib_end, -col_id)
+# water
 ```
 
 
@@ -162,6 +167,12 @@ drive_find(n_max = 30)
 drive_download(
   file = "Water Log",
   path = file.path("Water Log.xlsx"),
+  overwrite = T
+)
+
+drive_download(
+  file = "Mass Log",
+  path = file.path("Mass Log.xlsx"),
   overwrite = T
 )
 
@@ -181,16 +192,83 @@ water <- read.csv(file.path("Water Log.csv")) %>%
 
 water <- water %>% 
   dplyr::mutate(
-    date = lubridate::dmy(date),
+    date = as.Date(date,tryFormats = c("%d/%m/%Y")),
     water.start = as.POSIXct(water.start, format = "%H:%M") %>% format(format = "%H:%M"),
     water.end = as.POSIXct(water.end, format = "%H:%M") %>% format(format = "%H:%M")
   ) %>% 
   dplyr::select(1:5) %>% 
-  dplyr::rename("animal_id" = 1, "exp_id" = 2)
+  dplyr::rename("animal_id" = 1, "exp_id" = 2) %>% 
+  dplyr::mutate(exp_id = tolower(exp_id))
 water
 ```
 
 
 ```{r}
+mass <- read.csv(file.path("Mass Log.csv"),na.strings = c("","NA")) %>% 
+  as_tibble() %>% 
+  dplyr::select(-X, -X.1) %>% 
+  na.omit() %>% 
+  unite(col = "dm", date, mass, sep = "_") %>% 
+  unite(col = "dm1", date.1, mass.1, sep = "_") %>% 
+  unite(col = "dm2", date.2, mass.2, sep = "_") %>% 
+  unite(col = "dm3", date.3, mass.3, sep = "_") %>% 
+  unite(col = "dm4", date.4, mass.4, sep = "_") %>% 
+  unite(col = "dm5", date.5, mass.5, sep = "_") %>% 
+  unite(col = "dm6", date.6, mass.6, sep = "_") %>% 
+  unite(col = "dm7", date.7, mass.7, sep = "_") %>% 
+  unite(col = "dm8", date.8, mass.8, sep = "_") %>% 
+  unite(col = "dm9", date.9, mass.9, sep = "_") %>% 
+  unite(col = "dm10", date.10, mass.10, sep = "_") %>% 
+  gather(key = "dm_cols", value = "dm_values",
+         dm, dm1, dm2, dm3, dm4, dm5, dm6, dm7, dm8, dm9, dm10) %>% 
+  tidyr::extract(
+    col = dm_values, 
+    into = c("date", "mass"), 
+    regex = "([[:alnum:][:punct:] ]+)_([[:alnum:]]+)") %>% 
+  dplyr::rename("animal_id" = 1, "exp_id" = 2) %>% 
+  dplyr::select(-dm_cols) %>% 
+  dplyr::mutate(date = as.Date(date, tryFormats = c("%d/%m/%Y"))) %>% 
+   dplyr::mutate(exp_id = tolower(exp_id))
+
+mass
+```
+
+
+```{r message=F}
+time_ranges <- left_join(water, sessions) %>% 
+  unite(col = "water_se", water.start, water.end, sep = "_") %>% 
+  unite(col = "training_se", starttime, endtime, sep = "_") %>% 
+  gather(key = "proc_type", "proc_time_range", water_se, training_se) %>%  
+  tidyr::extract(
+    col = proc_time_range, 
+    into = c("start", "end"),
+    regex = "([[:alnum:][:punct:] ]+)_([[:alnum:][:punct:]]+)")
+
+time_ranges
+```
+
+
+
+```{r}
+time_ranges %>% 
+  dplyr::filter(date == "2019-10-14") %>%
+  dplyr::mutate(
+    start = as.POSIXct(start, format = "%H:%M"),
+    end = as.POSIXct(end, format = "%H:%M")) %>% 
+ggplot(mapping = aes(x = start, y = animal_id)) +
+  geom_linerange(aes(xmin = start,  xmax = end,  col = proc_type), size = 2) +
+  scale_x_datetime(breaks = "15 min",labels = scales::date_format("%H:%M")) +
+  geom_text_repel(
+    data = time_ranges %>% 
+      dplyr::filter(date == "2019-10-14") %>%
+      dplyr::mutate(
+        start = as.POSIXct(start, format = "%H:%M"),
+        end = as.POSIXct(end, format = "%H:%M")) %>% 
+      dplyr::filter(proc_type == "water_se"),  
+    mapping = aes(label = paste0("Watering time: ", end-start, " min")),  
+    hjust = -0.9,
+    direction = "y")
+
+
 ```
 
