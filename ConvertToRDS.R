@@ -8,7 +8,7 @@ ConvertToRDS <- function(file, save_path) {
   }
 
 
-  ### finds the index of the last "/", idetifies the start of the filename
+  ### finds the index of the last "/", identifies the start of the file name
   filename_pos <- gregexpr(file,
     pattern = "/"
   ) %>%
