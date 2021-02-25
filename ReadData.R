@@ -3,9 +3,9 @@ ReadData <- function(rds_file, trialData = F) {
   library(tidyverse)
   library(purrr)
 
-  if (missing(trialData)){
-    trialData = F
-  }
+  # if (missing(trialData)){
+  #   trialData = F
+  # }
   
   # browser()
   path <- file.path(
@@ -16,26 +16,26 @@ ReadData <- function(rds_file, trialData = F) {
   ### Default mode, no trial data ----
   if (trialData == F) {
 
-    ### cheks if CSV file exists
-    csv_exists <- file.exists(file.path(path, "TRAINING.csv"))
+    # ### cheks if CSV file exists
+    # csv_exists <- file.exists(file.path(path, "TRAINING.csv"))
+    # 
+    # ### cheks if the rds_file has been processed (can be found in the CSV file)
+    # if (csv_exists == T) {
+    #   read_TRAINING <- suppressMessages(
+    #     suppressWarnings(
+    #       read_csv(file.path(path, "TRAINING.csv"))
+    #     )
+    #   )
+    #   file_processed_test <- str_detect(
+    #     read_TRAINING$file,
+    #     regex(paste0(rds_file))
+    #   )
+    # } else {
+    #  file_processed_test <- F
+    # }
 
-    ### cheks if the rds_file has been processed (can be found in the CSV file)
-    if (csv_exists == T) {
-      read_TRAINING <- suppressMessages(
-        suppressWarnings(
-          read_csv(file.path(path, "TRAINING.csv"))
-        )
-      )
-      file_processed_test <- str_detect(
-        read_TRAINING$file,
-        regex(paste0(rds_file))
-      )
-    } else {
-      file_processed_test <- F
-    }
 
-
-    if (all(file_processed_test == F)) {
+    # if (all(file_processed_test == F)) { ### being tested outside of the function. Only non-processed files are being sent to the function!
       rat_data <- readRDS(paste0(file.path("data", "rds_files"), "/", rds_file))
 
       ### checks the source of the data
@@ -60,15 +60,15 @@ ReadData <- function(rds_file, trialData = F) {
           return(TRAINING)
         }
       }
-    } else {
-      warning(paste0(
-        rds_file,
-        # ".mat: ",
-        " file has already been processed"
-      ))
-      return(NULL)
-    }
-  } 
+    # } else {
+    #   warning(paste0(
+    #     rds_file,
+    #     # ".mat: ",
+    #     " file has already been processed"
+    #   ))
+    #   return(NULL)
+    # }
+  }#if trialData = F 
   
   ### With trial data ----
   if(trialData == T) {
@@ -126,5 +126,5 @@ ReadData <- function(rds_file, trialData = F) {
       ))
       return(NULL)
     }
-  }
-}
+  }#if trialData = T
+}#function end
