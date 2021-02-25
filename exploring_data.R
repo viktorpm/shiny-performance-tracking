@@ -603,3 +603,34 @@ session_water %>%
   geom_linerange(aes(xmin = starttime,  xmax = endtime), color = "red", size = 1) +
   scale_x_datetime(breaks = "30 min",labels = scales::date_format("%H:%M"))
 
+
+
+#### optimising file conversion (mat to rds) and file checks
+mat_file_list <- list.files(
+  path = file.path("D:", "_Rig_data", "SoloData", "Data"),
+  pattern = "\\.mat$",
+  recursive = T
+  # full.names = F
+  ) %>%
+  as.list()
+
+
+mat_file_list <- file_list[!grepl("experimenter", file_list) & 
+                         !grepl("Session Settings", file_list) & 
+                         !grepl("FakeSubject", file_list)]
+
+
+sub(pattern = ".*\\/", "", mat_file_list[[1]])
+
+
+
+
+mat_file_list <- sub(pattern = ".*\\/", "", mat_file_list)
+
+
+rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
+
+setdiff(
+mat_file_list,  
+rds_list %>% unlist() %>% substr(start = 1, stop = nchar(.)-4)
+)
