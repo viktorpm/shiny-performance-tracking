@@ -33,17 +33,18 @@ ConvertToRDS <- function(file, save_path) {
 
 
   ### gets the list of files from save_path
-  file_list <- list.files(save_path) %>% as.list()
-
-  filename_test <- paste0(filename, ".rds")
-
-  if (any(str_detect(string = file_list, pattern = filename_test)) == T) {
-    warning(paste0(
-      filename,
-      " ",
-      "File has already been processed"
-    ))
-  } else {
+  ### !!!!!! Testing outside of the function. Only unprocessed files are passed to the function 
+  # file_list <- list.files(save_path) %>% as.list()
+  # 
+  # filename_test <- paste0(filename, ".rds")
+  # 
+  # if (any(str_detect(string = file_list, pattern = filename_test)) == T) {
+  #   warning(paste0(
+  #     filename,
+  #     " ",
+  #     "File has already been processed"
+  #   ))
+  # } else {
     rat_data <- readMat(paste0(file_path, filename))
 
     saveRDS(rat_data,
@@ -54,5 +55,5 @@ ConvertToRDS <- function(file, save_path) {
         ".rds"
       )
     )
-  }
+  # }
 }
