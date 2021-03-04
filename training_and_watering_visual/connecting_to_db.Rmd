@@ -292,8 +292,8 @@ time_ranges %>%
   formattable::formattable(
     align = c("c", "c", "r", "c", "c", "c", "c", "l", "l"),
     list(
-      `Watering` = color_bar(color = "#AAD6E6", fun = unit.scale2),
-      `Training` = color_bar(color = "pink", fun = unit.scale2)
+      `Watering` = color_bar(color = "#AAD6E6"),#, fun = unit.scale2),
+      `Training` = color_bar(color = "pink")#, fun = unit.scale2)
       # `Training` = color_tile("pink", "red")
     )
   )
