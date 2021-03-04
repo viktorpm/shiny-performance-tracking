@@ -35,7 +35,7 @@ output$table_sum <- DT::renderDataTable(
       group_by(protocol, stage) %>%
       summarize("Animal names" = paste(animal_id, sep = "", collapse = ", ")) %>%
       pull("Animal names") %>%
-      as.tibble() %>%
+      as_tibble() %>%
       rename("Aimal names" = value)
   )
 )
