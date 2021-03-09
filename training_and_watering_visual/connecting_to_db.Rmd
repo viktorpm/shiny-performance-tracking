@@ -269,12 +269,13 @@ time_ranges <- left_join(water, sessions) %>%
     "Water OFF" = water.end
   ) %>%
   dplyr::mutate(
-    Training = difftime(
+    `Training (min)` = difftime(
       `Training OFF` %>% as.POSIXct(format = "%H:%M"),
       `Training ON` %>% as.POSIXct(format = "%H:%M"),
       units = "min"
     ) %>% as.numeric() %>% replace_na(""),
-    Watering = difftime(
+    `Training (min)` = ifelse(`Training (min)` <= 5, "", `Training (min)`),
+    `Watering (min)` = difftime(
       `Water OFF` %>% as.POSIXct(format = "%H:%M"),
       `Water ON` %>% as.POSIXct(format = "%H:%M"),
       units = "min"
@@ -282,8 +283,8 @@ time_ranges <- left_join(water, sessions) %>%
   ) %>%
   dplyr::relocate(`Training ON`, .before = `Training OFF`)
 
-unit.scale <- function(x) (x - min(x)) / (max(x) - min(x))
-unit.scale2 <- function(x) (x /100)
+unit.scale <- function(x) ( x / max(x)  )
+unit.scale2 <- function(x) (x/150)
 unit.scale3 <- function(x) (1 / x)
 unit.scale4 <- function(x) (x - mean(x) / sd(x))
 
@@ -292,8 +293,8 @@ time_ranges %>%
   formattable::formattable(
     align = c("c", "c", "r", "c", "c", "c", "c", "l", "l"),
     list(
-      `Watering` = color_bar(color = "#AAD6E6"),#, fun = unit.scale2),
-      `Training` = color_bar(color = "pink")#, fun = unit.scale2)
+      `Watering (min)` = color_bar(color = "#AAD6E6", fun = unit.scale2),
+      `Training (min)` = color_bar(color = "pink", fun = unit.scale2)
       # `Training` = color_tile("pink", "red")
     )
   )
@@ -356,3 +357,20 @@ mass %>%
     )
   )
 ```
+
+
+
+```{r, warning=F}
+
+mass %>% 
+  dplyr::filter(
+    exp_id == "viktor",
+    date <= Sys.Date()
+    ) %>% 
+  ggplot(mapping = aes(x = date, y = mass %>% as.numeric())) + 
+  geom_line(aes(color = animal_id))
+
+
+
+```
+
