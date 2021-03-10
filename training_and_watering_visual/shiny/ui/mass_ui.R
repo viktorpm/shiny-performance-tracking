@@ -24,17 +24,18 @@ tabPanel(
       selectInput(
         inputId = "animal_select",
         label = "Select animals to show",
-        choices = TRAINING$animal_id %>% unique() %>% as.vector()
+        choices = mass$animal_id %>% unique() %>% as.vector()
+        # choices = mass %>% dplyr::filter(exp_id == input$exp_select) %>% pull(animal_id) %>% unique()
       ),
       
       
       dateRangeInput(
         inputId = "setdate",
         label = "Dates to show (default: last 3 weeks)",
-        start = max(TRAINING$date) - 21,
-        end = max(TRAINING$date),
-        min = min(TRAINING$date),
-        max = max(TRAINING$date)
+        start = Sys.Date() - 21,
+        end =  Sys.Date(),
+        min = min(mass$date),
+        max = Sys.Date()
       )
     ),
     
