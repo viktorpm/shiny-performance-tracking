@@ -19,9 +19,7 @@ library(plotly)
 library(knitr)
 library(kableExtra)
 library(rmarkdown)
-
-
-
+library(formattable)
 
 
 source(file.path("functions", "load_mass.R"))
@@ -29,14 +27,11 @@ source(file.path("functions", "plots_mass.R"))
 
 
 
-
-
-
 ui <- fluidPage(
   useShinyjs(),
   navbarPage(
     "Log",
-    
+
     # include the UI for each tab
     source(file.path("ui", "mass_ui.R"), local = TRUE)$value
   )
