@@ -2,14 +2,12 @@
 
 
 create_plot <- reactive({
-  # isolate({
   plots_mass(
     datelim = input$setdate,
     f_options = input$f_options,
     animal_filter = input$animal_select,
     exp = input$exp_select
   )
-  # })
 })
 
 
@@ -19,11 +17,31 @@ output$plot <- renderPlot({
 
 
 
+mass_formatter <-
+  formatter("span",
+    style = x ~ style(
+      font.weight = "bold",
+      color = ifelse(
+        test = c(NA, diff(as.numeric(x))) > 0, ### NA to shift it by 1 to get the correct colors
+        yes = "green",
+        no = ifelse(c(NA, diff(as.numeric(x))) < 0, "red", "black")
+      )
+    ),
+    x ~ icontext(ifelse(
+      test = c(NA, diff(as.numeric(x))) > 0,
+      yes = "arrow-up",
+      no = ifelse(c(NA, diff(as.numeric(x))) < 0, "arrow-down", "minus")
+    ), x)
+  )
+
+
+
+
 observe({
   if (input$f_options == "Experimenter") {
     disable("animal_select")
 
-    output$mass_table <- renderFormattable(
+    output$mass_table <- DT::renderDataTable({
       mass %>%
         dplyr::filter(
           # animal_id == input$animal_select,
@@ -33,14 +51,22 @@ observe({
         ) %>%
         dplyr::arrange(animal_id, date) %>%
         dplyr::rename("Animal" = animal_id, "Experimenter" = exp_id, "Date" = date, "Mass (g)" = mass) %>%
-        # dplyr::mutate(d = c(NA, diff(as.numeric(`Mass (g)`)))) %>%
         formattable::formattable(
           align = c("c", "c", "r", "r"),
           list(
             `Mass (g)` = mass_formatter
           )
+        ) %>%
+        as.datatable(
+          extensions = "Buttons",
+          options = list(
+            pageLength = 20,
+            buttons = c("copy", "csv", "excel"),
+            dom = "Bfrtip"
+          ),
+          class = "display"
         )
-    )
+    })
   }
 
 
@@ -61,7 +87,7 @@ observe({
     )
 
 
-    output$mass_table <- renderFormattable(
+    output$mass_table <- DT::renderDataTable({
       mass %>%
         dplyr::filter(
           animal_id == input$animal_select,
@@ -71,31 +97,21 @@ observe({
         ) %>%
         dplyr::arrange(date) %>%
         dplyr::rename("Animal" = animal_id, "Experimenter" = exp_id, "Date" = date, "Mass (g)" = mass) %>%
-        # dplyr::mutate(d = c(NA, diff(as.numeric(`Mass (g)`)))) %>%
         formattable::formattable(
           align = c("c", "c", "r", "r"),
           list(
             `Mass (g)` = mass_formatter
           )
+        ) %>%
+        as.datatable(
+          extensions = "Buttons",
+          options = list(
+            pageLength = 20,
+            buttons = c("copy", "csv", "excel"),
+            dom = "Bfrtip"
+          ),
+          class = "display"
         )
-    )
+    })
   }
 })
-
-
-mass_formatter <-
-  formatter("span",
-    style = x ~ style(
-      font.weight = "bold",
-      color = ifelse(
-        test = c(NA, diff(as.numeric(x))) > 0, ### NA to shift it by 1 to get the correct colors
-        yes = "green",
-        no = ifelse(c(NA, diff(as.numeric(x))) < 0, "red", "black")
-      )
-    ),
-    x ~ icontext(ifelse(
-      test = c(NA, diff(as.numeric(x))) > 0,
-      yes = "arrow-up",
-      no = ifelse(c(NA, diff(as.numeric(x))) < 0, "arrow-down", "minus")
-    ), x)
-  )
