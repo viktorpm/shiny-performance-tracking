@@ -154,13 +154,13 @@ sessions
 ```{r}
 rats <- dplyr::tbl(
   src = akrami_db,
-  sql("SELECT * FROM rats")
+  sql("SELECT * FROM rats_original")
 ) %>% 
-  as_tibble() %>% 
-  mutate_all(list(~na_if(.,"")))
+  as_tibble()
+  # mutate_all(list(~na_if(.,"")))
 
 
-rats_pyrat <- read_csv(file.path("D:","_R_WD","git_projects","r_codes_rat_wm","data","animals.csv")) %>% 
+rats_pyrat <- read_csv(file.path("D:","_R_WD","git_projects","r_codes_rat_wm","data","animals.csv")) %>%
   as_tibble()
 
 rats_new <- left_join(rats, rats_pyrat)
