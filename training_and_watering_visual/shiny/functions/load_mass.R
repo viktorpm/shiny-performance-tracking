@@ -25,5 +25,5 @@ mass <- read.csv(file.path("../", "Mass Log.csv"), na.strings = c("", "NA")) %>%
   dplyr::rename("animal_id" = 1, "exp_id" = 2) %>%
   dplyr::select(-dm_cols) %>%
   dplyr::mutate(date = as.Date(date, tryFormats = c("%d/%m/%Y"))) %>%
-  dplyr::mutate(exp_id = tolower(exp_id))
+  dplyr::mutate(exp_id = tolower(exp_id)) 
 
