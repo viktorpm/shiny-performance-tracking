@@ -82,8 +82,8 @@ knitr::opts_chunk$set(echo = TRUE)
 first open an ssh tunnel: ssh -f vplattner@192.168.238.210 -L 8080:172.24.155.100:3306 -N
 
 
-```{r}
 
+```{r}
 akrami_db <- dbConnect(MySQL(),
   user = "akrami",
   password = "Akrami2019!",
@@ -91,6 +91,8 @@ akrami_db <- dbConnect(MySQL(),
   host = "localhost",
   port = 8080
 )
+
+#dbDisconnect(akrami_db)
 
 DBI::dbListTables(akrami_db)
 DBI::dbListFields(akrami_db, "sessions")
@@ -125,8 +127,9 @@ drive_auth(
 ```
 
 
-Tables from database
+## Tables from database
 
+### sessions
 ```{r}
 sessions <- dplyr::tbl(
   src = akrami_db,
@@ -146,6 +149,32 @@ sessions <- dplyr::tbl(
 sessions
 ```
 
+### rats
+
+```{r}
+rats <- dplyr::tbl(
+  src = akrami_db,
+  sql("SELECT * FROM rats")
+) %>% 
+  as_tibble() %>% 
+  mutate_all(list(~na_if(.,"")))
+
+
+rats_pyrat <- read_csv(file.path("D:","_R_WD","git_projects","r_codes_rat_wm","data","animals.csv")) %>% 
+  as_tibble()
+
+rats_new <- left_join(rats, rats_pyrat)
+
+
+```
+```{r}
+# dbWriteTable(conn = akrami_db, 
+#              name = "rats_new", 
+#              value = rats_new) 
+
+```
+
+
 
 
 
@@ -161,7 +190,7 @@ sessions
 ```
 
 
-Files on drive
+## Files on drive
 
 ```{r}
 drive_find(n_max = 30)
@@ -283,8 +312,8 @@ time_ranges <- left_join(water, sessions) %>%
   ) %>%
   dplyr::relocate(`Training ON`, .before = `Training OFF`)
 
-unit.scale <- function(x) ( x / max(x)  )
-unit.scale2 <- function(x) (x/150)
+unit.scale <- function(x) (x / max(x))
+unit.scale2 <- function(x) (x / 150)
 unit.scale3 <- function(x) (1 / x)
 unit.scale4 <- function(x) (x - mean(x) / sd(x))
 
@@ -297,7 +326,8 @@ time_ranges %>%
       `Training (min)` = color_bar(color = "pink", fun = unit.scale2)
       # `Training` = color_tile("pink", "red")
     )
-  )
+  ) %>%
+  as.datatable()
 ```
 
 
@@ -362,15 +392,11 @@ mass %>%
 
 ```{r, warning=F}
 
-mass %>% 
+mass %>%
   dplyr::filter(
     exp_id == "viktor",
     date <= Sys.Date()
-    ) %>% 
-  ggplot(mapping = aes(x = date, y = mass %>% as.numeric())) + 
+  ) %>%
+  ggplot(mapping = aes(x = date, y = mass %>% as.numeric())) +
   geom_line(aes(color = animal_id))
-
-
-
 ```
-
