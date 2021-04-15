@@ -27,7 +27,7 @@ plots_DelayComp <- function(plottype,
         choice_direction == "right_trials",
         stage %in% stage_filter,
         date >= datelim[1], date <= datelim[2],
-        protocol == "@AthenaDelayComp"
+        protocol == "@AthenaDelayComp"  | protocol == "@AthenaDelayComp_mod_reward"
       )
 
     col_by <- "animal_id"
@@ -44,7 +44,7 @@ plots_DelayComp <- function(plottype,
         choice_direction == "right_trials",
         stage %in% stage_filter,
         date >= datelim[1], date <= datelim[2],
-        protocol == "@AthenaDelayComp",
+        protocol == "@AthenaDelayComp" | protocol == "@AthenaDelayComp_mod_reward",
         experimenter == exp
       )
 
@@ -63,7 +63,7 @@ plots_DelayComp <- function(plottype,
         choice_direction == "right_trials",
         stage %in% stage_filter,
         date >= datelim[1], date <= datelim[2],
-        protocol == "@AthenaDelayComp",
+        protocol == "@AthenaDelayComp" | protocol == "@AthenaDelayComp_mod_reward",
         animal_id == animal_filter
       )
 
