@@ -50,9 +50,23 @@ observe({
     
     if (input$f_options == "Individual animals") {
       enable("animal_select")
-      disable("exp_select")
+      enable("exp_select")
       disable("report")
       show("perform")
+      
+      x <- TRAINING %>%
+        dplyr::filter(experimenter == input$exp_select) %>%
+        pull(animal_id) %>%
+        unique()
+      
+      
+      updateSelectInput(session,
+                        inputId = "animal_select",
+                        label = "Select animals to show",
+                        choices = x,
+                        selected = x[1]
+      )
+      
       
       output$perform <- DT::renderDataTable(
         TRAINING %>%
@@ -74,10 +88,8 @@ observe({
           ) %>%
           mutate(sum = correct_trials + error_trials + violation_trials + timeoout_trials) %>%
           mutate(difference = all_trials - sum) %>%
-          mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>%
-                   round(2)) %>%
-          mutate("violation_ratio (violation/done)" = (violation_trials / all_trials) %>%
-                   round(2))
+          mutate("correct_ratio (correct/completed)" = (correct_trials / completed_trials) %>% round(2)) %>%
+          mutate("violation_ratio (violation/done)" = (violation_trials / all_trials) %>% round(2))
       )
     }
   }
