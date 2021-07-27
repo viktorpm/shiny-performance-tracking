@@ -413,7 +413,10 @@ record_weights <- left_join(
   mass %>% 
   dplyr::filter(date == max(date, na.rm = T)) %>% 
   dplyr::select(animal_id, mass)
-)
+) %>% 
+  mutate(current_weight = NA)
+
+record_weights %>%   datatable()
 
 ```
 
