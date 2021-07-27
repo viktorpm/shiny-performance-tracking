@@ -24,6 +24,9 @@ library(odbc)
 library(DBI)
 library(RMySQL)
 
+# connecting to db
+# first open an ssh tunnel: ssh -f vplattner@192.168.238.210 -L 8080:172.24.155.100:3306 -N
+# all other ssh tunnels have to be closed 
 
 source(file.path("functions", "load_mass.R"))
 source(file.path("functions", "load_water.R"))
