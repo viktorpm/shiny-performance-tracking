@@ -30,6 +30,7 @@ library(RMySQL)
 
 source(file.path("functions", "load_mass.R"))
 source(file.path("functions", "load_water.R"))
+source(file.path("functions", "load_rats.R"))
 source(file.path("functions", "plots_mass.R"))
 
 
@@ -57,9 +58,9 @@ server <- function(input, output, session) {
 }
 
 
-onStop(function() {
-  dbDisconnect(conn = akrami_db)
-})
+# onStop(function() {
+#   dbDisconnect(conn = akrami_db)
+# })
 
 
 

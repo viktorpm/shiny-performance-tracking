@@ -36,6 +36,51 @@ mass_formatter <-
 
 
 
+### defining shinyInput helper function
+shinyInput = function(FUN, len, id, ...) {
+  #validate(need(character(len)>0,message=paste("")))
+  inputs = character(len)
+  for (i in seq_len(len)) {
+    inputs[i] = as.character(FUN(paste0(id, i), label = NULL, ...))
+  }
+  inputs
+}
+
+values <- reactiveValues(data = NULL)
+
+values$data <- as.data.frame(record_weights)
+
+
+ExportWeights <- reactive({
+  data.frame(
+    values$data,
+    current_weight = shinyInput(textInput, nrow(values$data), "cbox_")
+  )
+})
+
+
+observeEvent(
+  eventExpr = input$save,
+  handlerExpr = {
+  
+    out_col <- character(nrow(values$data))
+
+    for (i in seq_len(nrow(values$data))) {
+
+      out_col[i] <- input[[paste0("cbox_", i)]]
+
+    }
+    out_df <- cbind(values$data,out_col)
+    
+
+
+    write.csv(out_df, "test.csv", row.names = FALSE)
+  
+})
+
+
+
+
 
 observe({
   if (input$f_options == "Experimenter") {
@@ -68,6 +113,23 @@ observe({
         )
     })
   }
+  
+  output$mass_rec_table <- DT::renderDataTable({
+    datatable(
+      ExportWeights(),
+      selection="multiple",
+      escape = FALSE,
+      options = list(
+        # dom = 'BRrltpi',
+        # autoWidth=TRUE,
+        # lengthMenu = list(c(10, 50, -1), c('10', '50', 'All')),
+        # ColReorder = TRUE,s
+        preDrawCallback = JS('function() { Shiny.unbindAll(this.api().table().node()); }'),
+        drawCallback = JS('function() { Shiny.bindAll(this.api().table().node()); } ')
+      )
+      )
+  })
+
 
 
   if (input$f_options == "Individual animals") {

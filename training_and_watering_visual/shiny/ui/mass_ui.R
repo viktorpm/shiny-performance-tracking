@@ -45,7 +45,12 @@ tabPanel(
       column(width = 9,offset = 2,
       tabsetPanel(
         tabPanel("Plot", plotOutput(outputId = "plot", height = 1000)),
-        tabPanel("Table", DT::dataTableOutput(outputId = "mass_table"))
+        tabPanel("Table", DT::dataTableOutput(outputId = "mass_table")),
+        tabPanel(
+          "Record weight", 
+          DT::dataTableOutput(outputId = "mass_rec_table"),
+          actionButton(inputId = "save", label = "Save", width = 200)
+          )
       )),
       
       width = 9,
