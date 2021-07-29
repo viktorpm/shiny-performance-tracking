@@ -13,7 +13,7 @@ rats <- dplyr::tbl(
   as_tibble()
 
 record_weights <- rats %>% 
-  dplyr::select(ratname, nrf_id, cage) %>% 
+  dplyr::select(ratname, nrf_id, cage, experimenter) %>% 
   dplyr::rename("animal_id" = ratname)
 
 record_weights <- left_join(
