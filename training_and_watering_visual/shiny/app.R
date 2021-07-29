@@ -58,9 +58,10 @@ server <- function(input, output, session) {
 }
 
 
-# onStop(function() {
-#   dbDisconnect(conn = akrami_db)
-# })
+onStop(function() {
+  lapply(dbListConnections(drv = MySQL()), dbDisconnect)
+  #dbDisconnect(conn = akrami_db)
+})
 
 
 
