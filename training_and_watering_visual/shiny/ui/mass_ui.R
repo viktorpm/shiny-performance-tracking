@@ -2,7 +2,6 @@ tabPanel(
   "Weight",
   sidebarLayout(
     sidebarPanel(
-     #conditionalPanel( "input.tabs != rectab", 
       tags$style(type="text/css", "body {padding-top: 70px;}"), # to keep sidebar panel on top of navbar tabs
       width = 2,
       style = "position:fixed;width:inherit;",
@@ -42,12 +41,12 @@ tabPanel(
       ),
       
       
-      conditionalPanel(
-        condition = "input.tabs == 'rectab'",
-        sidebarPanel(
-          actionButton(inputId = "save", label = "Save", width = 200)
-        )
-      )
+      # conditionalPanel(
+      #   condition = "input.tabs == 'rectab'",
+      #   sidebarPanel(
+      #     actionButton(inputId = "save", label = "Save", width = 200)
+      #   )
+      # )
 
       
     ),
@@ -59,14 +58,26 @@ tabPanel(
     mainPanel(
       column(width = 9,offset = 2,
       tabsetPanel(
-        type = "tabs", id = "tabs",
-        tabPanel(id = 'plottab', value = 'plottab', "Plot", plotOutput(outputId = "plot", height = 1000)),
-        tabPanel(id = 'masstab', value = 'masstab', "Table", DT::dataTableOutput(outputId = "mass_table")),
-        tabPanel(id = 'rectab', value = 'rectab',
-          "Record weight", 
-          DT::dataTableOutput(outputId = "mass_rec_table")
-          #actionButton(inputId = "save", label = "Save", width = 200)
-          )#,
+      #  type = "tabs", id = "tabs",
+        tabPanel(
+          # id = 'plottab',
+          # value = 'plottab',
+          title = "Plot", 
+          plotOutput(outputId = "plot", height = 1000)
+          ),
+        tabPanel(
+          # id = 'masstab',
+          # value = 'masstab',
+          title = "Table",
+          DT::dataTableOutput(outputId = "mass_table")
+          )
+        # tabPanel(
+        #   id = 'rectab', 
+        #   value = 'rectab',
+        #   "Record weight",
+        #   DT::dataTableOutput(outputId = "mass_rec_table")
+        #   #actionButton(inputId = "save", label = "Save", width = 200)
+        #   )#,
       # id = "conditionedPanels",
       )),
       

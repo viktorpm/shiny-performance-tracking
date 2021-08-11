@@ -534,4 +534,23 @@ shinyApp(
 
 ```
 
+Scheduler
+
+to check active (in training) animals in order to select the water restricted ones 
+
+
+```{r}
+scheduler <- dplyr::tbl(
+  src = akrami_db,
+  sql("SELECT * FROM scheduler")) %>%
+  as_tibble() %>% 
+  mutate(date = as.Date(date)) %>% 
+  dplyr::filter(
+    date == max(date),
+    experimenter != "")
+
+scheduler %>% pull(ratname) %>% sort()
+
+
+```
 

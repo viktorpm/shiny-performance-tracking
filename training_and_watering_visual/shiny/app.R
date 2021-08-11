@@ -47,7 +47,8 @@ ui <- fluidPage(
 
     # include the UI for each tab
     source(file.path("ui", "mass_ui.R"), local = TRUE)$value,
-    source(file.path("ui", "water_ui.R"), local = TRUE)$value
+    source(file.path("ui", "water_ui.R"), local = TRUE)$value,
+    source(file.path("ui", "record_ui.R"), local = TRUE)$value
   )
 )
 
@@ -55,6 +56,7 @@ server <- function(input, output, session) {
   # Include the logic (server) for each tab
   source(file.path("server", "mass_server.R"), local = TRUE)$value
   source(file.path("server", "water_server.R"), local = TRUE)$value
+  source(file.path("server", "record_server.R"), local = TRUE)$value
 }
 
 
