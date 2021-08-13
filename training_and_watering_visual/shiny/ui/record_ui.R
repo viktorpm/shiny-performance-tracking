@@ -6,7 +6,18 @@ tabPanel(
       width = 2,
       style = "position:fixed;width:inherit;",
       
+      shinyTime::timeInput(inputId = "timestart", value = Sys.time(), label = "Watering time (from)", seconds = F), 
+      actionButton(inputId = "timestartadd", label = "Add", width = 120),
+      
+      
+      shinyTime::timeInput(inputId = "timeend", value = Sys.time() + 1200, label = "Watering time (to)", seconds = F),
+      actionButton(inputId = "timeendadd", label = "Add", width = 120),
+      
       actionButton(inputId = "save", label = "Save", width = 120)
+      
+      
+     
+      
     ),
     
     mainPanel(

@@ -4,7 +4,13 @@ shinyInputWaterStart = function(FUN, len, id, ...) {
   #validate(need(character(len)>0,message=paste("")))
   inputs = character(len)
   for (i in seq_len(len)) {
-    inputs[i] = as.character(FUN(paste0(id, i), label = NULL, placeholder = "HH:MM", ...))
+    inputs[i] = as.character(
+      FUN(paste0(id, i), 
+          label = NULL,  
+          width = "50%", 
+          #placeholder = "HH:MM",
+          value = Sys.time() %>% substring(first = 12, last = 16), ...)
+      )
   }
   inputs
 }
@@ -13,7 +19,13 @@ shinyInputWaterEnd = function(FUN, len, id, ...) {
   #validate(need(character(len)>0,message=paste("")))
   inputs = character(len)
   for (i in seq_len(len)) {
-    inputs[i] = as.character(FUN(paste0(id, i), label = NULL, placeholder = "HH:MM", ...))
+    inputs[i] = as.character(
+      FUN(paste0(id, i), 
+          label = NULL,  
+          width = "50%", 
+          #placeholder = "HH:MM",
+          value = (Sys.time() + 1200) %>% substring(first = 12, last = 16), ...)
+      )
   }
   inputs
 }
@@ -22,7 +34,7 @@ shinyInputWeight = function(FUN, len, id, ...) {
   #validate(need(character(len)>0,message=paste("")))
   inputs = character(len)
   for (i in seq_len(len)) {
-    inputs[i] = as.character(FUN(paste0(id, i), label = NULL,  ...))
+    inputs[i] = as.character(FUN(paste0(id, i), label = NULL, width = "50%",  ...))
   }
   inputs
 }
@@ -47,7 +59,7 @@ ExportWeights <- reactive({
 
 
 
-### if the save buton is pressed 
+### if the Save button is pressed 
 observeEvent(
   eventExpr = input$save,
   handlerExpr = {
@@ -79,6 +91,26 @@ observeEvent(
   })
 
 
+### if the Add button is pressed 
+
+# observeEvent(
+#   eventExpr = input$timestartadd,
+#   
+#   handlerExpr = {
+#   x <- input$timestart
+#   
+#   out_col_water_start <- list()
+#   
+#   for (i in seq_len(nrow(values$data)) ) {
+#     out_col_water_start[[i]] <- input[[paste0("cbox_ws", i)]]
+#   }
+#   
+#   }
+# )
+# 
+
+
+
 output$mass_rec_table <- DT::renderDataTable({
   
   ExportWeights() %>% 
@@ -88,9 +120,10 @@ output$mass_rec_table <- DT::renderDataTable({
       "PIL holder" = experimenter,
       "Cage" = cage,
       "Last measured weight (g)" = mass,
-      "Current weight (g)" = current_weight,
       "Water start" = water_start,
-      "Water end" = water_end
+      "Water end" = water_end,
+      "Current weight (g)" = current_weight
+      
       ) %>% 
     datatable(
       selection = "multiple",
