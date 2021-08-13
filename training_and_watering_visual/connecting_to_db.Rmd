@@ -430,7 +430,9 @@ record_weights <- left_join(
 ) %>% 
   mutate(current_weight = NA)
 
-record_weights %>% datatable()
+record_weights
+
+# record_weights %>% datatable()
 
 ```
 
@@ -550,6 +552,9 @@ scheduler <- dplyr::tbl(
     experimenter != "")
 
 scheduler %>% pull(ratname) %>% sort()
+
+record_weights %>%
+  dplyr::filter(animal_id %in% scheduler$ratname)
 
 
 ```

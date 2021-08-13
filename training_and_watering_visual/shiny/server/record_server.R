@@ -1,10 +1,28 @@
 
-### defining shinyInput helper function
-shinyInput = function(FUN, len, id, ...) {
+### defining shinyInput... helper functions to add text input in every row in 3 columns
+shinyInputWaterStart = function(FUN, len, id, ...) {
   #validate(need(character(len)>0,message=paste("")))
   inputs = character(len)
   for (i in seq_len(len)) {
-    inputs[i] = as.character(FUN(paste0(id, i), label = NULL, ...))
+    inputs[i] = as.character(FUN(paste0(id, i), label = NULL, placeholder = "HH:MM", ...))
+  }
+  inputs
+}
+
+shinyInputWaterEnd = function(FUN, len, id, ...) {
+  #validate(need(character(len)>0,message=paste("")))
+  inputs = character(len)
+  for (i in seq_len(len)) {
+    inputs[i] = as.character(FUN(paste0(id, i), label = NULL, placeholder = "HH:MM", ...))
+  }
+  inputs
+}
+
+shinyInputWeight = function(FUN, len, id, ...) {
+  #validate(need(character(len)>0,message=paste("")))
+  inputs = character(len)
+  for (i in seq_len(len)) {
+    inputs[i] = as.character(FUN(paste0(id, i), label = NULL,  ...))
   }
   inputs
 }
@@ -21,7 +39,9 @@ values$data <- as.data.frame(record_weights)
 ExportWeights <- reactive({
   data.frame(
     values$data,
-    current_weight = shinyInput(FUN = textInput, len = nrow(values$data), id = "cbox_")
+    current_weight = shinyInputWeight(FUN = textInput, len = nrow(values$data), id = "cbox_"),
+    water_start = shinyInputWaterStart(FUN = textInput, len = nrow(values$data), id = "cbox_ws"),
+    water_end = shinyInputWaterEnd(FUN = textInput, len = nrow(values$data), id = "cbox_we")
   )
 })
 
@@ -33,14 +53,24 @@ observeEvent(
   handlerExpr = {
     
     #out_col <- character(nrow(values$data))
-    out_col <- list()
+    out_col_weight <- list()
+    out_col_water_start <- list()
+    out_col_water_end <- list()
     
     for (i in seq_len(nrow(values$data)) ) {
       
-      out_col[[i]] <- input[[paste0("cbox_", i)]]
+      out_col_weight[[i]] <- input[[paste0("cbox_", i)]]
+      out_col_water_start[[i]] <- input[[paste0("cbox_ws", i)]]
+      out_col_water_end[[i]] <- input[[paste0("cbox_we", i)]]
       
     }
-    out_df <- cbind(values$data,out_col %>% unlist() )
+    
+    out_df <- cbind(
+      values$data, ### record_weights reactive
+      "Current weight (g)" = out_col_weight %>% unlist(), ### list of entries named as "Current weight (g)" 
+      "Water start" = out_col_water_start %>% unlist(),
+      "Water end" = out_col_water_end %>% unlist()
+      )
     
     
     
@@ -49,21 +79,21 @@ observeEvent(
   })
 
 
-
 output$mass_rec_table <- DT::renderDataTable({
   
   ExportWeights() %>% 
-    # dplyr::filter(
-    #   experimenter == input$exp_select) %>%
     dplyr::rename(
       "Lab ID" = animal_id, 
       "NRF ID" = nrf_id,
       "PIL holder" = experimenter,
       "Cage" = cage,
       "Last measured weight (g)" = mass,
-      "Current weight (g)" = current_weight) %>% 
+      "Current weight (g)" = current_weight,
+      "Water start" = water_start,
+      "Water end" = water_end
+      ) %>% 
     datatable(
-      selection="multiple",
+      selection = "multiple",
       escape = FALSE,
       options = list(
         pageLength = -1, ### important to show the whole table otherwise saving gives an error (in the for loop in the observEvent()) 

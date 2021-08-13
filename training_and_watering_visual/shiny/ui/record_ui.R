@@ -12,7 +12,7 @@ tabPanel(
     mainPanel(
        column(width = 9,offset = 2,
 
-      "Record weight",
+      
       DT::dataTableOutput(outputId = "mass_rec_table"),
       # actionButton(inputId = "save", label = "Save", width = 200)
 
