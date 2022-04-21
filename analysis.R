@@ -21,6 +21,7 @@ TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 TRAINING %>% names()
 
 TRIALS <- read_csv(file.path("shiny_app", "TrialByTrial.csv"))
+names(TRIALS)
 ################################
 ### Creating session matrix ----
 ################################
