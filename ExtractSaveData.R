@@ -63,12 +63,23 @@ ifelse(
 rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
 
 to_append <- setdiff(
+  
   rds_list %>% unlist(),
-    suppressMessages(
-    suppressWarnings(
-      read_csv(file.path("shiny_app", "TRAINING.csv")) %>% dplyr::select(file) %>% pull()))
+    
+  suppressMessages(
+  suppressWarnings(
+    if (file.exists(file.path("shiny_app", "TRAINING.csv"))) {
+        read_csv(file.path("shiny_app", "TRAINING.csv")) %>% dplyr::select(file) %>% pull()
+      } else
+      {
+        character()
+      }
+      
+      )
+    )
   ) %>%
   as.list()
+
 
 walk(to_append, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 # walk(rds_list, ~ ReadData(rds_file = .x) %>% TRAININGtoFeather())
@@ -78,8 +89,8 @@ walk(to_append, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 ################################################
 ### Trial by trial data 
 
-# walk(rds_list, ~ ReadData(rds_file = .x, trialData = T) %>% 
-#        TRAININGtoCSV(filename = "TrialByTrial.csv"))
+walk(rds_list, ~ ReadData(rds_file = .x, trialData = T) %>%
+       TRAININGtoCSV(filename = "TrialByTrial.csv"))
 
 
 # data_@AltStatDelayComp_athena_AA08_200217a.mat.rds
@@ -89,8 +100,8 @@ walk(to_append, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 # LT01_Gap_Detection_20191011_093950.mat.rds
 # 
 # 
-# ReadData(rds_file = "LT01_Gap_Detection_20191011_093950.mat.rds",trialData = T) %>%
-#   TRAININGtoCSV(filename = "TrialByTrial.csv")
+ReadData(rds_file = "LT01_Gap_Detection_20191011_093950.mat.rds",trialData = T) %>%
+  TRAININGtoCSV(filename = "TrialByTrial.csv")
 
 
 
@@ -98,5 +109,5 @@ walk(to_append, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 
 
 
-
+ 
 
