@@ -22,6 +22,13 @@ TRAINING %>% names()
 
 TRIALS <- read_csv(file.path("shiny_app", "TrialByTrial.csv"))
 names(TRIALS)
+
+
+
+TRIALS %>% 
+  dplyr::group_by(animal_id, file, pair_number) %>% 
+  dplyr::summarise(sum(hit))
+
 ################################
 ### Creating session matrix ----
 ################################
