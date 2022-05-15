@@ -26,9 +26,43 @@ names(TRIALS)
 
 
 TRIALS %>% 
-  dplyr::group_by(animal_id, file, pair_number) %>% 
-  dplyr::summarise(sum(hit))
+  dplyr::mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
+  dplyr::mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
+  dplyr::mutate(stage = replace(
+    stage,
+    A2_time > 0 & A2_time < 0.5 & reward_type == "Always",
+    "2_intord_stim"
+  )) %>%
+  dplyr::mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>% 
+  #dplyr::filter(hit %>% is.na()==F) %>% 
+  ggplot(mapping = aes(pair_number %>% as.factor())) +
+  geom_bar(aes(fill = hit %>% as.factor())) +
+  facet_grid(~animal_id ~ stage)
 
+
+
+
+TRIALS %>% 
+  dplyr::mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
+  dplyr::mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
+  dplyr::mutate(stage = replace(
+    stage,
+    A2_time > 0 & A2_time < 0.5 & reward_type == "Always",
+    "2_intord_stim"
+  )) %>%
+  dplyr::mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>% 
+  dplyr::group_by(animal_id, stage, pair_number) %>% 
+  dplyr::summarise(hit_rate = sum(hit, na.rm = T), pair_value_s1, pair_value_s2) %>% na.omit() %>% 
+  ggplot(
+    mapping = aes(
+      x = pair_value_s1 %>% round(2) %>% as.factor(), 
+      y = pair_value_s2 %>% round(2) %>% as.factor(),
+      col = hit_rate)) +
+  geom_point(shape = 15, size = 4) +
+  facet_grid(~stage ~animal_id) +
+  coord_fixed()
+
+  
 ################################
 ### Creating session matrix ----
 ################################
