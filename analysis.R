@@ -21,6 +21,13 @@ TRAINING <- read_csv(file.path("shiny_app", "TRAINING.csv"))
 TRAINING %>% names()
 
 TRIALS <- read_csv(file.path("shiny_app", "TrialByTrial.csv"))
+TRIALS <- TRIALS %>% 
+    dplyr::mutate(
+    pair_number = pair_number %>% as.character(),
+    pair_value_s1 = pair_value_s1 %>% round(3) %>% as.character(), 
+    pair_value_s2 = pair_value_s2 %>% round(3) %>% as.character(),
+    hit = hit %>% as.integer()
+  )
 names(TRIALS)
 
 
@@ -35,9 +42,10 @@ TRIALS %>%
   )) %>%
   dplyr::mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>% 
   #dplyr::filter(hit %>% is.na()==F) %>% 
-  ggplot(mapping = aes(pair_number %>% as.factor())) +
+  ggplot(mapping = aes(pair_number)) +
   geom_bar(aes(fill = hit %>% as.factor())) +
-  facet_grid(~animal_id ~ stage)
+  theme(aspect.ratio=1) +
+  facet_grid(~animal_id ~ stage) 
 
 
 
@@ -52,15 +60,43 @@ TRIALS %>%
   )) %>%
   dplyr::mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>% 
   dplyr::group_by(animal_id, stage, pair_number) %>% 
-  dplyr::summarise(hit_rate = sum(hit, na.rm = T), pair_value_s1, pair_value_s2) %>% na.omit() %>% 
+  dplyr::summarise(hit_rate = sum(hit, na.rm = T)/length(hit), pair_value_s1, pair_value_s2) %>% na.omit() %>% 
+  dplyr::group_by(animal_id, stage, pair_number) %>%
+  slice(1) %>% 
+
+  
+  
   ggplot(
     mapping = aes(
-      x = pair_value_s1 %>% round(2) %>% as.factor(), 
-      y = pair_value_s2 %>% round(2) %>% as.factor(),
-      col = hit_rate)) +
-  geom_point(shape = 15, size = 4) +
-  facet_grid(~stage ~animal_id) +
-  coord_fixed()
+      x = pair_value_s1, 
+      y = pair_value_s2)) +
+  geom_point(aes(col = hit_rate), shape = 15, size = 4) +
+  theme(aspect.ratio=1) +
+  # expand_limits(x = 0.5, y = 0.5) +
+  # xlim(0,0.5) +
+  # ylim(0,0.5) +
+  geom_label_repel(
+    data = . %>% dplyr::filter(pair_number %in% c(1,2,3,4)),
+    aes(
+      x = pair_value_s1 , 
+      y = pair_value_s2, 
+      label = pair_number),
+    #hjust = 1,
+    nudge_x = 1.8,
+    nudge_y = -1,
+    direction = "x") +
+  
+  geom_label_repel(
+    data = . %>% dplyr::filter(pair_number %in% c(5,6,7,8)),
+    aes(
+      x = pair_value_s1, 
+      y = pair_value_s2, 
+      label = pair_number),
+    #hjust = ,
+    nudge_x = -1.8,
+    nudge_y = 1,
+   direction = "x") +
+  facet_grid(~stage ~animal_id) 
 
   
 ################################
