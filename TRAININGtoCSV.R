@@ -5,9 +5,7 @@ TRAININGtoCSV <- function(data, filename) {
     filename = "TRAINING.csv"
   }
   
-  path <- file.path(
-    "shiny_app"
-  )
+  path <- file.path(getwd(),"shiny_app")
   # browser()
 
   if (is.null(data)) {
