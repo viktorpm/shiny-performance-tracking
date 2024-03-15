@@ -14,7 +14,7 @@ file_list <- file_list[!grepl("experimenter|Session Settings|FakeSubject", file_
 # List files already converted to rds
 rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"))
 
-# Identify not yet converted mat files by comparing base filenames
+# Identify not yet converted mat files by comparing base file names
 not_yet_conv <- setdiff(
   sub(pattern = ".*\\/", "", file_list),  
   rds_list %>% unlist() %>% substr(start = 1, stop = nchar(.)-4)
@@ -27,12 +27,13 @@ to_be_conv <- ifelse(
   paste0(in_path, "/", file_list[str_detect(file_list, pattern = paste(not_yet_conv, collapse = "|"))])
 )
 
-# Convert not yet converted mat files to rds
-if (length(to_be_conv) > 0) {
+
+### converting not yet converted mat files to rds ----
+ifelse(
+  to_be_conv %>% is_empty(),
+  warning("Nothing to convert"),
   walk(to_be_conv, ~ ConvertToRDS(file = .x))
-} else {
-  warning("Nothing to convert")
-}
+)
 
 # Read rds files to a tibble and save them to a csv file
 rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"))
