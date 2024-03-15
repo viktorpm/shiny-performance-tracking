@@ -10,8 +10,8 @@ source("TRAININGtoCSV.R") ### f. to save tibble to csv
 ### determining the full path of each file ----
 
 ### listing all the mat files in the data folders
-in_path <- file.path("D:", "_Rig_data", "SoloData", "Data")
-file_list <- list.files(file.path("D:", "_Rig_data", "SoloData", "Data"), 
+in_path <- file.path("/mnt", "ceph","_raw_data", "rat_training_172", "SoloData", "Data")
+file_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "SoloData", "Data"), 
                         pattern = "\\.mat$",
                         recursive = T) %>% 
   as.list()
@@ -24,7 +24,7 @@ file_list <- file_list[!grepl("experimenter", file_list) & # excluding files fro
 # full_path <- paste0(in_path, "/", file_list) %>% as.list()
 
 ### listing files already converted to rds 
-rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
+rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files")) %>% as.list()
 
 ### listing the not yet converted mat files (remove ".rds", remove path form character strings)
 ### difference between file_list and rds_list
@@ -60,7 +60,7 @@ ifelse(
 ### reading rds files to a tibble and saving them to a csv file ----
 
 ### updated rds_list 
-rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
+rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files")) %>% as.list()
 
 to_append <- setdiff(
   
