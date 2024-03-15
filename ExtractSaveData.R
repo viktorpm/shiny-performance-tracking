@@ -21,12 +21,16 @@ not_yet_conv <- setdiff(
 )
 
 # Add path to the not yet converted mat files
-to_be_conv <- ifelse(
-  length(not_yet_conv) == 0,
-  character(),
-  paste0(in_path, "/", file_list[str_detect(file_list, pattern = paste(not_yet_conv, collapse = "|"))])
+ifelse(
+  not_yet_conv %>% is_empty(),
+  to_be_conv <-  character(),
+  to_be_conv <- paste0(
+    in_path,
+    "/",
+    file_list[str_detect(file_list, pattern = paste(not_yet_conv, collapse = "|")
+    )] %>% unlist()
+  )
 )
-
 
 ### converting not yet converted mat files to rds ----
 ifelse(
