@@ -36,7 +36,7 @@ ReadData <- function(rds_file, trialData = F) {
 
 
     # if (all(file_processed_test == F)) { ### being tested outside of the function. Only non-processed files are being sent to the function!
-      rat_data <- readRDS(paste0(file.path("data", "rds_files"), "/", rds_file))
+      rat_data <- readRDS(paste0(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"), "/", rds_file))
 
       ### checks the source of the data
       if (rat_data %>% names() %in% "SessionData" %>% any()) {
@@ -94,7 +94,7 @@ ReadData <- function(rds_file, trialData = F) {
 
 
     if (all(file_processed_test == F)) {
-      rat_data <- readRDS(paste0(file.path("data", "rds_files"), "/", rds_file))
+      rat_data <- readRDS(paste0(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"), "/", rds_file))
 
       ### checks the source of the data
       if (rat_data %>% names() %in% "SessionData" %>% any()) {

@@ -50,12 +50,12 @@ to_append <- setdiff(
 walk(to_append, ~ ReadData(rds_file = .x) %>% TRAININGtoCSV())
 
 # Trial by trial data
-walk(rds_list, ~ ReadData(rds_file = .x, trialData = TRUE) %>%
-       TRAININGtoCSV(filename = "TrialByTrial.csv"))
-
-# Specific example of trial by trial data
-ReadData(rds_file = "LT01_Gap_Detection_20191011_093950.mat.rds", trialData = TRUE) %>%
-  TRAININGtoCSV(filename = "TrialByTrial.csv")
+# walk(rds_list, ~ ReadData(rds_file = .x, trialData = TRUE) %>%
+#        TRAININGtoCSV(filename = "TrialByTrial.csv"))
+# 
+# # Specific example of trial by trial data
+# ReadData(rds_file = "LT01_Gap_Detection_20191011_093950.mat.rds", trialData = TRUE) %>%
+#   TRAININGtoCSV(filename = "TrialByTrial.csv")
 
 # Documentation:
 # Variables:
