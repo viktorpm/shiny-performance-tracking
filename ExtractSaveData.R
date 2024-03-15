@@ -32,14 +32,6 @@ to_be_conv <- if (length(not_yet_conv) > 0) {
 }
 
 
-### converting not yet converted mat files to rds ----
-ifelse(
-  to_be_conv %>% is_empty(),
-  warning("Nothing to convert"),
-  walk(to_be_conv, ~ ConvertToRDS(file = .x))
-)
-
-
 # Convert not yet converted mat files to rds using parallel processing
 if (length(to_be_conv) > 0) {
   # Set up a parallel backend using the number of cores available
