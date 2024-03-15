@@ -1,3 +1,5 @@
+library(parallel)
+
 # Load necessary functions
 source("ConvertToRDS.R") # Function to convert mat files to rds
 source("ReadData.R") # Function to read rds files to a tibble
@@ -14,23 +16,21 @@ file_list <- file_list[!grepl("experimenter|Session Settings|FakeSubject", file_
 # List files already converted to rds
 rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"))
 
+
 # Identify not yet converted mat files by comparing base file names
 not_yet_conv <- setdiff(
-  sub(pattern = ".*\\/", "", file_list),  
-  rds_list %>% unlist() %>% substr(start = 1, stop = nchar(.)-4)
+  basename(file_list),  
+  basename(rds_list) %>% str_remove(pattern = "\\.rds$")
 )
 
+
 # Add path to the not yet converted mat files
-ifelse(
-  not_yet_conv %>% is_empty(),
-  to_be_conv <-  character(),
-  to_be_conv <- paste0(
-    in_path,
-    "/",
-    file_list[str_detect(file_list, pattern = paste(not_yet_conv, collapse = "|")
-    )] %>% unlist()
-  )
-)
+to_be_conv <- if (length(not_yet_conv) > 0) {
+  file.path(in_path, file_list[str_detect(file_list, paste(not_yet_conv, collapse = "|"))])
+} else {
+  character()
+}
+
 
 ### converting not yet converted mat files to rds ----
 ifelse(
@@ -38,6 +38,22 @@ ifelse(
   warning("Nothing to convert"),
   walk(to_be_conv, ~ ConvertToRDS(file = .x))
 )
+
+
+# Convert not yet converted mat files to rds using parallel processing
+if (length(to_be_conv) > 0) {
+  # Set up a parallel backend using the number of cores available
+  cl <- makeCluster(detectCores() - 1) # Subtract 1 to leave one core free for the main R process
+  
+  # Use parLapply to apply the ConvertToRDS function in parallel
+  parLapply(cl, to_be_conv, ConvertToRDS)
+  
+  # Stop the cluster after use
+  stopCluster(cl)
+} else {
+  warning("Nothing to convert")
+}
+
 
 # Read rds files to a tibble and save them to a csv file
 rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"))
