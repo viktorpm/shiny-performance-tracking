@@ -1,17 +1,3 @@
-library(ggplot2)
-library(plotly)
-library(ggrepel)
-library(chron)
-library(padr)
-library(gridExtra)
-library(forcats)
-library(zoo)
-library(bdscale)
-library(magrittr)
-library(purrr)
-
-
-
 ##############################
 ### Reading csv to tibble ----
 ##############################
@@ -30,8 +16,6 @@ TRIALS <- TRIALS %>%
   )
 names(TRIALS)
 
-
-
 TRIALS %>% 
   dplyr::mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
   dplyr::mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
@@ -47,9 +31,6 @@ TRIALS %>%
   theme(aspect.ratio=1) +
   facet_grid(~animal_id ~ stage) 
 
-
-
-
 TRIALS %>% 
   dplyr::mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
   dplyr::mutate(stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
@@ -63,9 +44,6 @@ TRIALS %>%
   dplyr::summarise(hit_rate = sum(hit, na.rm = T)/length(hit), pair_value_s1, pair_value_s2) %>% na.omit() %>% 
   dplyr::group_by(animal_id, stage, pair_number) %>%
   slice(1) %>% 
-
-  
-  
   ggplot(
     mapping = aes(
       x = pair_value_s1, 
@@ -110,9 +88,6 @@ rigs_sessions <- matrix(
 )
 rownames(rigs_sessions) <- c("rig_1", "rig_2", "rig_3", "rig_4", "rig_5", "rig_6")
 colnames(rigs_sessions) <- c("session_1", "session_2", "session_3", "session_4", "session_5")
-
-
-
 
 ##############################################
 ### filtering and tidying up original csv ----
@@ -169,8 +144,6 @@ TRAINING %>%
                 animal_id %in% c("VP02","VP08","VP09")) %>% 
   select(date, animal_id, protocol ,correct_trials) 
 
-
-
 TRAINING %>% 
   dplyr::filter(protocol == "@SoundCategorization") %>% 
   select(animal_id) %>% 
@@ -191,12 +164,7 @@ ggplot(
                mean()
              )
 
-
-
-
 ### PLOTTING ----
-
-
 
 #######################################
 ### PLOT: session length over time ----
@@ -218,9 +186,6 @@ ggplot(
   geom_point() +
   scale_x_date(date_breaks = "1 day", date_labels = "%b %d", minor_breaks = "1 day") +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5))
-
-
-
 
 #######################################
 ### PLOT: No. left and right pokes ----
@@ -260,9 +225,6 @@ ggplot(
   )
 ) +
   geom_boxplot()
-
-
-
 
 ##########################
 ### PLOT: CP duration ----
@@ -314,9 +276,6 @@ ggplot(
   ) +
   geom_hline(yintercept = 6)
 
-
-
-
 ######################################
 ### PLOT: No. done trials vs date ----
 ######################################
@@ -356,7 +315,6 @@ ggplot(
     # nudge_y = 2.5,
     # check_overlap = F # geom_text parameter
   )
-
 
 ##############################################
 ### PLOT: No. completed trials (tg vs WT) ----
@@ -404,9 +362,6 @@ ggplot(
     # check_overlap = F # geom_text parameter
   )
 
-
-
-
 # RAINING$file[str_detect(TRAINING$file,pattern = regex("", ignore_case = T))]
 
 # TRAINING$file %>% str_detect(pattern = regex("delay", ignore_case = T))
@@ -420,10 +375,6 @@ ggplot(
   mapping = aes(y = all_trials, x = total_CP)
 ) +
   geom_point(mapping = aes(col = animal_id))
-
-
-
-
 
 #####################################
 ### PLOT: stage transition track ----
@@ -451,8 +402,6 @@ p <- ggplot(
     hjust = 1.3,
     vjust = 1
   )
-
-
 
 ggplotly(p)
 
