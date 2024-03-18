@@ -1,28 +1,28 @@
+# Set paths to frequently used directories
+path_to_mat_files <- file.path("/mnt", "ceph","_raw_data", "rat_training_172", "SoloData", "Data")
+path_to_rds_files <- file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files")
 
-
-library(tibble)
-library(tidyverse)
-library(purrr)
-library(magrittr)
-
+# Load commonly used libraries
+library(shiny)
 library(ggplot2)
+library(ggpubr)
 library(ggrepel)
-library(forcats)
-library(plotly)
-library(gridExtra)
-
-
-library(R.matlab)
-library(stringr)
 library(chron)
 library(padr)
-library(bdscale)
-
+library(gridExtra)
+library(forcats)
 library(zoo)
-library(shiny)
-library(DT)
+library(bdscale)
+library(tibble)
+library(tidyverse)
+library(R.matlab)
+library(stringr)
+library(purrr)
 library(shinyjs)
-
+library(DT)
+library(plotly)
 library(knitr)
 library(kableExtra)
 library(rmarkdown)
+library(parallel)
+library(magrittr)

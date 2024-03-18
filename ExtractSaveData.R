@@ -1,5 +1,3 @@
-library(parallel)
-
 # Load necessary functions
 source("ConvertToRDS.R") # Function to convert mat files to rds
 source("ReadData.R") # Function to read rds files to a tibble

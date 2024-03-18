@@ -1,7 +1,5 @@
 # Function to convert .mat files to .rds format
 ConvertToRDS <- function(file, save_path) {
-  # Load the R.matlab package for reading .mat files
-  library(R.matlab)
   
   # Check if save_path is provided, if not, set a default path
   if (missing(save_path)) {
@@ -20,7 +18,7 @@ ConvertToRDS <- function(file, save_path) {
   file_path <- substr(file, start = 1, stop = filename_pos - 1)
   
   # Read the .mat file using R.matlab's readMat function
-  rat_data <- readMat(paste0(file_path, filename))
+  rat_data <- R.matlab::readMat(paste0(file_path, filename))
   
   # Save the data as an .rds file in the specified save_path
   saveRDS(rat_data, file = paste0(save_path, "/", filename, ".rds"))

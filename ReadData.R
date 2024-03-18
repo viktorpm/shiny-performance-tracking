@@ -2,11 +2,8 @@
 #' @param rds_file The name of the RDS file to process.
 #' @param trialData A logical indicating whether to process trial data (TRUE) or not (FALSE).
 #' @return A list containing processed data from the RDS file.
+
 ReadData <- function(rds_file, trialData = F) {
-  # Load necessary libraries
-  library(R.matlab)
-  library(tidyverse)
-  library(purrr)
   
   # Define the path to the data
   path <- file.path("shiny_app")

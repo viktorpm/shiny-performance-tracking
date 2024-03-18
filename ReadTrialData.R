@@ -3,6 +3,7 @@
 #' @param rat_data The data structure containing the saved data from the RDS file.
 #' @param data_source The source of the data (e.g., "bpod", "bcontrol").
 #' @return A list containing processed trial data from the RDS file.
+
 ReadTrialData <- function(rds_file, rat_data, data_source) {
   # Extract section name from rds_file name
   section_name <- rds_file %>% substr(

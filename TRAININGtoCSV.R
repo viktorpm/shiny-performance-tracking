@@ -1,5 +1,4 @@
 TRAININGtoCSV <- function(data, filename) {
-  library(tidyverse)
   
   if (missing(filename)) {
     filename = "TRAINING.csv"
