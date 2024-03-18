@@ -10,10 +10,20 @@
 }
 
 
+# Dynamically detect the computer name
+computer_name <- Sys.info()[["nodename"]]
 
-# Set paths to frequently used directories
-path_to_mat_files <- file.path("/mnt", "ceph","_raw_data", "rat_training_172", "SoloData", "Data")
-path_to_rds_files <- file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files")
+# Define paths based on the computer name
+if (computer_name == "LAPTOP-DSAR795N") {
+  path_to_mat_files <- file.path("V:", "_raw_data", "rat_training_172", "SoloData", "Data")
+  path_to_rds_files <- file.path("V:", "_raw_data", "rat_training_172", "rds_files")
+} else if (computer_name == "akramihpc1.akramilab.swc.ucl.ac.uk") {
+  path_to_mat_files <- file.path("/mnt", "ceph", "_raw_data", "rat_training_172", "SoloData", "Data")
+  path_to_rds_files <- file.path("/mnt", "ceph", "_raw_data", "rat_training_172", "rds_files")
+} else {
+  stop(paste("Unsupported computer name:", computer_name))
+}
+
 
 # Load commonly used libraries
 library(shiny)
