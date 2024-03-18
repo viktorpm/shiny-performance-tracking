@@ -5,7 +5,7 @@ required_packages <- c(
   "zoo", "bdscale", "tibble", "tidyverse",
   "R.matlab", "stringr", "purrr", "shinyjs", 
   "DT", "plotly", "knitr", "kableExtra",
-  "rmarkdown", "parallel", "magrittr"
+  "rmarkdown", "parallel", "magrittr", "readr"
   )
 
 # Function to check and install packages
