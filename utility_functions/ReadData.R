@@ -12,7 +12,7 @@ ReadData <- function(rds_file, trialData = F) {
   # Default mode, no trial data
   if (trialData == F) {
     # Read RDS file
-    rat_data <- readRDS(paste0(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"), "/", rds_file))
+    rat_data <- readRDS(paste0(path_to_rds_files, "/", rds_file))
     
     # Check the source of the data
     if ("SessionData" %in% names(rat_data)) {
@@ -41,7 +41,7 @@ ReadData <- function(rds_file, trialData = F) {
     
     # Process if not already processed
     if (all(file_processed_test == F)) {
-      rat_data <- readRDS(paste0(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"), "/", rds_file))
+      rat_data <- readRDS(paste0(path_to_rds_files, "/", rds_file))
       
       # Check the source of the data
       if ("SessionData" %in% names(rat_data)) {

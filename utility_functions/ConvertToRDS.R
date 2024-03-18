@@ -3,7 +3,7 @@ ConvertToRDS <- function(file, save_path) {
   
   # Check if save_path is provided, if not, set a default path
   if (missing(save_path)) {
-    save_path <- file.path(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"))
+    save_path <- file.path(path_to_rds_files)
   }
   
   # Find the position of the last "/" to identify the start of the filename

@@ -1,13 +1,13 @@
 
 # Define the path to the data folder
-in_path <- file.path("/mnt", "ceph","_raw_data", "rat_training_172", "SoloData", "Data")
+in_path <- path_to_mat_files
 
 # List all .mat files in the data folder, excluding test data
 file_list <- list.files(in_path, pattern = "\\.mat$", recursive = TRUE)
 file_list <- file_list[!grepl("experimenter|Session Settings|FakeSubject", file_list)]
 
 # List files already converted to rds
-rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"))
+rds_list <- list.files(path_to_rds_files)
 
 
 # Identify not yet converted mat files by comparing base file names
@@ -41,7 +41,7 @@ if (length(to_be_conv) > 0) {
 
 
 # Read rds files to a tibble and save them to a csv file
-rds_list <- list.files(file.path("/mnt", "ceph","_raw_data", "rat_training_172", "rds_files"))
+rds_list <- list.files(path_to_rds_files)
 to_append <- setdiff(
   rds_list,
   suppressMessages(suppressWarnings(
