@@ -1,5 +1,5 @@
 # Read the TRAINING dataset from a CSV file
-TRAINING <- read_csv(file.path(getwd(), "shiny_app", "TRAINING.csv"))
+TRAINING <- read_csv(file.path("TRAINING.csv"))
 
 # Transform and clean the TRAINING dataset
 TRAINING <- TRAINING %>%
