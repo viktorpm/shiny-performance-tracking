@@ -17,12 +17,10 @@ ReadData <- function(rds_file, trialData = F) {
     # Check the source of the data
     if ("SessionData" %in% names(rat_data)) {
       data_source <- "bpod"
-      source("ReadBpodData.R")
       TRAINING <- ReadBpodData(rds_file = rds_file, data_source = data_source, rat_data = rat_data)
       return(TRAINING)
     } else if ("saved" %in% names(rat_data)) {
       data_source <- "bcontrol"
-      source("ReadBcontrolData.R")
       TRAINING <- ReadBcontrolData(rds_file = rds_file, rat_data = rat_data, data_source = data_source)
       return(TRAINING)
     }
@@ -50,7 +48,6 @@ ReadData <- function(rds_file, trialData = F) {
         return(NULL)
       } else if ("saved" %in% names(rat_data)) {
         data_source <- "bcontrol"
-        source("ReadTrialData.R")
         TRIAL <- ReadTrialData(rds_file = rds_file, rat_data = rat_data, data_source = data_source)
         return(TRIAL)
       }

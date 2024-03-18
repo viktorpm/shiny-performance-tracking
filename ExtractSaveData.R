@@ -1,8 +1,3 @@
-# Load necessary functions
-source("ConvertToRDS.R") # Function to convert mat files to rds
-source("ReadData.R") # Function to read rds files to a tibble
-source("TRAININGtoCSV.R") # Function to save tibble to csv
-# source("TRAININGtoFeather.R") # Function to save tibble to feather format (commented out)
 
 # Define the path to the data folder
 in_path <- file.path("/mnt", "ceph","_raw_data", "rat_training_172", "SoloData", "Data")
