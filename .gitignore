@@ -5,3 +5,4 @@
 data/
 .httr-oauth
 shiny-performance-tracking.Rproj
+*.Rproj

@@ -89,7 +89,7 @@ list.dirs(file.path("D:", "_Rig_data", "SoloData", "Data"), full.names = TRUE, r
 
 
 data_path <- file.path("D:", "_Rig_data", "SoloData", "Data")
-file_list <-l ist.files(data_path, recursive = T) %>% as.list()
+file_list <-list.files(data_path, recursive = T) %>% as.list()
 walk(file_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
 
 
