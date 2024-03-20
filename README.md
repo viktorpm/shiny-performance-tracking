@@ -3,3 +3,7 @@
 -   install R packages in `sudo su` mode on `akramihpc1` for system-wide
     availability!
 -   `library(renv)` for reproducibility across computers
+-   `.Rprofile`:
+    -   loading utility functions
+    -   building paths to data files computer dependently 
+    -   loading package dependencies
