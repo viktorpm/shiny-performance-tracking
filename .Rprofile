@@ -1,4 +1,4 @@
-source("renv/activate.R")
+# source("renv/activate.R")
 .First <- function() {
   # Source all utility functions
   source(file.path("utility_functions", "ConvertToRDS.R"))
