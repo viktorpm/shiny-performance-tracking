@@ -1,8 +1,26 @@
 tabPanel(
   "@SoundCategorization",
   sidebarLayout(
+    sidebarPanel(),
     sidebarPanel(
       width = 3,
+      
+      selectInput(
+        inputId = "protocol_SC",
+        label = "Protocol",
+        choices = c(
+          "Summary",
+          "@AthenaDelayComp",
+          "@SoundCategorization",
+          "@AltSoundCategorization",
+          "@AltStat",
+          "@AltSoundCategorizationCatch",
+          "@ElenaSequenceComp",
+          "@SoundCatContinuous"
+        )
+      ),
+      
+      
       selectInput(
         inputId = "plot_type_SC",
         label = "Select plot type",

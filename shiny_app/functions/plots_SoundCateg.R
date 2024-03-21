@@ -1,9 +1,11 @@
-plots_SoundCateg <- function(plottype_SC,
-                             datelim_SC,
-                             stage_filter_SC,
-                             animal_filter_SC,
-                             exp_SC,
-                             f_options_SC) {
+plots_SoundCateg <- function(
+    prot_SC,
+    plottype_SC,
+    datelim_SC,
+    stage_filter_SC,
+    animal_filter_SC,
+    exp_SC,
+    f_options_SC) {
 
 
   #############################
@@ -23,7 +25,7 @@ plots_SoundCateg <- function(plottype_SC,
         choice_direction == "right_trials",
         stage %in% stage_filter_SC,
         date >= datelim_SC[1], date <= datelim_SC[2],
-        protocol == "@SoundCategorization"
+        protocol == prot_SC
       )
 
     col_by <- "animal_id"
@@ -40,7 +42,7 @@ plots_SoundCateg <- function(plottype_SC,
         choice_direction == "right_trials",
         stage %in% stage_filter_SC,
         date >= datelim_SC[1], date <= datelim_SC[2],
-        protocol == "@SoundCategorization",
+        protocol == prot_SC,
         experimenter == exp_SC
       )
 
@@ -59,7 +61,7 @@ plots_SoundCateg <- function(plottype_SC,
         choice_direction == "right_trials",
         stage %in% stage_filter_SC,
         date >= datelim_SC[1], date <= datelim_SC[2],
-        protocol == "@SoundCategorization",
+        protocol == prot_SC,
         animal_id == animal_filter_SC
       )
 
@@ -131,7 +133,7 @@ plots_SoundCateg <- function(plottype_SC,
         dplyr::filter(
           stage %in% stage_filter_SC,
           date >= datelim_SC[1], date <= datelim_SC[2],
-          protocol == "@SoundCategorization"),
+          protocol == prot_SC),
       mapping = aes(
         x = animal_id,
         y = No_pokes # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length

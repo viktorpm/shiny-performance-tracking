@@ -39,7 +39,7 @@ source(file.path("functions", "plots_SoundCatContinuous.R"))
 ui <- fluidPage(
   useShinyjs(),
   navbarPage(
-    "Protocols",
+    "Room",
     # Include the UI for each tab
     source(file.path("ui", "Summary_ui.R"), local = TRUE)$value,
     source(file.path("ui", "AthenaDelayComp_ui.R"), local = TRUE)$value,

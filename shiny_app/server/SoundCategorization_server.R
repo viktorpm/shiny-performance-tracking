@@ -3,6 +3,7 @@
 
 create_plot_SC <- reactive({
   plots_SoundCateg(
+    prot_SC = input$protocol_SC,
     plottype_SC = input$plot_type_SC,
     datelim_SC = input$setdate_SC,
     stage_filter_SC = input$stage_SC,
