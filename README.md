@@ -12,7 +12,9 @@
 -   running `update_shiny_app.sh` bash script:
 
     -   script path: `/etc/cron.daily` on our VM1 
-    -	  on Ubuntu `systemd` to schedule tasks: <https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq>
+    -	  on Ubuntu `systemd` is used to schedule tasks
+
+ <https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq>
 
 ```
 #!/bin/bash
