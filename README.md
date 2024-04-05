@@ -11,6 +11,9 @@
 
 -   running `update_shiny_app.sh` bash script:
 
+    -   script path: `/etc/cron.daily` on our VM1 
+    -	  `systemd` is used on Ubuntu to schedule tasks: https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq
+
 ```
 #!/bin/bash
 
@@ -38,7 +41,4 @@ git push
 # Restart shiny-server
 systemctl restart shiny-server
 
-```
-	
-    -	script path: `/etc/cron.daily` on our VM1 
-    -	`systemd` is used on Ubuntu to schedule tasks: https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq
+```
