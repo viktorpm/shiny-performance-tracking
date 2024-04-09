@@ -29,8 +29,11 @@ TRAINING <- TRAINING %>%
   ungroup() %>%
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
 
+
+all_protocols <- TRAINING$protocol %>% unique()
+
 # Plot session length distribution
-ggplot(
+session_length_plot <- ggplot(
   data = TRAINING %>%
     dplyr::filter(session_length > 0) %>%
     select(session_length),

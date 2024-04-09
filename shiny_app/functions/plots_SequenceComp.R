@@ -1,9 +1,10 @@
-plots_SequenceComp <- function(plottype_ESC,
-                            datelim_ESC,
-                            stage_filter_ESC,
-                            animal_filter_ESC,
-                            exp_ESC,
-                            f_options_ESC) {
+plots_SequenceComp <- function(
+    plottype_ESC,
+    datelim_ESC,
+    stage_filter_ESC,
+    animal_filter_ESC,
+    exp_ESC, 
+    f_options_ESC) {
 
 
 
