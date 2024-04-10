@@ -22,6 +22,13 @@ CompletedTrialsPlot <- function(
       unique() %>%
       pull() %>%
       as.vector()
+    
+    # Defining plot colors and line types based on filters
+    col_by <- "animal_id"
+    col_lab_name <- "Animals"
+    lines <- geom_line(aes(col = eval(parse(text = col_by))),
+                       linetype = "dashed",
+                       alpha = 0.4)
   }
 
   if (show == "Experimenter") {
@@ -37,6 +44,14 @@ CompletedTrialsPlot <- function(
       unique() %>%
       pull() %>%
       as.vector()
+    
+    # Defining plot colors and line types based on filters
+    col_by <- "animal_id"
+    col_lab_name <- "Animals"
+    lines <- geom_line(aes(col = eval(parse(text = col_by))),
+                       linetype = "dashed",
+                       alpha = 0.4
+    )
   }
 
   # hist(mtcars$mpg)
@@ -50,7 +65,7 @@ CompletedTrialsPlot <- function(
       experimenter %in% exp
     )
 
-
+ 
   trial_plot <- ggplot(
     data = TRAINING,
     mapping = aes(
