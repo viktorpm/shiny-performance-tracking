@@ -1,10 +1,33 @@
 library(shiny)
 library(shinydashboard)
 library(shinyjs)
-
+library(ggplot2)
+library(ggpubr)
+library(ggrepel)
+library(chron)
+library(padr)
+library(gridExtra)
+library(forcats)
+library(zoo)
+library(bdscale)
+library(tibble)
+library(tidyverse)
+library(R.matlab)
+library(stringr)
+library(purrr)
+library(DT)
+library(plotly)
+library(knitr)
+library(kableExtra)
+library(rmarkdown)
+library(parallel)
+library(magrittr)
+library(readr)
 
 source(file.path("functions", "load_data.R"))
-source(file.path("functions", "plot_generation.R"))
+
+source(file.path("functions", "ChoiceDirectionPlot.R"))
+source(file.path("functions", "CompletedTrialsPlot.R"))
 
 
 # Define UI
@@ -15,32 +38,35 @@ ui <- dashboardPage(
     selectInput(
       inputId = "protocol",
       label = "Protocol",
-      choices = all_protocols # defined in load_data.R (unique values in the protocol column of TRAINING tibble)
+      choices = TRAINING$protocol %>% unique() %>% sort() %>% as.vector(),
+      # always selects the protocol that has the latest entries
+      selected = TRAINING %>% dplyr::arrange(desc(date)) %>% dplyr::slice(1) %>% dplyr::select(protocol) %>% pull()
     ),
+    
     # Filters
     radioButtons(
-      inputId = "f_options",
-      label = "Filters",
+      inputId = "show",
+      label = "Show",
       choices = c("All animals", "Experimenter", "Individual animals"),
       selected = "All animals"
     ),
+    
     # Experimenter selection
     selectInput(
       inputId = "exp_select",
       label = "Select experimenter",
-      choices = TRAINING$experimenter %>% unique() %>% as.vector()
+      choices = NULL
+      # choices = TRAINING$experimenter %>% unique() %>% as.vector()
     ),
+    
     # Animal selection
     selectInput(
       inputId = "animal_select",
       label = "Select animals to show",
-      choices = TRAINING %>%
-        dplyr::filter(protocol == "@SoundCategorization") %>%
-        select(animal_id) %>%
-        unique() %>%
-        pull() %>%
-        as.vector()
+      choices = NULL
+      # choices = TRAINING$animal_id %>% unique() %>% as.vector()
     ),
+    
     # Date range input
     dateRangeInput(
       inputId = "setdate",
@@ -50,6 +76,8 @@ ui <- dashboardPage(
       min = min(TRAINING$date),
       max = max(TRAINING$date)
     ),
+    
+    # Training stage input
     checkboxGroupInput(
       inputId = "stage",
       label = "Select stages to show",
@@ -57,12 +85,13 @@ ui <- dashboardPage(
       selected = TRAINING$stage %>% unique() %>% as.vector()
     )
   ),
+  
   # Define dashboard body
   dashboardBody(
     useShinyjs(),
     fluidRow(
-      column(6, plotOutput("plot_choice_direction")),
-      column(6, plotOutput("plot_completed_trials")),
+      column(6, plotOutput("plt1")),
+      column(6, plotOutput("plt2")),
     ),
     fluidRow(
       column(6, plotOutput("plot_correct_ratio")),
@@ -73,93 +102,130 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   
+  update_animal_select <- reactive({
+    req(input$protocol, input$exp_select)
+    #print("Updating animal select choices") # Debugging print statement
+    #print(paste("Protocol:", input$protocol)) # Debugging print statement
+    #print(paste("Experimenter:", input$exp_select)) # Debugging print statement
+    TRAINING %>%
+      dplyr::filter(
+        protocol == input$protocol,
+        experimenter == input$exp_select) %>%
+      dplyr::select(animal_id) %>%
+      unique() %>%
+      pull() %>%
+      sort() %>% 
+      as.vector()
+    #print(paste("Filtered data:", filtered_data)) # Debugging print statement
+    #return(filtered_data)
+  })
+  
+  
+  update_exp_select <- reactive({
+    req(input$protocol)
+    #print("Updating experimenter select choices") # Debugging print statement
+    #print(paste("Protocol:", input$protocol)) # Debugging print statement
+    TRAINING %>%
+      dplyr::filter(protocol == input$protocol) %>%
+      dplyr::select(experimenter) %>%
+      unique() %>%
+      pull() %>%
+      sort() %>% 
+      as.vector()
+    #print(paste("Filtered data:", filtered_data)) # Debugging print statement
+    #return(filtered_data)
+  })
+  
+  
   # choice direction plot
-  create_plot_choice <- reactive({
-    plot_generation(
-      plottype = "Choice direction",
-      protocol = input$protocol,
+  create_plt1 <- reactive({
+    ChoiceDirectionPlot(
+      prtcl = input$protocol,
       datelim = input$setdate,
       stage_filter = input$stage,
       animal_filter = input$animal_select,
       exp = input$exp_select,
-      f_options = input$f_options
+      show = input$show
     )
   })
   
-  output$plot_choice_direction <- renderPlot({
-    create_plot_choice()
+  output$plt1 <- renderPlot({
+    create_plt1()
   })
   
+
   # No. completed trials plot
-  create_plot_completed <- reactive({
-    plot_generation(
-      plottype = "No. completed trials",
-      protocol = input$protocol,
+  create_plt2 <- reactive({
+    CompletedTrialsPlot(
+      prtcl = input$protocol,
       datelim = input$setdate,
       stage_filter = input$stage,
       animal_filter = input$animal_select,
       exp = input$exp_select,
-      f_options = input$f_options
+      show = input$show
     )
   })
-  output$plot_completed_trials <- renderPlot({
-    create_plot_completed()
-  })
-  
-  # correct ratio plot
-  create_plot_correct <- reactive({
-    plot_generation(
-      plottype = "Correct ratio",
-      protocol = input$protocol,
-      datelim = input$setdate,
-      stage_filter = input$stage,
-      animal_filter = input$animal_select,
-      exp = input$exp_select,
-      f_options = input$f_options
-    )
-  })
-  
-  output$plot_correct_ratio <- renderPlot({
-    create_plot_correct()
-  })
-  
-  # stage tracking plot
-  create_plot_stage <- reactive({
-    plot_generation(
-      plottype = "Stage tracking",
-      protocol = input$protocol,
-      datelim = input$setdate,
-      stage_filter = input$stage,
-      animal_filter = input$animal_select,
-      exp = input$exp_select,
-      f_options = input$f_options
-    )
-  })
-  
-  output$plot_stage_tracking <- renderPlot({
-    create_plot_stage()
+  output$plt2 <- renderPlot({
+    create_plt2()
   })
   
   
-  observe({
-    if (input$f_options == "All animals") {
-      disable("animal_select")
-      disable("exp_select")
-    }
+  # # correct ratio plot
+  # create_plot_correct <- reactive({
+  #   plot_generation(
+  #     plottype = "Correct ratio",
+  #     protocol = input$protocol,
+  #     datelim = input$setdate,
+  #     stage_filter = input$stage,
+  #     animal_filter = input$animal_select,
+  #     exp = input$exp_select,
+  #     show = input$show
+  #   )
+  # })
+  # 
+  # output$plot_correct_ratio <- renderPlot({
+  #   create_plot_correct()
+  # })
+  # 
+  # # stage tracking plot
+  # create_plot_stage <- reactive({
+  #   plot_generation(
+  #     plottype = "Stage tracking",
+  #     protocol = input$protocol,
+  #     datelim = input$setdate,
+  #     stage_filter = input$stage,
+  #     animal_filter = input$animal_select,
+  #     exp = input$exp_select,
+  #     show = input$show
+  #   )
+  # })
+  # 
+  # output$plot_stage_tracking <- renderPlot({
+  #   create_plot_stage()
+  # })
+  
+
+  
+  observeEvent(c(input$show, input$protocol, input$exp_select), {
+    if (input$show == "All animals") {
+      shinyjs::disable("animal_select")
+      shinyjs::disable("exp_select")
+      }
     
-    if (input$f_options == "Experimenter") {
-      enable("exp_select")
-      disable("animal_select")
-    }
-    
-    if (input$f_options == "Individual animals") {
-      enable("exp_select")
-      enable("animal_select")
-    }
-    
-    
-    
+    if (input$show == "Experimenter") {
+      shinyjs::enable("exp_select")
+      shinyjs::disable("animal_select")
+      updateSelectInput(session, inputId = "exp_select", choices = update_exp_select())
+      }
+      
+    if (input$show == "Individual animals") {
+      shinyjs::enable("exp_select")
+      shinyjs::enable("animal_select")
+      updateSelectInput(session, inputId = "animal_select", choices = update_animal_select())
+      }
   })
+
+  
 }
 
 shinyApp(ui, server)

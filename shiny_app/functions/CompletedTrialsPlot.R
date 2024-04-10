@@ -1,0 +1,98 @@
+CompletedTrialsPlot <- function(
+    prtcl,
+    datelim,
+    stage_filter,
+    animal_filter,
+    exp,
+    show) {
+  if (missing(datelim)) {
+    datelim <- c(max(TRAINING$date) - 9, max(TRAINING$date))
+  }
+
+  if (show == "All animals") {
+    animal_filter <- TRAINING %>%
+      dplyr::filter(protocol == prtcl) %>%
+      dplyr::select(animal_id) %>%
+      unique() %>%
+      pull() %>%
+      as.vector()
+    exp <- TRAINING %>%
+      dplyr::filter(protocol == prtcl) %>%
+      dplyr::select(experimenter) %>%
+      unique() %>%
+      pull() %>%
+      as.vector()
+  }
+
+  if (show == "Experimenter") {
+    animal_filter <- TRAINING %>%
+      dplyr::filter(protocol == prtcl) %>%
+      dplyr::select(animal_id) %>%
+      unique() %>%
+      pull() %>%
+      as.vector()
+    exp <- TRAINING %>%
+      dplyr::filter(protocol == prtcl) %>%
+      dplyr::select(experimenter) %>%
+      unique() %>%
+      pull() %>%
+      as.vector()
+  }
+
+  # hist(mtcars$mpg)
+
+  TRAINING <- TRAINING %>%
+    dplyr::filter(
+      date >= datelim[1], date <= datelim[2],
+      protocol == prtcl,
+      stage %in% stage_filter,
+      animal_id %in% animal_filter,
+      experimenter %in% exp
+    )
+
+
+  trial_plot <- ggplot(
+    data = TRAINING,
+    mapping = aes(
+      x = date,
+      y = completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+    )
+  ) +
+
+    ### lines and points
+    lines +
+    geom_point(
+      mapping = aes(col = eval(parse(text = col_by))),
+      size = 3
+    ) +
+    geom_hline(yintercept = 20, col = "gray") +
+    annotate("text", x = datelim[1], y = 23, label = "Threshold - 20 trials", col = "gray") +
+
+    ### scales, labels, themes
+    scale_x_date(
+      date_breaks = "1 day",
+      date_labels = "%b %d",
+      minor_breaks = "1 day",
+      limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
+    ) +
+    ylim(0, max(TRAINING$all_trials) + 10) + # max(all_trials): comparable to the done trial plot
+    theme(
+      axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12),
+      axis.text.y = element_text(size = 12),
+      axis.title = element_text(size = 14, face = "bold")
+    ) +
+    ylab("No. completed trials") +
+    xlab("Date [day]") +
+    geom_label_repel(
+      data = TRAINING %>%
+        dplyr::filter(
+          date == max(date)
+        ),
+      mapping = aes(label = animal_id, col = eval(parse(text = col_by))),
+      hjust = -0.5,
+      direction = "y"
+    ) +
+    labs(col = eval(parse(text = "col_lab_name")))
+
+  plot(trial_plot)
+}
