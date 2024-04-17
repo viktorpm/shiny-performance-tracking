@@ -9,14 +9,18 @@ ChoiceDirectionPlot <- function(
   if (missing(datelim)) {
     datelim <- c(max(TRAINING$date) - 9, max(TRAINING$date))
   }
-
-  if (show == "All animals") {
+  
+  # Default: when all animals are shown
+  if (show == "All animals" ) {
+    # list of animals under the selected protocol
     animal_filter <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
       dplyr::select(animal_id) %>%
       unique() %>%
       pull() %>%
       as.vector()
+    
+    # list of experimenters under the selected protocol 
     exp <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
       dplyr::select(experimenter) %>%
@@ -25,19 +29,18 @@ ChoiceDirectionPlot <- function(
       as.vector()
   }
   
+  # when an experimenter is selected 
   if (show == "Experimenter") {
+    # list of animals under the selected protocol
     animal_filter <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
       dplyr::select(animal_id) %>%
       unique() %>%
       pull() %>%
       as.vector()
-    exp <- TRAINING %>%
-      dplyr::filter(protocol == prtcl) %>%
-      dplyr::select(experimenter) %>%
-      unique() %>%
-      pull() %>%
-      as.vector()
+    
+    # experimenter is selected by user
+    exp <- exp
   }
   
   
@@ -60,7 +63,7 @@ ChoiceDirectionPlot <- function(
     )
   ) +
 
-    ### boxplots, points
+    ### box plots, points
     geom_boxplot(aes(fill = choice_direction), alpha = 0.3) +
     geom_point(aes(group = choice_direction, col = choice_direction),
       position = position_dodge(width = 0.75),

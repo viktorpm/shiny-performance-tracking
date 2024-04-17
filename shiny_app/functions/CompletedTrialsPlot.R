@@ -5,17 +5,23 @@ CompletedTrialsPlot <- function(
     animal_filter,
     exp,
     show) {
+  
   if (missing(datelim)) {
     datelim <- c(max(TRAINING$date) - 9, max(TRAINING$date))
   }
 
+  
+  # Default: when all animals are shown
   if (show == "All animals") {
+    # list of animals under the selected protocol
     animal_filter <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
       dplyr::select(animal_id) %>%
       unique() %>%
       pull() %>%
       as.vector()
+    
+    # list of experimenters under the selected protocol 
     exp <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
       dplyr::select(experimenter) %>%
@@ -30,7 +36,8 @@ CompletedTrialsPlot <- function(
                        linetype = "dashed",
                        alpha = 0.4)
   }
-
+  
+  # when an experimenter is selected 
   if (show == "Experimenter") {
     animal_filter <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
@@ -38,12 +45,9 @@ CompletedTrialsPlot <- function(
       unique() %>%
       pull() %>%
       as.vector()
-    exp <- TRAINING %>%
-      dplyr::filter(protocol == prtcl) %>%
-      dplyr::select(experimenter) %>%
-      unique() %>%
-      pull() %>%
-      as.vector()
+    
+    # experimenter is selected by user
+    exp <- exp
     
     # Defining plot colors and line types based on filters
     col_by <- "animal_id"
@@ -53,8 +57,20 @@ CompletedTrialsPlot <- function(
                        alpha = 0.4
     )
   }
+  
+  
+  if (show == "Individual animals") {
+    animal_filter <- animal_filter
+    exp <- exp
+    
+    # Defining plot colors and line types based on filters
+    col_by <- "stage"
+    col_lab_name <- "Stages"
+    lines <- geom_line(linetype = "dashed", alpha = 0.4)
+  }
+  
+  
 
-  # hist(mtcars$mpg)
 
   TRAINING <- TRAINING %>%
     dplyr::filter(
@@ -62,7 +78,8 @@ CompletedTrialsPlot <- function(
       protocol == prtcl,
       stage %in% stage_filter,
       animal_id %in% animal_filter,
-      experimenter %in% exp
+      experimenter %in% exp,
+      choice_direction == "right_trials"
     )
 
  

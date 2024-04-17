@@ -39,7 +39,7 @@ ui <- dashboardPage(
       inputId = "protocol",
       label = "Protocol",
       choices = TRAINING$protocol %>% unique() %>% sort() %>% as.vector(),
-      # always selects the protocol that has the latest entries
+      # always selects the protocol with the latest entries
       selected = TRAINING %>% dplyr::arrange(desc(date)) %>% dplyr::slice(1) %>% dplyr::select(protocol) %>% pull()
     ),
     
@@ -56,7 +56,6 @@ ui <- dashboardPage(
       inputId = "exp_select",
       label = "Select experimenter",
       choices = NULL
-      # choices = TRAINING$experimenter %>% unique() %>% as.vector()
     ),
     
     # Animal selection
@@ -64,7 +63,6 @@ ui <- dashboardPage(
       inputId = "animal_select",
       label = "Select animals to show",
       choices = NULL
-      # choices = TRAINING$animal_id %>% unique() %>% as.vector()
     ),
     
     # Date range input
@@ -102,38 +100,35 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   
-  update_animal_select <- reactive({
-    req(input$protocol, input$exp_select)
-    #print("Updating animal select choices") # Debugging print statement
-    #print(paste("Protocol:", input$protocol)) # Debugging print statement
-    #print(paste("Experimenter:", input$exp_select)) # Debugging print statement
+  # updating "Select experimenter" drop down list based on protocol and date
+  update_exp_select <- reactive({
+    req(input$protocol, input$setdate)
     TRAINING %>%
       dplyr::filter(
-        protocol == input$protocol,
-        experimenter == input$exp_select) %>%
-      dplyr::select(animal_id) %>%
-      unique() %>%
-      pull() %>%
-      sort() %>% 
-      as.vector()
-    #print(paste("Filtered data:", filtered_data)) # Debugging print statement
-    #return(filtered_data)
-  })
-  
-  
-  update_exp_select <- reactive({
-    req(input$protocol)
-    #print("Updating experimenter select choices") # Debugging print statement
-    #print(paste("Protocol:", input$protocol)) # Debugging print statement
-    TRAINING %>%
-      dplyr::filter(protocol == input$protocol) %>%
+        protocol == input$protocol, 
+        date >= input$setdate[1], date <= input$setdate[2]) %>%
       dplyr::select(experimenter) %>%
       unique() %>%
       pull() %>%
       sort() %>% 
       as.vector()
-    #print(paste("Filtered data:", filtered_data)) # Debugging print statement
-    #return(filtered_data)
+  })
+  
+  
+  
+  # updating "Select animals to show" drop down list based on protocol, date and experimenter
+  update_animal_select <- reactive({
+    req(input$protocol, input$exp_select, input$setdate)
+    TRAINING %>%
+      dplyr::filter(
+        protocol == input$protocol,
+        experimenter == input$exp_select,
+        date >= input$setdate[1], date <= input$setdate[2]) %>%
+      dplyr::select(animal_id) %>%
+      unique() %>%
+      pull() %>%
+      sort() %>% 
+      as.vector()
   })
   
   
