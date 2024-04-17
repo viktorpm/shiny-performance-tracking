@@ -18,8 +18,11 @@
 ```
 #!/bin/bash
 
-# Redirect all output to a log file
-exec > >(tee -a ~/update_shiny_app.log) 2>&1
+# Generate a timestamp for the log file name
+DATE=$(date +"%Y%m%d%H%M")
+
+# Redirect all output to a log file with the timestamp in the filename
+exec > >(tee -a ~/update_shiny_app_$DATE.log) 2>&1
 
 # Change directory
 cd /srv/shiny-server/shiny-performance-tracking
@@ -40,6 +43,6 @@ git commit -m "daily update of TRAINING.csv"
 git push
 
 # Restart shiny-server
-systemctl restart shiny-server
+systemctl restart shiny-server.service
 ```
 
