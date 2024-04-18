@@ -29,12 +29,6 @@ TRAINING <- TRAINING %>%
   ungroup() %>%
   gather(right_trials, left_trials, key = "choice_direction", value = "No_pokes")
 
-# Plot session length distribution
-ggplot(
-  data = TRAINING %>%
-    dplyr::filter(session_length > 0) %>%
-    select(session_length),
-  mapping = aes(x = session_length)
-) +
-  geom_histogram(bins = 70) +
-  scale_x_continuous(breaks = seq(from = 0, to = 300, by = 25), minor_breaks = F)
+
+#all_protocols <- TRAINING$protocol %>% unique() %>% as.character()
+
