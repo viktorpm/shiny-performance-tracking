@@ -35,6 +35,11 @@ source(file.path("functions", "StageTrackingPlot.R"))
 ui <- dashboardPage(
   dashboardHeader(title = "Training Dashboard"),
   dashboardSidebar(
+    br(),
+    br(),
+    actionButton("reset", "Reset to Defaults"),
+    br(),
+
     # Protocol selection
     selectInput(
       inputId = "protocol",
@@ -69,7 +74,7 @@ ui <- dashboardPage(
     # Date range input
     dateRangeInput(
       inputId = "setdate",
-      label = "Dates to show (default: last 3 weeks)",
+      label = HTML("Dates to show<br>(default: last 3 weeks)"),
       start = max(TRAINING$date) - 21,
       end = max(TRAINING$date),
       min = min(TRAINING$date),
@@ -101,6 +106,26 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output, session) {
+  
+  # Capture initial state of inputs
+  initialState <- reactiveValues(
+    protocol = TRAINING %>% dplyr::arrange(desc(date)) %>% dplyr::slice(1) %>% dplyr::select(protocol) %>% pull(),
+    show = "All animals",
+    exp_select = NULL,
+    animal_select = NULL,
+    setdate = list(start = max(TRAINING$date) - 21, end = max(TRAINING$date)),
+    stage = TRAINING$stage %>% unique() %>% as.vector()
+  )
+  # Reset inputs to initial state when reset button is clicked
+  observeEvent(input$reset, {
+    updateSelectInput(session, "protocol", selected = initialState$protocol)
+    updateRadioButtons(session, "show", selected = initialState$show)
+    updateSelectInput(session, "exp_select", choices = NULL) # Assuming you want to clear this
+    updateSelectInput(session, "animal_select", choices = NULL) # Assuming you want to clear this
+    updateDateRangeInput(session, "setdate", start = initialState$setdate$start, end = initialState$setdate$end)
+    updateCheckboxGroupInput(session, "stage", selected = initialState$stage)
+  })
+  
   # updating "Select experimenter" drop down list based on protocol and date
   update_exp_select <- reactive({
     req(input$protocol, input$setdate)
