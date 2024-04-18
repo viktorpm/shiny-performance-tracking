@@ -1,4 +1,4 @@
-CompletedTrialsPlot <- function(
+CorrectRatioPlot <- function(
     prtcl,
     datelim,
     stage_filter,
@@ -79,11 +79,11 @@ CompletedTrialsPlot <- function(
     )
 
 
-  trial_plot <- ggplot(
+  ratio_plot <- ggplot(
     data = TRAINING,
     mapping = aes(
       x = date,
-      y = completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+      y = correct_trials / completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
     )
   ) +
 
@@ -93,9 +93,8 @@ CompletedTrialsPlot <- function(
       mapping = aes(col = eval(parse(text = col_by))),
       size = 3
     ) +
-    geom_hline(yintercept = 20, col = "gray") +
-    annotate("text", x = datelim[1], y = 23, label = "Threshold - 20 trials", col = "gray", vjust = 2, hjust = -0.5) +
-
+    geom_hline(yintercept = 0.50, col = "gray") +
+    annotate("text", x = datelim[1], y = 0.51, label = "Chance level", col = "gray", vjust = 2, hjust = -0.5) +
     ### scales, labels, themes
     scale_x_date(
       date_breaks = "1 day",
@@ -103,10 +102,10 @@ CompletedTrialsPlot <- function(
       minor_breaks = "1 day",
       limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
     ) +
-    ylim(0, max(TRAINING$all_trials) + 10) + # max(all_trials): comparable to the done trial plot
-    ylab("No. completed trials") +
+    ylim(0, 1) + # max(all_trials): comparable to the done trial plot
+    ylab("Correct ratio [No. correct / No. completed trials]") +
     xlab("Date [day]") +
-    ggtitle("Completed trials") +
+    ggtitle("Correct to completed trials ratio") +
     geom_label_repel(
       data = TRAINING %>%
         dplyr::filter(
@@ -119,5 +118,5 @@ CompletedTrialsPlot <- function(
     labs(col = eval(parse(text = "col_lab_name"))) +
     plot_theme_settings()
 
-  plot(trial_plot)
+  plot(ratio_plot)
 }

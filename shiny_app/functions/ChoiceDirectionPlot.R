@@ -5,13 +5,12 @@ ChoiceDirectionPlot <- function(
     animal_filter,
     exp,
     show) {
-  
   if (missing(datelim)) {
     datelim <- c(max(TRAINING$date) - 9, max(TRAINING$date))
   }
-  
+
   # Default: when all animals are shown
-  if (show == "All animals" ) {
+  if (show == "All animals") {
     # list of animals under the selected protocol
     animal_filter <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
@@ -19,8 +18,8 @@ ChoiceDirectionPlot <- function(
       unique() %>%
       pull() %>%
       as.vector()
-    
-    # list of experimenters under the selected protocol 
+
+    # list of experimenters under the selected protocol
     exp <- TRAINING %>%
       dplyr::filter(protocol == prtcl) %>%
       dplyr::select(experimenter) %>%
@@ -28,8 +27,8 @@ ChoiceDirectionPlot <- function(
       pull() %>%
       as.vector()
   }
-  
-  # when an experimenter is selected 
+
+  # when an experimenter is selected
   if (show == "Experimenter") {
     # list of animals under the selected protocol
     animal_filter <- TRAINING %>%
@@ -38,12 +37,12 @@ ChoiceDirectionPlot <- function(
       unique() %>%
       pull() %>%
       as.vector()
-    
+
     # experimenter is selected by user
     exp <- exp
   }
-  
-  
+
+
   TRAINING <- TRAINING %>%
     dplyr::filter(
       date >= datelim[1], date <= datelim[2],
@@ -52,8 +51,6 @@ ChoiceDirectionPlot <- function(
       animal_id %in% animal_filter,
       experimenter %in% exp
     )
-
-
 
   direction_plot <- ggplot(
     data = TRAINING,
@@ -72,17 +69,16 @@ ChoiceDirectionPlot <- function(
 
     ### scales, labels, themes
     ylab("No. pokes") +
-    theme(
-      axis.text.x = element_text(angle = 90, vjust = -0.001, size = 12, hjust = 0.05),
-      axis.text.y = element_text(size = 12),
-      axis.title = element_text(size = 14, face = "bold")
-    ) +
+    xlab("Animals") +
+    ggtitle("Choice direction") +
 
     ### statistics
-    stat_compare_means(aes(group = choice_direction),
-      label = "p.signif",
-      hide.ns = T
-    )
+    ggpubr::stat_compare_means(
+      aes(group = choice_direction),
+      label = "p.signif"
+    ) +
+    labs(col = "Choice direction", fill = "Choice direction" ) +
+    plot_theme_settings()
 
 
   plot(direction_plot)

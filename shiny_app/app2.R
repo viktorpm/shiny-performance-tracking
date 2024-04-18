@@ -25,10 +25,11 @@ library(magrittr)
 library(readr)
 
 source(file.path("functions", "load_data.R"))
-
+source(file.path("functions", "plot_theme_settings.R"))
 source(file.path("functions", "ChoiceDirectionPlot.R"))
 source(file.path("functions", "CompletedTrialsPlot.R"))
-
+source(file.path("functions", "CorrectRatioPlot.R"))
+source(file.path("functions", "StageTrackingPlot.R"))
 
 # Define UI
 ui <- dashboardPage(
@@ -42,7 +43,7 @@ ui <- dashboardPage(
       # always selects the protocol with the latest entries
       selected = TRAINING %>% dplyr::arrange(desc(date)) %>% dplyr::slice(1) %>% dplyr::select(protocol) %>% pull()
     ),
-    
+
     # Filters
     radioButtons(
       inputId = "show",
@@ -50,21 +51,21 @@ ui <- dashboardPage(
       choices = c("All animals", "Experimenter", "Individual animals"),
       selected = "All animals"
     ),
-    
+
     # Experimenter selection
     selectInput(
       inputId = "exp_select",
       label = "Select experimenter",
       choices = NULL
     ),
-    
+
     # Animal selection
     selectInput(
       inputId = "animal_select",
       label = "Select animals to show",
       choices = NULL
     ),
-    
+
     # Date range input
     dateRangeInput(
       inputId = "setdate",
@@ -74,7 +75,7 @@ ui <- dashboardPage(
       min = min(TRAINING$date),
       max = max(TRAINING$date)
     ),
-    
+
     # Training stage input
     checkboxGroupInput(
       inputId = "stage",
@@ -83,39 +84,46 @@ ui <- dashboardPage(
       selected = TRAINING$stage %>% unique() %>% as.vector()
     )
   ),
-  
+
   # Define dashboard body
   dashboardBody(
     useShinyjs(),
     fluidRow(
-      column(6, plotOutput("plt1")),
-      column(6, plotOutput("plt2")),
+      column(6, plotOutput("plt1", height = "600px")),
+      column(6, plotOutput("plt4", height = "600px")),
     ),
+    br(),
     fluidRow(
-      column(6, plotOutput("plot_correct_ratio")),
-      column(6, plotOutput("plot_stage_tracking")),
+      column(6, plotOutput("plt2", height = "600px")),
+      column(6, plotOutput("plt3", height = "600px")),
     )
   )
 )
 
 server <- function(input, output, session) {
-  
   # updating "Select experimenter" drop down list based on protocol and date
   update_exp_select <- reactive({
     req(input$protocol, input$setdate)
     TRAINING %>%
       dplyr::filter(
-        protocol == input$protocol, 
-        date >= input$setdate[1], date <= input$setdate[2]) %>%
+        protocol == input$protocol,
+        date >= input$setdate[1], date <= input$setdate[2]
+      ) %>%
       dplyr::select(experimenter) %>%
       unique() %>%
       pull() %>%
-      sort() %>% 
+      sort() %>%
       as.vector()
   })
-  
-  
-  
+
+  # Initialize a reactiveVal to store the current selection of the experimenter dropdown
+  current_exp_select <- reactiveVal()
+
+  # Update the reactiveVal whenever the selection changes
+  observe({
+    current_exp_select(input$exp_select)
+  })
+
   # updating "Select animals to show" drop down list based on protocol, date and experimenter
   update_animal_select <- reactive({
     req(input$protocol, input$exp_select, input$setdate)
@@ -123,15 +131,20 @@ server <- function(input, output, session) {
       dplyr::filter(
         protocol == input$protocol,
         experimenter == input$exp_select,
-        date >= input$setdate[1], date <= input$setdate[2]) %>%
+        date >= input$setdate[1], date <= input$setdate[2]
+      ) %>%
       dplyr::select(animal_id) %>%
       unique() %>%
       pull() %>%
-      sort() %>% 
+      sort() %>%
       as.vector()
   })
-  
-  
+
+  current_animal_select <- reactiveVal()
+  observe({
+    current_animal_select(input$animal_select)
+  })
+
   # choice direction plot
   create_plt1 <- reactive({
     ChoiceDirectionPlot(
@@ -143,11 +156,10 @@ server <- function(input, output, session) {
       show = input$show
     )
   })
-  
+
   output$plt1 <- renderPlot({
     create_plt1()
   })
-  
 
   # No. completed trials plot
   create_plt2 <- reactive({
@@ -163,64 +175,59 @@ server <- function(input, output, session) {
   output$plt2 <- renderPlot({
     create_plt2()
   })
-  
-  
-  # # correct ratio plot
-  # create_plot_correct <- reactive({
-  #   plot_generation(
-  #     plottype = "Correct ratio",
-  #     protocol = input$protocol,
-  #     datelim = input$setdate,
-  #     stage_filter = input$stage,
-  #     animal_filter = input$animal_select,
-  #     exp = input$exp_select,
-  #     show = input$show
-  #   )
-  # })
-  # 
-  # output$plot_correct_ratio <- renderPlot({
-  #   create_plot_correct()
-  # })
-  # 
-  # # stage tracking plot
-  # create_plot_stage <- reactive({
-  #   plot_generation(
-  #     plottype = "Stage tracking",
-  #     protocol = input$protocol,
-  #     datelim = input$setdate,
-  #     stage_filter = input$stage,
-  #     animal_filter = input$animal_select,
-  #     exp = input$exp_select,
-  #     show = input$show
-  #   )
-  # })
-  # 
-  # output$plot_stage_tracking <- renderPlot({
-  #   create_plot_stage()
-  # })
-  
 
-  
+  # correct ratio plot
+  create_plt3 <- reactive({
+    CorrectRatioPlot(
+      prtcl = input$protocol,
+      datelim = input$setdate,
+      stage_filter = input$stage,
+      animal_filter = input$animal_select,
+      exp = input$exp_select,
+      show = input$show
+    )
+  })
+
+  output$plt3 <- renderPlot({
+    create_plt3()
+  })
+
+  # stage tracking plot
+  create_plt4 <- reactive({
+    StageTrackingPlot(
+      prtcl = input$protocol,
+      datelim = input$setdate,
+      stage_filter = input$stage,
+      animal_filter = input$animal_select,
+      exp = input$exp_select,
+      show = input$show
+    )
+  })
+
+  output$plt4 <- renderPlot({
+    create_plt4()
+  })
+
   observeEvent(c(input$show, input$protocol, input$exp_select), {
     if (input$show == "All animals") {
       shinyjs::disable("animal_select")
       shinyjs::disable("exp_select")
-      }
-    
+    }
+
     if (input$show == "Experimenter") {
       shinyjs::enable("exp_select")
       shinyjs::disable("animal_select")
-      updateSelectInput(session, inputId = "exp_select", choices = update_exp_select())
-      }
-      
+
+      # Update the choices and pass the current selection to the selected argument
+      updateSelectInput(session, inputId = "exp_select", choices = update_exp_select(), selected = current_exp_select())
+    }
+
     if (input$show == "Individual animals") {
       shinyjs::enable("exp_select")
       shinyjs::enable("animal_select")
-      updateSelectInput(session, inputId = "animal_select", choices = update_animal_select())
-      }
+      updateSelectInput(session, inputId = "animal_select", choices = update_animal_select(), selected = current_animal_select())
+    }
   })
-
-  
 }
 
 shinyApp(ui, server)
