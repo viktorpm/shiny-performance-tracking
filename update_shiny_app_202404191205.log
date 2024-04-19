@@ -1,0 +1,88 @@
+Already on 'master'
+M	shiny_app/TRAINING.csv
+Your branch is up to date with 'origin/master'.
+Loading required package: stats
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ lubridate 1.9.3     ✔ stringr   1.5.1
+✔ purrr     1.0.2     ✔ tidyr     1.3.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::combine()     masks gridExtra::combine()
+✖ lubridate::days()    masks chron::days()
+✖ dplyr::filter()      masks stats::filter()
+✖ lubridate::hours()   masks chron::hours()
+✖ dplyr::lag()         masks stats::lag()
+✖ lubridate::minutes() masks chron::minutes()
+✖ lubridate::seconds() masks chron::seconds()
+✖ lubridate::years()   masks chron::years()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+R.matlab v3.7.0 (2022-08-25 21:52:34 UTC) successfully loaded. See ?R.matlab for help.
+
+Attaching package: ‘R.matlab’
+
+The following objects are masked from ‘package:base’:
+
+    getOption, isOpen
+
+
+Attaching package: ‘shinyjs’
+
+The following object is masked from ‘package:lubridate’:
+
+    show
+
+The following object is masked from ‘package:shiny’:
+
+    runExample
+
+The following objects are masked from ‘package:methods’:
+
+    removeClass, show
+
+
+Attaching package: ‘DT’
+
+The following objects are masked from ‘package:shiny’:
+
+    dataTableOutput, renderDataTable
+
+
+Attaching package: ‘plotly’
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+The following object is masked from ‘package:ggplot2’:
+
+    last_plot
+
+
+Attaching package: ‘kableExtra’
+
+The following object is masked from ‘package:dplyr’:
+
+    group_rows
+
+
+Attaching package: ‘magrittr’
+
+The following object is masked from ‘package:purrr’:
+
+    set_names
+
+The following object is masked from ‘package:tidyr’:
+
+    extract
+
+Warning message:
+Nothing to convert 
+Warning message:
+In TRAININGtoCSV(.) : File has already been processed
