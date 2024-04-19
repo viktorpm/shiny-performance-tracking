@@ -22,25 +22,18 @@
 DATE=$(date +"%Y%m%d%H%M")
 
 # Redirect all output to a log file with the timestamp in the filename
-exec > >(tee -a ~/update_shiny_app_$DATE.log) 2>&1
+exec > >(tee -a /mnt/ceph/_raw_data/rat_training_172/update_shiny_app_$DATE.log) 2>&1
 
-# Change directory
+# Switch to vplattner user and execute Git commands
+su - vplattner -c "
 cd /srv/shiny-server/shiny-performance-tracking
-
-# Checkout master branch
 git checkout master
-
-# Run R script
 Rscript ExtractSaveData.R
-
-# Add changes to git
+git config --global --add safe.directory /srv/shiny-server/shiny-performance-tracking
 git add .
-
-# Commit changes
-git commit -m "daily update of TRAINING.csv"
-
-# Push changes to remote repository
+git commit -m 'daily update of TRAINING.csv'
 git push
+"
 
 # Restart shiny-server
 systemctl restart shiny-server.service
