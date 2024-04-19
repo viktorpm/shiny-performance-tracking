@@ -86,3 +86,22 @@ Warning message:
 Nothing to convert 
 Warning message:
 In TRAININGtoCSV(.) : File has already been processed
+[master 0079d0d] daily update of TRAINING.csv
+ Committer: Viktor Plattner <vplattner@akramihpc1.akramilab.swc.ucl.ac.uk>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 94 insertions(+)
+ create mode 100644 update_shiny_app_202404191205.log
+To github.com:viktorpm/shiny-performance-tracking.git
+   15e7509..0079d0d  master -> master
+Failed to restart shiny-server.service: Connection timed out
+See system logs and 'systemctl status shiny-server.service' for details.
