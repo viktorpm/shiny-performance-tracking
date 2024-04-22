@@ -19,10 +19,10 @@
 #!/bin/bash
 
 # Generate a timestamp for the log file name
-DATE=$(date +"%Y%m%d%H%M")
+DATE=$(date +"%Y-%m-%d_%H-%M")
 
 # Redirect all output to a log file with the timestamp in the filename
-exec > >(tee -a /mnt/ceph/_raw_data/rat_training_172/update_shiny_app_$DATE.log) 2>&1
+exec > >(tee -a /mnt/ceph/_raw_data/rat_training_172/update_shiny_app_log_$DATE.txt) 2>&1
 
 # Switch to vplattner user and execute Git commands
 su - vplattner -c "
