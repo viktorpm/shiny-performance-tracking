@@ -12,6 +12,7 @@
 -   running `update_shiny_app.sh` bash script:
 
     -   script path: `/etc/cron.daily` on our VM1 
+    -	add `root ALL=(vplattner) NOPASSWD: ALL` line to `/etc/sudoers`:  allows the `root` user to execute any command as `vplattner` password (necessary to switch to `vplattner` in the script)
     -	on Ubuntu `systemd` is used to schedule tasks
     -   for more more details: <https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq>
 
