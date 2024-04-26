@@ -83,7 +83,7 @@ CorrectRatioPlot <- function(
     data = TRAINING,
     mapping = aes(
       x = date,
-      y = correct_trials / completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+      y = correct_trials / completed_trials
     )
   ) +
 
@@ -94,7 +94,12 @@ CorrectRatioPlot <- function(
       size = 3
     ) +
     geom_hline(yintercept = 0.50, col = "gray") +
-    annotate("text", x = datelim[1], y = 0.51, label = "Chance level", col = "gray", vjust = 2, hjust = -0.5) +
+    annotate(
+      "text",
+      x = datelim[1], y = 0.51,
+      label = "Chance level", col = "gray",
+      vjust = 2, hjust = -0.5
+    ) +
     ### scales, labels, themes
     scale_x_date(
       date_breaks = "1 day",

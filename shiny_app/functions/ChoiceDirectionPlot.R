@@ -56,7 +56,7 @@ ChoiceDirectionPlot <- function(
     data = TRAINING,
     mapping = aes(
       x = animal_id,
-      y = No_pokes # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+      y = No_pokes 
     )
   ) +
 

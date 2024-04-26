@@ -83,7 +83,7 @@ CompletedTrialsPlot <- function(
     data = TRAINING,
     mapping = aes(
       x = date,
-      y = completed_trials # / ((session_length * 60 * 24) %>% as.numeric()) # normalized to session length
+      y = completed_trials
     )
   ) +
 
@@ -94,7 +94,12 @@ CompletedTrialsPlot <- function(
       size = 3
     ) +
     geom_hline(yintercept = 20, col = "gray") +
-    annotate("text", x = datelim[1], y = 23, label = "Threshold - 20 trials", col = "gray", vjust = 2, hjust = -0.5) +
+    annotate(
+      "text",
+      x = datelim[1], y = 23,
+      label = "Threshold - 20 trials", col = "gray",
+      vjust = 2, hjust = -0.5
+    ) +
 
     ### scales, labels, themes
     scale_x_date(
@@ -103,7 +108,7 @@ CompletedTrialsPlot <- function(
       minor_breaks = "1 day",
       limits = c(as.Date(datelim[1]), as.Date(datelim[2]))
     ) +
-    ylim(0, max(TRAINING$all_trials) + 10) + # max(all_trials): comparable to the done trial plot
+    ylim(0, max(TRAINING$all_trials) + 10) +
     ylab("No. completed trials") +
     xlab("Date [day]") +
     ggtitle("Completed trials") +

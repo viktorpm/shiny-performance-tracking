@@ -7,7 +7,7 @@
   source(file.path("utility_functions", "ReadBpodData.R"))
   source(file.path("utility_functions", "ReadBcontrolData.R"))
   source(file.path("utility_functions", "ReadTrialData.R"))
-  # to be completed: source(file.path("utility_functions", "ReadBonsaiData")) 
+  # to be completed: source(file.path("utility_functions", "ReadBonsaiData"))
 }
 
 
@@ -16,11 +16,19 @@ computer_name <- Sys.info()[["nodename"]]
 
 # Define paths based on the computer name
 if (computer_name == "LAPTOP-DSAR795N") {
-  path_to_mat_files <- file.path("V:", "_raw_data", "rat_training_172", "SoloData", "Data")
-  path_to_rds_files <- file.path("V:", "_raw_data", "rat_training_172", "rds_files")
+  path_to_mat_files <- file.path(
+    "V:", "_raw_data", "rat_training_172", "SoloData", "Data"
+  )
+  path_to_rds_files <- file.path(
+    "V:", "_raw_data", "rat_training_172", "rds_files"
+  )
 } else if (computer_name == "akramihpc1.akramilab.swc.ucl.ac.uk") {
-  path_to_mat_files <- file.path("/mnt", "ceph", "_raw_data", "rat_training_172", "SoloData", "Data")
-  path_to_rds_files <- file.path("/mnt", "ceph", "_raw_data", "rat_training_172", "rds_files")
+  path_to_mat_files <- file.path(
+    "/mnt", "ceph", "_raw_data", "rat_training_172", "SoloData", "Data"
+  )
+  path_to_rds_files <- file.path(
+    "/mnt", "ceph", "_raw_data", "rat_training_172", "rds_files"
+  )
 } else {
   stop(paste("Unsupported computer name:", computer_name))
 }

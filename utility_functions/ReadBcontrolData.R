@@ -1,34 +1,38 @@
 # Function to read and process data from an RDS file
 ReadBcontrolData <- function(rds_file, rat_data, data_source) {
-  
   # Extract section name from rds_file name
   section_name <- rds_file %>% substr(
     start = rds_file %>% gregexpr(pattern = "@") %>% unlist() %>% `+`(1),
     stop = rds_file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2) - 1
   )
-  
+
   # Determine positions for filename and settings filename in the path
-  filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.data.file %>% as.character(),
-                           pattern = "\\\\"
+  filename_pos <- gregexpr(
+    rat_data$saved[, , ]$SavingSection.data.file %>%
+      as.character(),
+    pattern = "\\\\"
   ) %>%
     unlist() %>%
     `[[`(length(.)) + 1
-  
-  settings_filename_pos <- gregexpr(rat_data$saved[, , ]$SavingSection.settings.file %>% as.character(),
-                                    pattern = "\\\\"
+
+  settings_filename_pos <- gregexpr(
+    rat_data$saved[, , ]$SavingSection.settings.file %>%
+      as.character(),
+    pattern = "\\\\"
   ) %>%
     unlist() %>%
     `[[`(length(.)) + 1
-  
+
   # Initialize TRAINING list to store processed data
   TRAINING <- list(
     # Files, animals, experimenters
     file = rds_file,
-    settings_file = rat_data$saved[, , ]$SavingSection.settings.file %>% as.character() %>%
+    settings_file = rat_data$saved[, , ]$SavingSection.settings.file %>%
+      as.character() %>%
       substr(start = settings_filename_pos, stop = nchar(.)),
     protocol = substr(rds_file,
-                      start = rds_file %>% gregexpr(pattern = "@") %>% unlist(),
-                      stop = rds_file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2) - 1
+      start = rds_file %>% gregexpr(pattern = "@") %>% unlist(),
+      stop = rds_file %>% gregexpr(pattern = "_") %>% unlist() %>% `[`(2) - 1
     ),
     data_source = data_source,
     experimenter = rat_data$saved[, , ]$SavingSection.experimenter %>%
@@ -37,7 +41,7 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
       as.character(),
     rig_id = rat_data$saved[, , ]$WaterValvesSection.RigID %>%
       as.character(),
-    
+
     # Date, time, stage
     date = rat_data$saved[, , ]$SavingSection.SaveTime %>%
       as.character() %>%
@@ -51,7 +55,7 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
       as.character() %>%
       substr(13, 20),
     stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
-    
+
     # Trials
     right_trials = rat_data$saved[, , ]$SideSection.previous.sides %>%
       intToUtf8(multiple = T) %>%
@@ -63,7 +67,8 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
       length(),
     right_hit_frac = rat_data$saved[, , ]$OverallPerformanceSection.Right.hit.frac,
     left_hit_frac = rat_data$saved[, , ]$OverallPerformanceSection.Left.hit.frac,
-    all_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>% as.numeric(),
+    all_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>%
+      as.numeric(),
     completed_trials = get(
       paste(section_name, ".hit.history", sep = ""),
       rat_data$saved[, , ]
@@ -97,15 +102,21 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
     ) %>%
       as.numeric() %>%
       sum(na.rm = T),
-    init_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>% as.numeric(),
-    total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>% as.numeric(),
+    init_CP = rat_data$saved[, , ]$SideSection.init.CP.duration %>%
+      as.numeric(),
+    total_CP = rat_data$saved[, , ]$SideSection.Total.CP.duration %>%
+      as.numeric(),
     A1_time = rat_data$saved[, , ]$SideSection.A1.time %>% as.numeric(),
     A2_time = rat_data$saved[, , ]$SideSection.A2.time %>% as.numeric(),
-    reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character()
+    reward_type = rat_data$saved[, , ]$SideSection.reward.type %>%
+      as.character()
   )
-  
+
   # Convert empty elements to text for compatibility with TRAININGtoCSV
-  TRAINING <- lapply(TRAINING, function(x) ifelse(is_empty(x), yes = "empty_field_in_mat_file", no = x))
+  TRAINING <- lapply(
+    TRAINING,
+    function(x) ifelse(is_empty(x), yes = "empty_field_in_mat_file", no = x)
+  )
   return(TRAINING)
 }
 
