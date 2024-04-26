@@ -161,7 +161,8 @@ server <- function(input, output, session) {
       as.vector()
   })
 
-  # Initialize a reactiveVal to store the current selection of the experimenter dropdown
+  # Initialize a reactiveVal to store the current selection of the
+  # experimenter dropdown
   current_exp_select <- reactiveVal()
 
   # Update the reactiveVal whenever the selection changes
@@ -169,7 +170,8 @@ server <- function(input, output, session) {
     current_exp_select(input$exp_select)
   })
 
-  # updating "Select animals to show" drop down list based on protocol, date and experimenter
+  # updating "Select animals to show" drop down list based on protocol,
+  # date and experimenter
   update_animal_select <- reactive({
     req(input$protocol, input$exp_select, input$setdate)
     TRAINING %>%
@@ -263,7 +265,8 @@ server <- function(input, output, session) {
       shinyjs::enable("exp_select")
       shinyjs::disable("animal_select")
 
-      # Update the choices and pass the current selection to the selected argument
+      # Update the choices and pass the current selection
+      # to the selected argument
       updateSelectInput(session,
         inputId = "exp_select",
         choices = update_exp_select(),
