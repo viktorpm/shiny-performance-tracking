@@ -79,7 +79,10 @@ TRAINING <- add_row(TRAINING,
 
 ### read and extract data automatically
 # CHECK ALL SUBDIRECTORIES
-file_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data"), recursive = T) %>% as.list()
+file_list <- list.files(
+  file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data"),
+  recursive = T
+) %>% as.list()
 walk(file_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
 
 list.dirs(file.path("D:", "_Rig_data", "SoloData", "Data"), full.names = TRUE, recursive = TRUE)
@@ -89,7 +92,7 @@ list.dirs(file.path("D:", "_Rig_data", "SoloData", "Data"), full.names = TRUE, r
 
 
 data_path <- file.path("D:", "_Rig_data", "SoloData", "Data")
-file_list <-list.files(data_path, recursive = T) %>% as.list()
+file_list <- list.files(data_path, recursive = T) %>% as.list()
 walk(file_list, ~ ReadData(file = .x) %>% TRAININGtoCSV())
 
 
@@ -105,28 +108,31 @@ rat_data <- readRDS(file.path(
 rat_data %>% names()
 
 rat_data$saved[, , ]$SavingSection.settings.file.load.time %>%
-  as.numeric() %>% `-`(719529) %>% `*`(86400) %>%
+  as.numeric() %>%
+  `-`(719529) %>%
+  `*`(86400) %>%
   as.POSIXct(origin = "1970-01-01", tz = "UTC") %>%
   as.character() %>%
   substr(12, 20)
 
 
-rat_data$saved[, , ] %>% 
-  names() %>% `[`(1) %>% 
-  as.character() %>% 
+rat_data$saved[, , ] %>%
+  names() %>%
+  `[`(1) %>%
+  as.character() %>%
   substr(start = 1, stop = gregexpr(., pattern = "\\."))
-  
 
-mat_data <- tibble(names = rat_data$saved[, , ] %>% names(),
-                   value = rat_data$saved[, , ],
-                   class = lapply(rat_data$saved[, , ], class),
-                   dimension = lapply(rat_data$saved[, , ], dim),
-                   type = lapply(rat_data$saved[, , ], typeof)
-                   
+
+mat_data <- tibble(
+  names = rat_data$saved[, , ] %>% names(),
+  value = rat_data$saved[, , ],
+  class = lapply(rat_data$saved[, , ], class),
+  dimension = lapply(rat_data$saved[, , ], dim),
+  type = lapply(rat_data$saved[, , ], typeof)
 )
 
 
-names = rat_data$saved[, , ] %>% names()
+names <- rat_data$saved[, , ] %>% names()
 names %>% str_detect(pattern = "rew")
 names[str_detect(names, pattern = regex("history", ignore_case = T))]
 
@@ -137,7 +143,7 @@ rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
   sum()
 
 
-### trial by trial choice 
+### trial by trial choice
 
 tibble(
   animal_id = rat_data$saved[, , ]$SavingSection.ratname %>%
@@ -147,16 +153,16 @@ tibble(
     substr(1, 11),
   stage = rat_data$saved[, , ]$SideSection.training.stage %>% as.numeric(),
   A2_time = rat_data$saved[, , ]$SideSection.A2.time %>% as.numeric(),
-  
   reward_type = rat_data$saved[, , ]$SideSection.reward.type %>% as.character(),
   hit = rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% as.vector(),
   choice = rat_data$saved[, , ]$SideSection.previous.sides %>%
     intToUtf8(multiple = T),
-  trial_per_session = seq(from = 1, 
-                          to = rat_data$saved[, , ]$AthenaDelayComp.hit.history %>% 
-                            length()
-                          )
- )
+  trial_per_session = seq(
+    from = 1,
+    to = rat_data$saved[, , ]$AthenaDelayComp.hit.history %>%
+      length()
+  )
+)
 
 
 
@@ -171,14 +177,14 @@ rat_data$saved[, , ]$OverallPerformanceSection.Left.hit.frac
 
 rat_data$saved[, , ]$AthenaDelayComp.violation.history
 
-rat_data$saved[, , ]$SideSection.previous.sides %>% 
-  intToUtf8(multiple = T) %>% 
-  `[` (.=="r") %>% 
+rat_data$saved[, , ]$SideSection.previous.sides %>%
+  intToUtf8(multiple = T) %>%
+  `[`(. == "r") %>%
   length()
 
-rat_data$saved[, , ]$SideSection.previous.sides %>% 
-  intToUtf8(multiple = T) %>% 
-  `[` (.=="l") %>% 
+rat_data$saved[, , ]$SideSection.previous.sides %>%
+  intToUtf8(multiple = T) %>%
+  `[`(. == "l") %>%
   length()
 
 
@@ -196,7 +202,7 @@ rat_data$saved[, , ]$StimulusSection.nTrialsClass1 +
   rat_data$saved[, , ]$StimulusSection.nTrialsClass6 +
   rat_data$saved[, , ]$StimulusSection.nTrialsClass7 +
   rat_data$saved[, , ]$StimulusSection.nTrialsClass8
-  
+
 
 
 
@@ -248,7 +254,13 @@ section_name <- file %>% substr(
 
 
 
-get(paste(section_name, ".violation.history", sep = ""), rat_data$saved[, , ]) %>% sum()
+get(
+  paste(
+    section_name, ".violation.history",
+    sep = ""
+  ),
+  rat_data$saved[, , ]
+) %>% sum()
 
 
 
@@ -275,7 +287,9 @@ rat_data$saved[, , ]$WaterValvesSection.RigID
 
 
 
-rat_data <- readRDS(paste0(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files"), "/", "data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds"))
+rat_data <- readRDS(
+  paste0(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files"), "/", "data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds")
+)
 
 
 ReadData("data_@AthenaDelayComp_dammy_DO07_190522a.mat.rds")
@@ -294,7 +308,7 @@ rat_data <- readRDS(file.path(
   "D:", "_R_WD", "git_projects",
   "r_codes_rat_wm", "data",
   "rds_files",
-  #"DefaultSettings.mat.rds",
+  # "DefaultSettings.mat.rds",
   "VP04_Gap_Detection_20190822_095255.mat.rds"
 ))
 
@@ -304,34 +318,43 @@ rat_data <- readRDS(file.path(
 #   "rds_files",
 #   "data_@AthenaDelayComp_athena_AA01_190516a.mat.rds"
 # ))
-# 
+#
 
 
-rat_data %>% names() %in% "saved" %>% any()
+rat_data %>%
+  names() %in% "saved" %>%
+  any()
 
 
-rat_data$SessionData[,,]$RawData[,,]$OriginalStateData
-rat_data$SessionData[,,]$OnlinePlotParams[,,]$PlotColour
-rat_data$SessionData[,,]$RawEvents[,,]$Trial[[1]]
+rat_data$SessionData[, , ]$RawData[, , ]$OriginalStateData
+rat_data$SessionData[, , ]$OnlinePlotParams[, , ]$PlotColour
+rat_data$SessionData[, , ]$RawEvents[, , ]$Trial[[1]]
 
-rat_data$SessionData[,,]$Info[,,]$SessionStartTime.MATLAB%>%
-  as.numeric() %>% `-`(719529) %>% `*`(86400) %>% 
+rat_data$SessionData[, , ]$Info[, , ]$SessionStartTime.MATLAB %>%
+  as.numeric() %>%
+  `-`(719529) %>%
+  `*`(86400) %>%
   as.POSIXct(origin = "1970-01-01", tz = "UTC") %>%
-  as.character()  %>%
+  as.character() %>%
   substr(12, 21)
 
-rat_data$SessionData[,,]$Info[,,]$SessionStartTime.MATLAB
+rat_data$SessionData[, , ]$Info[, , ]$SessionStartTime.MATLAB
 
-rat_data$SessionData[,,]$Info[,,]$SessionDate %>% as.character() 
-
-
-
-rat_data$SessionData[,,]$RawEvents[,,]$Trial[[1]][[1]][,,]$States[,,] %>% 
-  names() %>% paste(collapse = ", ")
+rat_data$SessionData[, , ]$Info[, , ]$SessionDate %>% as.character()
 
 
 
-rat_data$SessionData[,,]$RawEvents[,,]$Trial[[6]][[1]][,,]$States[,,] %>% data.frame(id = names(.)) %>% View()
+rat_data$SessionData[, , ]$RawEvents[, , ]$
+  Trial[[1]][[1]][, , ]$States[, , ] %>%
+  names() %>%
+  paste(collapse = ", ")
+
+
+
+rat_data$SessionData[, , ]$RawEvents[, , ]$
+  Trial[[6]][[1]][, , ]$States[, , ] %>%
+  data.frame(id = names(.)) %>%
+  View()
 
 
 
@@ -344,47 +367,58 @@ ListLevels <- function(obj) {
   obj %>% is.array()
   obj %>% length()
   level_0 <- obj %>% as.character()
-  
-  #lev_counter
-  #sublev_counter
-  
-  for (i in length(obj)){
-    assign(paste0("level_", as.character(i)), 
-           obj[i] %>% names()
-           )
+
+  # lev_counter
+  # sublev_counter
+
+  for (i in length(obj)) {
+    assign(
+      paste0("level_", as.character(i)),
+      obj[i] %>% names()
+    )
   }
-  
-  
 }
 
 
 
 
-if (lev_counter == 1){
-  assign(paste0("level_", as.character(i),".",as.character()), rat_data[i] %>% names())
-}
-
-  
-for (i in 1:lev_counter) {
-  assign(paste0("level_", as.character(i),".",as.character()), rat_data[i] %>% names())
+if (lev_counter == 1) {
+  assign(
+    paste0("level_", as.character(i), ".", as.character()), rat_data[i] %>%
+      names()
+  )
 }
 
 
 for (i in 1:lev_counter) {
-  assign(paste0("level_1.", as.character(i)), rat_data$SessionData[,,][i] %>% names())
+  assign(
+    paste0("level_", as.character(i), ".", as.character()), rat_data[i] %>%
+      names()
+  )
+}
+
+
+for (i in 1:lev_counter) {
+  assign(paste0("level_1.", as.character(i)), rat_data$SessionData[, , ][i] %>% names())
 }
 
 
 for (i in 1:length(rat_data)) {
-  rat_data[i] %>% names() %>% paste(collapse = ", ")
+  rat_data[i] %>%
+    names() %>%
+    paste(collapse = ", ")
   for (j in 1:length(rat_data[[i]])) {
-    rat_data[[i]][[j]] %>% names() %>% paste(collapse = ", ")
+    rat_data[[i]][[j]] %>%
+      names() %>%
+      paste(collapse = ", ")
   }
 }
 
 
-for (i in 1:length(rat_data[[1]])){
-  rat_data[i] %>% names() %>% paste(collapse = ", ")
+for (i in 1:length(rat_data[[1]])) {
+  rat_data[i] %>%
+    names() %>%
+    paste(collapse = ", ")
 }
 
 rat_data[[1]] %>% length()
@@ -397,9 +431,12 @@ rat_data$saved[, , ]$SavingSection.SaveTime %>%
 
 
 substr("VP05_Gap_Detection_20190828_113737.mat",
-       start = 1,
-       stop = gregexpr(pattern = "_",
-                       "VP05_Gap_Detection_20190828_113737.mat") %>% unlist %>% `[` (1) - 1)
+  start = 1,
+  stop = gregexpr(
+    pattern = "_",
+    "VP05_Gap_Detection_20190828_113737.mat"
+  ) %>% unlist() %>% `[`(1) - 1
+)
 
 
 
@@ -407,12 +444,12 @@ substr("VP05_Gap_Detection_20190828_113737.mat",
 
 
 if (rat_data %>% names() %in% "SessionData" %>% any()) {
-  data_source = "bpod"
+  data_source <- "bpod"
 }
 
 
-if(rat_data %>% names() %in% "saved" %>% any()) {
-  data_source = "bcontrol"
+if (rat_data %>% names() %in% "saved" %>% any()) {
+  data_source <- "bcontrol"
 }
 
 
@@ -420,68 +457,91 @@ if(rat_data %>% names() %in% "saved" %>% any()) {
 
 
 
-in_path <- file.path("D:",
-                     "_Rig_data",
-                     "SoloData",
-                     "Data",
-                     "emmett")
-file_list <- list.files(file.path("D:",
-                                  "_Rig_data",
-                                  "SoloData",
-                                  "Data",
-                                  "emmett"),
-                        pattern = "\\.mat$", ### only mat files 
-                        recursive = T) %>%
-  as.list() 
+in_path <- file.path(
+  "D:",
+  "_Rig_data",
+  "SoloData",
+  "Data",
+  "emmett"
+)
+file_list <- list.files(
+  file.path(
+    "D:",
+    "_Rig_data",
+    "SoloData",
+    "Data",
+    "emmett"
+  ),
+  pattern = "\\.mat$", ### only mat files
+  recursive = T
+) %>%
+  as.list()
 full_path <- paste0(in_path, "/", file_list)
 
 
 
 
 tmp <- readBin(
-  file.path("W:","swc","akrami","neuropixels_recordings","do02","09_09_2020","2020-09-09_14-13-09","recording_slot2_1.npx2"),
+  file.path(
+    "W:", "swc", "akrami", "neuropixels_recordings",
+    "do02", "09_09_2020", "2020-09-09_14-13-09",
+    "recording_slot2_1.npx2"
+  ),
   what = "integer",
   endian = "little",
   # size = 2,
-  n = 384 * 30000)
+  n = 384 * 30000
+)
 
-tmp <- tmp * 0.195 
+tmp <- tmp * 0.195
 
 
 tmp <- tmp %>% matrix(nrow = 384, byrow = F)
 tmp %>% dim()
 
-tmp_df <-  tmp %>% t() %>% as.tibble()
+tmp_df <- tmp %>%
+  t() %>%
+  as.tibble()
 
 tmp_df <- tmp_df %>% mutate(time = row_number())
 library(reshape2)
-ggplot(data = tmp_df %>% melt(id.vars="time"), 
-       mapping = aes(x= time, y = value)) +
+ggplot(
+  data = tmp_df %>% melt(id.vars = "time"),
+  mapping = aes(x = time, y = value)
+) +
   geom_line() +
   facet_wrap(~variable)
 
 
 
-tmp[65,] %>% plot(type = "l")
+tmp[65, ] %>% plot(type = "l")
 
-# %>% 
+# %>%
 #   plot(type = "l")
-  
 
 
-sBinFileName <-  file.path("W:","swc","akrami","neuropixels_recordings","do02","08_09_2020","2020-09-08_14-49-30","recording_slot2_1.npx2")
 
-sBinFileName <-   file.path("W:","swc","akrami","neuropixels_recordings","do02","09_09_2020","2020-09-09_14-13-09","recording_slot2_1.npx2")
+sBinFileName <- file.path(
+  "W:", "swc", "akrami", "neuropixels_recordings",
+  "do02", "08_09_2020", "2020-09-08_14-49-30",
+  "recording_slot2_1.npx2"
+)
+
+sBinFileName <- file.path(
+  "W:", "swc", "akrami", "neuropixels_recordings",
+  "do02", "09_09_2020", "2020-09-09_14-13-09",
+  "recording_slot2_1.npx2"
+)
 
 conBinFile <- file(description = sBinFileName, open = "rb")
 ### # loop reading the chunks
-nLoopIdx <- 384*30000
-while ( length(vecDataChunk <- readBin(con = conBinFile, what = "integer", n = nLoopIdx)) > 0 ) {
+nLoopIdx <- 384 * 30000
+while (length(vecDataChunk <- readBin(con = conBinFile, what = "integer", n = nLoopIdx)) > 0) {
   cat("Line: ", nLoopIdx, " : ")
   print(vecDataChunk)
   ### # here we can do more computations on vecDataChunk
   vecDataChunk <- vecDataChunk %>% matrix(nrow = 384, byrow = F)
-  vecDataChunk[65,] %>% plot(type = "l")
+  vecDataChunk[65, ] %>% plot(type = "l")
   ### # increment loop index
   nLoopIdx <- nLoopIdx + 1
 }
@@ -514,22 +574,26 @@ sort(unique(odbcListDrivers()[[1]]))
 gateway <- ssh_connect("vplattner@192.168.238.210")
 print(gateway)
 
-ssh_tunnel(session = ssh_connect("vplattner@192.168.238.210"),
-           port = 8080,
-           target = "172.24.155.100:80" )
+ssh_tunnel(
+  session = ssh_connect("vplattner@192.168.238.210"),
+  port = 8080,
+  target = "172.24.155.100:80"
+)
 
 ssh_tunnel()
 ssh_disconnect(gateway)
 
 
 
-#### first open an ssh tunnel: ssh -f vplattner@192.168.238.210 -L 8080:172.24.155.100:3306 -N
-con <- dbConnect(MySQL(), 
-                 user = "akrami", 
-                 password = "Akrami2019!",
-                 dbname = 'akrami_db',
-                 host = "localhost",
-                 port = 8080)
+# first open an ssh tunnel:
+# ssh -f vplattner@192.168.238.210 -L 8080:172.24.155.100:3306 -N
+con <- dbConnect(MySQL(),
+  user = "akrami",
+  password = "Akrami2019!",
+  dbname = "akrami_db",
+  host = "localhost",
+  port = 8080
+)
 
 
 drive_auth(
@@ -544,7 +608,7 @@ drive_auth(
 drive_find()
 
 
-#https://www.googleapis.com/auth/drive.readonly
+# https://www.googleapis.com/auth/drive.readonly
 
 DBI::dbListTables(con)
 DBI::dbListFields(con, "sessions")
@@ -555,14 +619,25 @@ dplyr::tbl(con, sql("SELECT * FROM mass_log"))
 mass <- dplyr::tbl(con, "mass_log") %>%
   as_tibble()
 
-sessions <- dplyr::tbl(con, sql("SELECT ratname, sessiondate, endtime, starttime FROM sessions")) %>% 
+sessions <- dplyr::tbl(
+  con, sql(
+    "SELECT ratname, sessiondate,
+    endtime, starttime FROM sessions"
+  )
+) %>%
   as_tibble()
 
 water <- dplyr::tbl(con, "water_log") %>%
-  as_tibble() %>% 
+  as_tibble() %>%
   dplyr::mutate(
-    water_start = as.POSIXct(water_start, format = "%H:%M:%S") %>% format(format = "%H:%M:%S"),
-    water_end = as.POSIXct(water_end, format = "%H:%M:%S") %>% format(format = "%H:%M:%S"))
+    water_start = as.POSIXct(
+      water_start,
+      format = "%H:%M:%S"
+    ) %>%
+      format(format = "%H:%M:%S"),
+    water_end = as.POSIXct(water_end, format = "%H:%M:%S") %>%
+      format(format = "%H:%M:%S")
+  )
 
 
 
@@ -571,37 +646,47 @@ sessions %>% head()
 
 
 
-sessions %>% 
-  dplyr::mutate(sessiondate = as.Date(sessiondate),
-                endtime = as.POSIXct(endtime, format = "%H:%M:%S"),
-                starttime = as.POSIXct(starttime, format = "%H:%M:%S")) %>%
-  dplyr::filter(sessiondate == "2019-10-14") %>% 
+sessions %>%
+  dplyr::mutate(
+    sessiondate = as.Date(sessiondate),
+    endtime = as.POSIXct(endtime, format = "%H:%M:%S"),
+    starttime = as.POSIXct(starttime, format = "%H:%M:%S")
+  ) %>%
+  dplyr::filter(sessiondate == "2019-10-14") %>%
   ggplot(mapping = aes(x = starttime, y = ratname)) +
-  geom_linerange(aes(xmin = starttime,  xmax = endtime), color = "red", size = 1) +
-  scale_x_datetime(breaks = "30 min",labels = scales::date_format("%H:%M"))
-  #scale_y_date(breaks = "1 day")
+  geom_linerange(
+    aes(xmin = starttime, xmax = endtime),
+    color = "red", size = 1
+  ) +
+  scale_x_datetime(breaks = "30 min", labels = scales::date_format("%H:%M"))
+# scale_y_date(breaks = "1 day")
 
 
 session_water <- full_join(
   sessions %>% dplyr::rename(
     animal_id = ratname,
     date = sessiondate
-  ) %>% 
+  ) %>%
     dplyr::select(date, animal_id, starttime, endtime),
   water %>%
     select(animal_id, date, water_start, water_end)
 )
 
-session_water %>% 
-  dplyr::mutate(date = as.Date(date),
-                endtime = as.POSIXct(endtime, format = "%H:%M:%S"),
-                starttime = as.POSIXct(starttime, format = "%H:%M:%S"),
-                water_start = as.POSIXct(water_start, format = "%H:%M:%S"),
-                water_end = as.POSIXct(water_end, format = "%H:%M:%S")) %>%
-  dplyr::filter(date == "2019-10-14") %>% 
+session_water %>%
+  dplyr::mutate(
+    date = as.Date(date),
+    endtime = as.POSIXct(endtime, format = "%H:%M:%S"),
+    starttime = as.POSIXct(starttime, format = "%H:%M:%S"),
+    water_start = as.POSIXct(water_start, format = "%H:%M:%S"),
+    water_end = as.POSIXct(water_end, format = "%H:%M:%S")
+  ) %>%
+  dplyr::filter(date == "2019-10-14") %>%
   ggplot(mapping = aes(x = starttime, y = animal_id)) +
-  geom_linerange(aes(xmin = starttime,  xmax = endtime), color = "red", size = 1) +
-  scale_x_datetime(breaks = "30 min",labels = scales::date_format("%H:%M"))
+  geom_linerange(
+    aes(xmin = starttime, xmax = endtime),
+    color = "red", size = 1
+  ) +
+  scale_x_datetime(breaks = "30 min", labels = scales::date_format("%H:%M"))
 
 
 
@@ -611,13 +696,13 @@ mat_file_list <- list.files(
   pattern = "\\.mat$",
   recursive = T
   # full.names = F
-  ) %>%
+) %>%
   as.list()
 
 
-mat_file_list <- file_list[!grepl("experimenter", file_list) & 
-                         !grepl("Session Settings", file_list) & 
-                         !grepl("FakeSubject", file_list)]
+mat_file_list <- file_list[!grepl("experimenter", file_list) &
+  !grepl("Session Settings", file_list) &
+  !grepl("FakeSubject", file_list)]
 
 
 sub(pattern = ".*\\/", "", mat_file_list[[1]])
@@ -628,9 +713,14 @@ sub(pattern = ".*\\/", "", mat_file_list[[1]])
 mat_file_list <- sub(pattern = ".*\\/", "", mat_file_list)
 
 
-rds_list <- list.files(file.path("D:", "_R_WD", "git_projects", "r_codes_rat_wm", "data", "rds_files")) %>% as.list()
+rds_list <- list.files(
+  file.path(
+    "D:", "_R_WD", "git_projects",
+    "r_codes_rat_wm", "data", "rds_files"
+  )
+) %>% as.list()
 
 setdiff(
-mat_file_list,  
-rds_list %>% unlist() %>% substr(start = 1, stop = nchar(.)-4)
+  mat_file_list,
+  rds_list %>% unlist() %>% substr(start = 1, stop = nchar(.) - 4)
 )

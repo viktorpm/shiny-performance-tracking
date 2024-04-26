@@ -1,12 +1,12 @@
 # List of required packages
 required_packages <- c(
-  "shiny", "ggplot2", "ggpubr", "ggrepel", 
-  "chron", "padr", "gridExtra", "forcats", 
+  "shiny", "ggplot2", "ggpubr", "ggrepel",
+  "chron", "padr", "gridExtra", "forcats",
   "zoo", "bdscale", "tibble", "tidyverse",
-  "R.matlab", "stringr", "purrr", "shinyjs", 
+  "R.matlab", "stringr", "purrr", "shinyjs",
   "DT", "plotly", "knitr", "kableExtra",
   "rmarkdown", "parallel", "magrittr", "readr"
-  )
+)
 
 # Function to check and install packages
 check_and_install_packages <- function(pkg_list) {

@@ -23,23 +23,24 @@ ReadBpodData <- function(rds_file, data_source, rat_data) {
   A1_time <- NA
   A2_time <- NA
   reward_type <- NA
-  
+
   # Extract protocol from rds_file name
   protocol <- substr(rds_file,
-                     start = gregexpr(pattern = "_", rds_file) %>% unlist() %>% `[`(1) + 1,
-                     stop = gregexpr(pattern = "_", rds_file) %>% unlist() %>% `[`(3) - 1
+    start = gregexpr(pattern = "_", rds_file) %>% unlist() %>% `[`(1) + 1,
+    stop = gregexpr(pattern = "_", rds_file) %>% unlist() %>% `[`(3) - 1
   )
-  
+
   # Extract animal_id from rds_file name
   animal_id <- substr(rds_file,
-                      start = 1,
-                      stop = gregexpr(pattern = "_", rds_file) %>% unlist() %>% `[`(1) - 1
+    start = 1,
+    stop = gregexpr(pattern = "_", rds_file) %>% unlist() %>% `[`(1) - 1
   )
-  
+
   # Extract date and start_time from rat_data
-  date <- rat_data$SessionData[,,]$Info[,,]$SessionDate %>% as.character()
-  start_time <- rat_data$SessionData[, , ]$Info[, , ]$SessionStartTime.UTC %>% as.character()
-  
+  date <- rat_data$SessionData[, , ]$Info[, , ]$SessionDate %>% as.character()
+  start_time <- rat_data$SessionData[, , ]$Info[, , ]$SessionStartTime.UTC %>%
+    as.character()
+
   # Initialize TRAINING list with extracted and initialized variables
   TRAINING <- list(
     file = rds_file,
@@ -69,7 +70,7 @@ ReadBpodData <- function(rds_file, data_source, rat_data) {
     A2_time = A2_time,
     reward_type = reward_type
   )
-  
+
   return(TRAINING)
 }
 
