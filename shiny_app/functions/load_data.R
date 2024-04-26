@@ -16,11 +16,9 @@ TRAINING <- TRAINING %>%
   )) %>%
   # Conditionally replace stage values
   mutate(stage = replace(stage, stage == 0, "0_side_poke_on")) %>%
-  
-  
-  
   mutate(
-    stage = replace(stage, stage == 1, "1_center_poke_on")) %>%
+    stage = replace(stage, stage == 1, "1_center_poke_on")
+  ) %>%
   mutate(stage = replace(
     stage,
     A2_time > 0 & A2_time < 0.5 & reward_type == "Always",
@@ -29,15 +27,16 @@ TRAINING <- TRAINING %>%
   mutate(
     stage = replace(
       stage, reward_type == "DelayedReward", "3_DelayedReward"
-      )
-    ) %>%
-  mutate(          stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>%
+    )
+  ) %>%
+  mutate(stage = replace(stage, reward_type == "NoReward", "3_NoReward")) %>%
   # Reshape the data to long format for trials
   rowwise() %>%
   ungroup() %>%
   gather(
-                          right_trials, left_trials, key = "choice_direction", value = "No_pokes"
-    )
+    right_trials, left_trials,
+    key = "choice_direction", value = "No_pokes"
+  )
 
 
 # all_protocols <- TRAINING$protocol %>% unique() %>% as.character()
