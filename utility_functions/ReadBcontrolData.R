@@ -65,8 +65,10 @@ ReadBcontrolData <- function(rds_file, rat_data, data_source) {
       intToUtf8(multiple = T) %>%
       `[`(. == "l") %>%
       length(),
-    right_hit_frac = rat_data$saved[, , ]$OverallPerformanceSection.Right.hit.frac,
-    left_hit_frac = rat_data$saved[, , ]$OverallPerformanceSection.Left.hit.frac,
+    right_hit_frac = rat_data$saved[, , ]$
+      OverallPerformanceSection.Right.hit.frac,
+    left_hit_frac = rat_data$saved[, , ]$
+      OverallPerformanceSection.Left.hit.frac,
     all_trials = rat_data$saved[, , ]$ProtocolsSection.n.done.trials %>%
       as.numeric(),
     completed_trials = get(
