@@ -1,3 +1,6 @@
+#------------------------------------------------------------------------------
+# LIBRARY IMPORTS
+#------------------------------------------------------------------------------
 library(shiny)
 library(shinydashboard)
 library(shinyjs)
@@ -24,6 +27,9 @@ library(parallel)
 library(magrittr)
 library(readr)
 
+#------------------------------------------------------------------------------
+# SOURCE FUNCTIONS
+#------------------------------------------------------------------------------
 source(file.path("functions", "load_data.R"))
 source(file.path("functions", "plot_theme_settings.R"))
 source(file.path("functions", "ChoiceDirectionPlot.R"))
@@ -31,7 +37,9 @@ source(file.path("functions", "CompletedTrialsPlot.R"))
 source(file.path("functions", "CorrectRatioPlot.R"))
 source(file.path("functions", "StageTrackingPlot.R"))
 
-# Define UI
+#------------------------------------------------------------------------------
+# UI DEFINITION
+#------------------------------------------------------------------------------
 ui <- dashboardPage(
   dashboardHeader(title = "Training Dashboard"),
   dashboardSidebar(
@@ -45,8 +53,11 @@ ui <- dashboardPage(
       inputId = "protocol",
       label = "Protocol",
       choices = TRAINING$protocol %>% unique() %>% sort() %>% as.vector(),
-      # always selects the protocol with the latest entries
-      selected = TRAINING %>% dplyr::arrange(desc(date)) %>% dplyr::slice(1) %>% dplyr::select(protocol) %>% pull()
+      selected = TRAINING %>%
+        dplyr::arrange(desc(date)) %>%
+        dplyr::slice(1) %>%
+        dplyr::select(protocol) %>%
+        pull()
     ),
 
     # Filters
@@ -105,11 +116,17 @@ ui <- dashboardPage(
   )
 )
 
+#------------------------------------------------------------------------------
+# SERVER FUNCTION
+#------------------------------------------------------------------------------
 server <- function(input, output, session) {
-  
   # Capture initial state of inputs
   initialState <- reactiveValues(
-    protocol = TRAINING %>% dplyr::arrange(desc(date)) %>% dplyr::slice(1) %>% dplyr::select(protocol) %>% pull(),
+    protocol = TRAINING %>%
+      dplyr::arrange(desc(date)) %>%
+      dplyr::slice(1) %>%
+      dplyr::select(protocol) %>%
+      pull(),
     show = "All animals",
     exp_select = NULL,
     animal_select = NULL,
@@ -120,12 +137,15 @@ server <- function(input, output, session) {
   observeEvent(input$reset, {
     updateSelectInput(session, "protocol", selected = initialState$protocol)
     updateRadioButtons(session, "show", selected = initialState$show)
-    updateSelectInput(session, "exp_select", choices = NULL) # Assuming you want to clear this
-    updateSelectInput(session, "animal_select", choices = NULL) # Assuming you want to clear this
-    updateDateRangeInput(session, "setdate", start = initialState$setdate$start, end = initialState$setdate$end)
+    updateSelectInput(session, "exp_select", choices = NULL)
+    updateSelectInput(session, "animal_select", choices = NULL)
+    updateDateRangeInput(session, "setdate",
+      start = initialState$setdate$start,
+      end = initialState$setdate$end
+    )
     updateCheckboxGroupInput(session, "stage", selected = initialState$stage)
   })
-  
+
   # updating "Select experimenter" drop down list based on protocol and date
   update_exp_select <- reactive({
     req(input$protocol, input$setdate)
@@ -244,13 +264,21 @@ server <- function(input, output, session) {
       shinyjs::disable("animal_select")
 
       # Update the choices and pass the current selection to the selected argument
-      updateSelectInput(session, inputId = "exp_select", choices = update_exp_select(), selected = current_exp_select())
+      updateSelectInput(session,
+        inputId = "exp_select",
+        choices = update_exp_select(),
+        selected = current_exp_select()
+      )
     }
 
     if (input$show == "Individual animals") {
       shinyjs::enable("exp_select")
       shinyjs::enable("animal_select")
-      updateSelectInput(session, inputId = "animal_select", choices = update_animal_select(), selected = current_animal_select())
+      updateSelectInput(session,
+        inputId = "animal_select",
+        choices = update_animal_select(),
+        selected = current_animal_select()
+      )
     }
   })
 }
