@@ -35,27 +35,35 @@ if (computer_name == "LAPTOP-DSAR795N") {
 
 
 # Load commonly used libraries
-library(shiny)
-library(ggplot2)
-library(ggpubr)
-library(ggrepel)
-library(chron)
-library(padr)
-library(gridExtra)
-library(forcats)
-library(zoo)
-library(bdscale)
-library(tibble)
-library(tidyverse)
-library(R.matlab)
-library(stringr)
-library(purrr)
-library(shinyjs)
-library(DT)
-library(plotly)
-library(knitr)
-library(kableExtra)
-library(rmarkdown)
-library(parallel)
-library(magrittr)
-library(readr)
+# Data Visualization and Manipulation
+library(ggplot2) # For creating elegant and complex data visualizations
+library(ggpubr) # For enhancing ggplot2 plots with additional functionalities
+library(ggrepel) # For avoiding overlapping text labels in ggplot2 plots
+library(plotly) # For interactive and web-based data visualizations
+
+# Data Manipulation and Wrangling
+library(tidyverse) # Packages for data manipulation and visualization
+library(forcats) # For working with categorical data
+library(purrr) # For functional programming tools
+library(stringr) # For string manipulation
+library(readr) # For reading rectangular data 
+library(tibble) # For tibbles, a modern reimagining of data frames
+library(zoo) # For working with time series data
+library(chron) # For working with time series data
+library(padr) # For padding time series data
+
+# Data Import and Export
+library(R.matlab) # For importing and exporting data between R and MATLAB
+
+# Shiny and Web Applications
+library(shiny) # For building interactive web applications with R
+library(shinyjs) # For adding JavaScript interactivity to Shiny apps
+library(DT) # For creating interactive tables in Shiny apps
+library(kableExtra) # For enhancing tables in R Markdown and Shiny apps
+library(rmarkdown) # For creating dynamic documents with R Markdown
+library(knitr) # For knitting R Markdown documents into various formats
+
+# Utilities and Helpers
+library(gridExtra) # For arranging multiple grid graphics on a page
+library(magrittr) # For a pipe operator that makes code more readable
+library(parallel) # For parallel computing in R
