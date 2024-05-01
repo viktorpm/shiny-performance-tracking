@@ -33,11 +33,13 @@ eval "$(ssh-agent -s)"
 ssh-add $SSH_KEY
 
 
+
 # Switch to vplattner user and execute Git commands
 su - vplattner -c "
 cd /srv/shiny-server/shiny-performance-tracking
 git config --global --add safe.directory /srv/shiny-server/shiny-performance-tracking
 git checkout master
+git pull
 Rscript ExtractSaveData.R
 git add .
 git commit -m 'daily update of TRAINING.csv'
