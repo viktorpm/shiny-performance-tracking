@@ -23,14 +23,22 @@
 DATE=$(date +"%Y-%m-%d_%H-%M")
 
 # Redirect all output to a log file with the timestamp in the filename
-exec > >(tee -a /mnt/ceph/_raw_data/rat_training_172/update_shiny_app_log_$DATE.txt) 2>&1
+exec > >(tee -a /mnt/ceph/_logs/shiny_log_$DATE.txt) 2>&1
+
+# Define the SSH key path
+SSH_KEY="/nfs/nhome/live/vplattner/.ssh/id_rsa.pub"
+
+# Start the SSH agent and add the SSH key
+eval "$(ssh-agent -s)"
+ssh-add $SSH_KEY
+
 
 # Switch to vplattner user and execute Git commands
 su - vplattner -c "
 cd /srv/shiny-server/shiny-performance-tracking
+git config --global --add safe.directory /srv/shiny-server/shiny-performance-tracking
 git checkout master
 Rscript ExtractSaveData.R
-git config --global --add safe.directory /srv/shiny-server/shiny-performance-tracking
 git add .
 git commit -m 'daily update of TRAINING.csv'
 git push
