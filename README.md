@@ -22,6 +22,9 @@
 ```
 #!/bin/bash
 
+# for cron jobs the $HOME variable needs to explicitly set
+export HOME=/root/
+
 # Generate a timestamp for the log file name
 DATE=$(date +"%Y-%m-%d_%H-%M")
 
