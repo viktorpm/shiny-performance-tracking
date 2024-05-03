@@ -1,35 +1,36 @@
--   setting up Shiny Server:
-    <https://www.phind.com/search?cache=xbbosn359065x7dn4tunghvu&source=sidebar>
--   install R packages in `sudo su` mode on `akramihpc1` for system-wide
-    availability!
--   `library(renv)` for reproducibility across computers: not implemented for now
--   `.Rprofile`:
-    -   loading utility functions
-    -   building paths to data files computer dependently 
-    -   loading package dependencies
+### Setting Up Shiny Server
 
+- Visit [Phind's guide](https://www.phind.com/search?cache=xbbosn359065x7dn4tunghvu&source=sidebar) for detailed instructions on setting up Shiny Server.
 
-- `update_shiny_app.sh` bash script:
+### Installing R Packages System-Wide
 
-    -   script path: `/etc/cron.daily` on our VM1 
-    -   on Ubuntu, `systemd` is used to schedule tasks
-    -   configuration files: 
-    
-        -    `/etc/systemd/system/update_shiny_app.service`  
-        -    `/etc/systemd/system/update_shiny_app.timer`
-    -   scheduled scripts run as `root` so an SSH key needs to be set up for 
-    `root` user to be able perform git operations. 
-    <https://docs.github.com/en/authentication/connecting-to-github-with-ssh>
--   useful commands:
-    - restart timers after making changes in the configuration files:          
-  
-        `sudo systemctl daemon-reload`
+- Use `sudo su` mode on `akramihpc1` to install R packages for system-wide availability.
 
-    - list running timers
-    
-       `systemctl list-timers`
-    
-    -   for more more details: <https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq>
+### Reproducibility Across Computers
+
+- Currently, `library(renv)` is not implemented for reproducibility across computers.
+
+### .Rprofile
+
+- Utilize `.Rprofile` for:
+    - Loading utility functions.
+    - Building paths to data files based on the computer.
+    - Loading package dependencies.
+
+### Scheduled data processing
+
+- `update_shiny_app.sh` bash script, path: `/etc/cron.daily` on our VM1.
+- On Ubuntu, `systemd` is used for scheduling tasks.
+- Configuration files are stored at:
+    - `/etc/systemd/system/update_shiny_app.service`
+    - `/etc/systemd/system/update_shiny_app.timer`
+- Scheduled scripts run as `root`, requiring an SSH key for the `root` user to perform git operations. Refer to [GitHub's SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) for setup instructions.
+
+### Useful Commands
+
+- Restart timers after making changes in the configuration files: `sudo systemctl daemon-reload`
+- List running timers: `systemctl list-timers`
+- For more details, visit [Phind's guide](https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq).
 
 ```
 #!/bin/bash
