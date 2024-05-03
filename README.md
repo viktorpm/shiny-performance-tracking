@@ -1,6 +1,6 @@
 ### Setting Up Shiny Server
 
-- Visit [Phind's guide](https://www.phind.com/search?cache=xbbosn359065x7dn4tunghvu&source=sidebar) for detailed instructions on setting up Shiny Server.
+- For detailed instructions check our lab documentation on [how to set up a Shiny Server](https://github.com/viktorpm/limlab_documentation/blob/main/docs/Setting%20up%20Shiny%20server.md). Access to the GitHub repository is required for viewing.
 
 ### Installing R Packages System-Wide
 
@@ -30,7 +30,7 @@
 
 - Restart timers after making changes in the configuration files: `sudo systemctl daemon-reload`
 - List running timers: `systemctl list-timers`
-- For more details, visit [Phind's guide](https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq).
+- For more details check our lab documentation on [scheduling bash scripts](https://github.com/viktorpm/limlab_documentation/blob/main/docs/Scheduling%20and%20logging%20bash%20scripts.md). Access to the GitHub repository is required for viewing.
 
 ```
 #!/bin/bash
