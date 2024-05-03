@@ -13,6 +13,14 @@
 
     -   script path: `/etc/cron.daily` on our VM1 
     -   on Ubuntu `systemd` is used to schedule tasks
+    -   configuration files: 
+    `/etc/systemd/system/update_shiny_app.service`  
+    `/etc/systemd/system/update_shiny_app.timer`
+    -   useful commands:
+    ```
+    sudo systemctl daemon-reload
+    systemctl list-timers
+    ```
     -   for more more details: <https://www.phind.com/search?cache=kehos5pzvo7v8411fimrs0nq>
     -   scheduled scripts run as `root` so an SSH key needs to be set up for 
     `root` user to be able perform git operations. 
