@@ -1,5 +1,5 @@
 ### Setting Up Shiny Server
-test from vm
+
 - For detailed instructions check our lab documentation on [how to set up a Shiny Server](https://github.com/viktorpm/limlab_documentation/blob/main/docs/Setting%20up%20Shiny%20server.md). Access to the GitHub repository is required for viewing.
 
 ### Installing R Packages System-Wide
